@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 640">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#10285c"/>
+      <stop offset="100%" stop-color="#0a1638"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" x2="1">
+      <stop offset="0%" stop-color="#39c6ff"/>
+      <stop offset="100%" stop-color="#2ef2c6"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="640" rx="36" fill="url(#bg)"/>
+  <circle cx="620" cy="130" r="72" fill="#1f4aa0" opacity="0.4"/>
+  <circle cx="170" cy="540" r="110" fill="#1c3d86" opacity="0.28"/>
+  <path d="M120 110h170M100 170h230M140 230h160" stroke="#5ccfff" stroke-width="10" stroke-linecap="round" opacity="0.75"/>
+  <rect x="78" y="80" width="280" height="180" rx="24" fill="#0d214e" stroke="#345fb7" stroke-width="3"/>
+  <text x="118" y="132" fill="#dce9ff" font-family="Arial, sans-serif" font-size="24" font-weight="700">AI + Healthcare</text>
+  <text x="118" y="170" fill="#8fc6ff" font-family="Arial, sans-serif" font-size="18">Diagnostics</text>
+  <text x="118" y="198" fill="#8fc6ff" font-family="Arial, sans-serif" font-size="18">Public Health</text>
+  <text x="118" y="226" fill="#8fc6ff" font-family="Arial, sans-serif" font-size="18">Telemedicine</text>
+  <circle cx="554" cy="320" r="120" fill="#0f2456" stroke="#50bfff" stroke-width="4"/>
+  <circle cx="554" cy="320" r="78" fill="none" stroke="url(#glow)" stroke-width="10"/>
+  <path d="M526 318c0-18 13-31 28-31s28 13 28 31c0 16-11 27-24 27h-8c-13 0-24-11-24-27z" fill="#dce9ff"/>
+  <path d="M538 353h32v14h-32z" fill="#dce9ff"/>
+  <rect x="547" y="364" width="14" height="30" rx="4" fill="#dce9ff"/>
+  <path d="M554 218v-34M654 320h34M554 456v-34M454 320h-34M625 250l24-24M625 390l24 24M483 250l-24-24M483 390l-24 24" stroke="#44d4ff" stroke-width="7" stroke-linecap="round"/>
+  <rect x="410" y="462" width="288" height="94" rx="20" fill="#f5f9ff"/>
+  <text x="446" y="503" fill="#173873" font-family="Arial, sans-serif" font-size="24" font-weight="700">Conference Insights</text>
+  <text x="446" y="536" fill="#5376a9" font-family="Arial, sans-serif" font-size="17">Innovation • Collaboration • Responsible AI</text>
+</svg>
