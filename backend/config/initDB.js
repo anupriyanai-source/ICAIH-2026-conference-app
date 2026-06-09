@@ -6,25 +6,22 @@ async function initDB() {
     // ── registrations ────────────────────────────────────────────────
     await conn.query(`
       CREATE TABLE IF NOT EXISTS registrations (
-        id            INT AUTO_INCREMENT PRIMARY KEY,
-        ref_id        VARCHAR(40) UNIQUE NOT NULL,
-        name          VARCHAR(150) NOT NULL,
-        email         VARCHAR(150) NOT NULL,
-        phone         VARCHAR(30)  NOT NULL,
-        organization  VARCHAR(200) NOT NULL,
-        role          VARCHAR(80)  DEFAULT 'Attendee',
-        category          VARCHAR(80)  DEFAULT 'General',
-        fee_amount       DECIMAL(10,2) DEFAULT 0,
-        discount_percent INT DEFAULT 0,
-        bulk_offer       VARCHAR(120),
-        student_count    INT,
-        payment_confirmed TINYINT(1) DEFAULT 0,
-        payment_status    VARCHAR(30) DEFAULT 'pending',
-        razorpay_order_id VARCHAR(100),
-        razorpay_payment_id VARCHAR(100),
-        razorpay_signature VARCHAR(255),
-        payment_verified_at DATETIME,
-        created_at        DATETIME DEFAULT CURRENT_TIMESTAMP
+        id                  INT AUTO_INCREMENT PRIMARY KEY,
+        ref_id              VARCHAR(40) UNIQUE NOT NULL,
+        name                VARCHAR(150) NOT NULL,
+        email               VARCHAR(150) NOT NULL,
+        phone               VARCHAR(30)  NOT NULL,
+        organization        VARCHAR(200) NOT NULL,
+        role                VARCHAR(80)  DEFAULT 'Attendee',
+        category            VARCHAR(80)  DEFAULT 'General',
+        fee_amount          DECIMAL(10,2) DEFAULT 0,
+        discount_percent    INT DEFAULT 0,
+        bulk_offer          VARCHAR(120),
+        student_count       INT,
+        payment_confirmed   TINYINT(1) DEFAULT 0,
+        payment_status      VARCHAR(30) DEFAULT 'pending-verification',
+        payment_reference   VARCHAR(120),
+        created_at          DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
@@ -64,26 +61,18 @@ async function initDB() {
       )
     `);
 
-
-    // ── Add new registration columns for existing databases ───────────
     const registrationColumns = [
       ['fee_amount', 'DECIMAL(10,2) DEFAULT 0'],
       ['discount_percent', 'INT DEFAULT 0'],
       ['bulk_offer', 'VARCHAR(120)'],
       ['student_count', 'INT'],
       ['payment_confirmed', 'TINYINT(1) DEFAULT 0'],
-      ['payment_status', "VARCHAR(30) DEFAULT 'pending'"],
-      ['razorpay_order_id', 'VARCHAR(100)'],
-      ['razorpay_payment_id', 'VARCHAR(100)'],
-      ['razorpay_signature', 'VARCHAR(255)'],
-      ['payment_verified_at', 'DATETIME']
+      ['payment_status', "VARCHAR(30) DEFAULT 'pending-verification'"],
+      ['payment_reference', 'VARCHAR(120)']
     ];
 
     for (const [column, definition] of registrationColumns) {
-      const [existing] = await conn.query(
-        `SHOW COLUMNS FROM registrations LIKE ?`,
-        [column]
-      );
+      const [existing] = await conn.query(`SHOW COLUMNS FROM registrations LIKE ?`, [column]);
 
       if (existing.length === 0) {
         await conn.query(`ALTER TABLE registrations ADD COLUMN ${column} ${definition}`);
@@ -91,12 +80,24 @@ async function initDB() {
     }
 
 
-    // Remove old payment_reference column if it exists. Payment reference/UTR is no longer required.
-    const [paymentReferenceColumn] = await conn.query(
-      `SHOW COLUMNS FROM registrations LIKE 'payment_reference'`
-    );
-    if (paymentReferenceColumn.length > 0) {
-      await conn.query(`ALTER TABLE registrations DROP COLUMN payment_reference`);
+
+    // Remove old payment gateway / screenshot columns that are no longer used.
+    const obsoleteRegistrationColumns = [
+      'payment_screenshot',
+      'payment_submitted_at',
+      'payment_verified_at',
+      'razorpay_order_id',
+      'razorpay_payment_id',
+      'razorpay_signature',
+      'payment_confirmed_at'
+    ];
+
+    for (const column of obsoleteRegistrationColumns) {
+      const [existing] = await conn.query(`SHOW COLUMNS FROM registrations LIKE ?`, [column]);
+
+      if (existing.length > 0) {
+        await conn.query(`ALTER TABLE registrations DROP COLUMN ${column}`);
+      }
     }
 
     console.log('✅  Database tables ready.');

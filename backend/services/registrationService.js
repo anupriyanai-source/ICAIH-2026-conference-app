@@ -1,6 +1,5 @@
 const RegistrationModel = require('../models/registrationModel');
 const { sendRegistrationEmails } = require('./emailService');
-const { verifyPaidPayment } = require('./paymentService');
 
 function isEmail(val) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(val || '').trim());
@@ -67,9 +66,8 @@ const RegistrationService = {
     const organization = sanitize(body.organization);
     const role = sanitize(body.role) || 'Delegate';
     const category = sanitize(body.category) || 'General';
-    const razorpayOrderId = sanitize(body.razorpayOrderId || body.razorpay_order_id);
-    const razorpayPaymentId = sanitize(body.razorpayPaymentId || body.razorpay_payment_id);
-    const razorpaySignature = sanitize(body.razorpaySignature || body.razorpay_signature);
+    const paymentReference = sanitize(body.paymentReference || body.payment_reference).toUpperCase();
+    const paymentWhatsappShared = sanitize(body.paymentWhatsappShared || body.payment_whatsapp_shared);
 
     if (!name || !email || !phone || !organization) {
       throw { status: 400, message: 'Name, email, phone, and organization are required.' };
@@ -89,25 +87,22 @@ const RegistrationService = {
       studentCount: body.studentCount
     });
 
-    let paymentVerified = payment.feeAmount <= 0;
-    let paymentStatus = payment.feeAmount <= 0 ? 'not-required' : 'pending';
+    const requiresPayment = payment.feeAmount > 0;
 
-    if (payment.feeAmount > 0) {
-      await verifyPaidPayment({
-        orderId: razorpayOrderId,
-        paymentId: razorpayPaymentId,
-        signature: razorpaySignature,
-        expectedAmount: payment.feeAmount
-      });
+    if (requiresPayment && paymentWhatsappShared !== '1') {
+      throw { status: 400, message: 'Please share the payment screenshot on WhatsApp before entering the UTR / transaction ID.' };
+    }
 
-      paymentVerified = true;
-      paymentStatus = 'verified';
+    if (requiresPayment && !/^[A-Za-z0-9]{10,30}$/.test(paymentReference)) {
+      throw { status: 400, message: 'Please enter a valid UTR / transaction ID. It must contain 10 to 30 letters or numbers only.' };
     }
 
     const existing = await RegistrationModel.findByEmail(email);
     if (existing) {
       throw { status: 409, message: 'This email is already registered. Reference ID: ' + existing.ref_id };
     }
+
+    const paymentStatus = requiresPayment ? 'pending-verification' : 'not-required';
 
     const registrationData = {
       name,
@@ -120,20 +115,21 @@ const RegistrationService = {
       discountPercent: payment.discountPercent,
       bulkOffer: payment.bulkOffer,
       studentCount: payment.studentCount,
-      paymentConfirmed: paymentVerified,
+      paymentConfirmed: false,
       paymentStatus,
-      razorpayOrderId,
-      razorpayPaymentId,
-      razorpaySignature
+      paymentReference
     };
 
     const { refId } = await RegistrationModel.create(registrationData);
     const emailResult = await sendRegistrationEmails({ ...registrationData, refId });
 
     return {
-      message: 'Registration submitted successfully.',
+      message: requiresPayment
+        ? 'Registration submitted successfully. Payment UTR received and pending manual verification.'
+        : 'Registration submitted successfully.',
       id: refId,
       feeAmount: payment.feeAmount,
+      paymentStatus,
       emailStatus: emailResult.message
     };
   },

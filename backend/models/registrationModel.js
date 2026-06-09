@@ -41,9 +41,7 @@ const RegistrationModel = {
     studentCount,
     paymentConfirmed,
     paymentStatus,
-    razorpayOrderId,
-    razorpayPaymentId,
-    razorpaySignature
+    paymentReference
   }) {
     const conn = await pool.getConnection();
 
@@ -53,8 +51,8 @@ const RegistrationModel = {
 
       await conn.query(
         `INSERT INTO registrations
-         (ref_id, name, email, phone, organization, role, category, fee_amount, discount_percent, bulk_offer, student_count, payment_confirmed, payment_status, razorpay_order_id, razorpay_payment_id, razorpay_signature, payment_verified_at, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, IF(? = 1, DATE_ADD(UTC_TIMESTAMP(), INTERVAL 330 MINUTE), NULL), DATE_ADD(UTC_TIMESTAMP(), INTERVAL 330 MINUTE))`,
+         (ref_id, name, email, phone, organization, role, category, fee_amount, discount_percent, bulk_offer, student_count, payment_confirmed, payment_status, payment_reference, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, DATE_ADD(UTC_TIMESTAMP(), INTERVAL 330 MINUTE))`,
         [
           refId,
           name,
@@ -68,11 +66,8 @@ const RegistrationModel = {
           bulkOffer || null,
           studentCount || null,
           paymentConfirmed ? 1 : 0,
-          paymentStatus || 'pending',
-          razorpayOrderId || null,
-          razorpayPaymentId || null,
-          razorpaySignature || null,
-          paymentConfirmed ? 1 : 0
+          paymentStatus || 'pending-verification',
+          paymentReference || null
         ]
       );
 

@@ -113,6 +113,7 @@ function registrationRows(data) {
     ['Role', data.role],
     ['Category', data.category],
     ['Paid Amount', formatINR(data.feeAmount)],
+    ['UTR / Transaction ID', data.paymentReference || '-'],
     ['Bulk Offer', data.bulkOffer || '-'],
     ['Student Count', data.studentCount || '-']
   ];

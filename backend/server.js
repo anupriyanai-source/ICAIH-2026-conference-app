@@ -6,7 +6,6 @@ const initDB = require('./config/initDB');
 const registrationRoutes = require('./routes/registrationRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const sponsorRoutes = require('./routes/sponsorRoutes');
-const paymentRoutes = require('./routes/paymentRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -15,12 +14,12 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // API routes
 app.use('/api/register', registrationRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/sponsor-inquiry', sponsorRoutes);
-app.use('/api', paymentRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, message: 'ICAIH 2026 API is running.' });

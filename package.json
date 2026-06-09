@@ -1,0 +1,12 @@
+{
+  "name": "icaih-2026-conference-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npm install --prefix backend",
+    "start": "node backend/server.js"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}

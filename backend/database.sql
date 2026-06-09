@@ -15,11 +15,8 @@ CREATE TABLE IF NOT EXISTS registrations (
   bulk_offer VARCHAR(120),
   student_count INT,
   payment_confirmed TINYINT(1) DEFAULT 0,
-  payment_status VARCHAR(30) DEFAULT 'pending',
-  razorpay_order_id VARCHAR(100),
-  razorpay_payment_id VARCHAR(100),
-  razorpay_signature VARCHAR(255),
-  payment_verified_at DATETIME,
+  payment_status VARCHAR(30) DEFAULT 'pending-verification',
+  payment_reference VARCHAR(120),
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -51,12 +48,38 @@ CREATE TABLE IF NOT EXISTS sponsor_inquiries (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- For an already existing database, the backend initDB.js automatically adds these columns if missing.
-ALTER TABLE registrations ADD COLUMN IF NOT EXISTS payment_status VARCHAR(30) DEFAULT 'pending';
-ALTER TABLE registrations ADD COLUMN IF NOT EXISTS razorpay_order_id VARCHAR(100);
-ALTER TABLE registrations ADD COLUMN IF NOT EXISTS razorpay_payment_id VARCHAR(100);
-ALTER TABLE registrations ADD COLUMN IF NOT EXISTS razorpay_signature VARCHAR(255);
-ALTER TABLE registrations ADD COLUMN IF NOT EXISTS payment_verified_at DATETIME;
+-- For existing databases, backend/config/initDB.js automatically adds required columns and removes old columns.
+-- Manual Workbench-safe migration for existing registrations table:
+SET @db_name := DATABASE();
 
--- Remove old payment reference column from existing databases because UTR is no longer collected.
-ALTER TABLE registrations DROP COLUMN IF EXISTS payment_reference;
+SET @sql := IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @db_name AND TABLE_NAME = 'registrations' AND COLUMN_NAME = 'payment_status') = 0,
+  'ALTER TABLE registrations ADD COLUMN payment_status VARCHAR(30) DEFAULT 'pending-verification'',
+  'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql := IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @db_name AND TABLE_NAME = 'registrations' AND COLUMN_NAME = 'payment_reference') = 0,
+  'ALTER TABLE registrations ADD COLUMN payment_reference VARCHAR(120)',
+  'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- Clean up old screenshot / payment-gateway columns if they exist.
+SET @sql := IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @db_name AND TABLE_NAME = 'registrations' AND COLUMN_NAME = 'payment_screenshot') > 0, 'ALTER TABLE registrations DROP COLUMN payment_screenshot', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql := IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @db_name AND TABLE_NAME = 'registrations' AND COLUMN_NAME = 'payment_submitted_at') > 0, 'ALTER TABLE registrations DROP COLUMN payment_submitted_at', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql := IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @db_name AND TABLE_NAME = 'registrations' AND COLUMN_NAME = 'payment_verified_at') > 0, 'ALTER TABLE registrations DROP COLUMN payment_verified_at', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql := IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @db_name AND TABLE_NAME = 'registrations' AND COLUMN_NAME = 'razorpay_order_id') > 0, 'ALTER TABLE registrations DROP COLUMN razorpay_order_id', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql := IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @db_name AND TABLE_NAME = 'registrations' AND COLUMN_NAME = 'razorpay_payment_id') > 0, 'ALTER TABLE registrations DROP COLUMN razorpay_payment_id', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql := IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @db_name AND TABLE_NAME = 'registrations' AND COLUMN_NAME = 'razorpay_signature') > 0, 'ALTER TABLE registrations DROP COLUMN razorpay_signature', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql := IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @db_name AND TABLE_NAME = 'registrations' AND COLUMN_NAME = 'payment_confirmed_at') > 0, 'ALTER TABLE registrations DROP COLUMN payment_confirmed_at', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;

@@ -435,7 +435,7 @@
             <p>CEO, Institute for Transformative Technologies</p>
           </article>
           <article class="speaker-card"><img src="assets/speakers/ramesh-sunil.jpg" alt="Romesh Wadhwani">
-            <h4>Romesh Wadhwani</h4>
+            <h4>Dr. Romesh Wadhwani</h4>
             <p>Founder, Wadhwani Foundation</p>
           </article>
           <article class="speaker-card"><img src="assets/speakers/a-senthilrajan.jpg" alt="Dr. A. Senthilrajan">
@@ -469,6 +469,10 @@
           <article class="speaker-card"><img src="assets/speakers/s-uma.jpg" alt="Dr. S. Uma">
             <h4>Dr. S. Uma, IAS</h4>
             <p>Project Director, Tamil Nadu Health System Project</p>
+          </article>
+          <article class="speaker-card"><img src="assets/speakers/Uma-Maheswari.jpg" alt="Dr. S. Uma">
+            <h4>Dr. P. Uma Maheswari</h4>
+            <p>CEO of TN-RISE</p>
           </article>
           <article class="speaker-card"><img src="assets/speakers/anand-rangarajan.jpg" alt="Anand Rangarajan">
             <h4>Anand Rangarajan</h4>
@@ -605,7 +609,7 @@
           <!-- Platinum -->
           <div class="feature-panel reveal" style="border-top:4px solid #b0c4f7;">
             <h3 style="color:#b0c4f7;">🥇 Platinum Sponsor</h3>
-            <p style="font-size:1.3rem;font-weight:700;margin:0.5rem 0 1rem;">₹74,999</p>
+            <p style="font-size:1.3rem;font-weight:700;margin:0.5rem 0 1rem;">₹99,999</p>
             <ul class="check-list">
               <li>Logo on all banners, website, brochures &amp; lanyards</li>
               <li>Exclusive keynote / panel speaking slot</li>
@@ -620,7 +624,7 @@
           <!-- Gold -->
           <div class="feature-panel reveal" style="border-top:4px solid #f7d96b;">
             <h3 style="color:#f7d96b;">🥈 Gold Sponsor</h3>
-            <p style="font-size:1.3rem;font-weight:700;margin:0.5rem 0 1rem;">₹49,999</p>
+            <p style="font-size:1.3rem;font-weight:700;margin:0.5rem 0 1rem;">₹74,999</p>
             <ul class="check-list">
               <li>Logo on website, selected banners &amp; newsletters</li>
               <li>Medium-sized exhibition stall</li>
@@ -635,7 +639,7 @@
           <!-- Silver -->
           <div class="feature-panel reveal" style="border-top:4px solid #c0c0c0;">
             <h3 style="color:#c0c0c0;">🥉 Silver Sponsor</h3>
-            <p style="font-size:1.3rem;font-weight:700;margin:0.5rem 0 1rem;">₹24,999</p>
+            <p style="font-size:1.3rem;font-weight:700;margin:0.5rem 0 1rem;">₹49,999</p>
             <ul class="check-list">
               <li>Logo on website &amp; selected event banners</li>
               <li>Small exhibition stall or shared booth</li>
@@ -753,21 +757,22 @@
             <small id="selectedFeeNote">Delegate registration fee</small>
           </div>
 
-          <div class="payment-qr-box">
-            <h3>Secure Payment Verification</h3>
-            <p id="paymentQrText">Click Pay Now and complete payment through the secure payment window. You can choose UPI QR, UPI ID, card, or net banking.</p>
+          <div class="payment-qr-box" id="manualPaymentBox">
+            <h3>Manual UPI Payment</h3>
+            <p id="paymentQrText">Scan this QR code or use the UPI button to pay the selected fee. After payment, share the payment screenshot on WhatsApp. The UTR field will open after you click the WhatsApp share button.</p>
             <img id="paymentQrImage" src="assets/qr/icaih-payment-qr.jpeg" alt="ICAIH 2026 payment QR code">
-            <button class="btn primary payment-button" id="payNowBtn" type="button">Pay Now and Verify Payment</button>
-            <p class="payment-status" id="paymentStatusText">Payment is not verified yet. Submit will be enabled only after successful payment verification.</p>
+            <button class="btn primary payment-button" id="openUpiBtn" type="button">Open Google Pay / PhonePe / UPI App</button>
+            <button class="btn secondary payment-button whatsapp-payment-button" id="sharePaymentWhatsappBtn" type="button">Open WhatsApp to Send Screenshot</button>
+            <button class="btn secondary payment-button whatsapp-confirm-button" id="confirmWhatsappSentBtn" type="button" hidden>I Sent the Screenshot on WhatsApp</button>
+            <label class="manual-payment-field" id="utrField" hidden><span>UTR / Transaction ID <b class="required-star">*</b></span><input name="paymentReference" id="paymentReference" placeholder="Enter UPI UTR / transaction ID" minlength="10" maxlength="30" pattern="[A-Za-z0-9]{10,30}" title="Enter 10 to 30 letters or numbers only" disabled></label>
+            <input type="hidden" name="paymentWhatsappShared" id="paymentWhatsappShared" value="0">
+            <p class="payment-status" id="paymentStatusText">Pay first, then share the screenshot on WhatsApp to enable UTR entry.</p>
           </div>
 
           <input type="hidden" name="feeAmount" id="feeAmount" value="1499">
           <input type="hidden" name="discountPercent" id="discountPercent" value="0">
-          <input type="hidden" name="razorpayOrderId" id="razorpayOrderId">
-          <input type="hidden" name="razorpayPaymentId" id="razorpayPaymentId">
-          <input type="hidden" name="razorpaySignature" id="razorpaySignature">
-          <input type="hidden" name="paymentStatus" id="paymentStatus" value="pending">
-          <button class="btn primary" id="registrationSubmitBtn" type="submit" disabled>Submit Registration</button>
+          <input type="hidden" name="paymentStatus" id="paymentStatus" value="pending-verification">
+          <button class="btn primary" id="registrationSubmitBtn" type="submit">Submit Registration</button>
           <p class="form-message" id="registrationMessage"></p>
         </form>
       </div>
@@ -914,7 +919,6 @@
     </div>
   </div>
 
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="js/main.js"></script>
 </body>
 

@@ -2592,6 +2592,23 @@ blockquote {
   justify-content: center;
 }
 
+.whatsapp-payment-button {
+  background: #0f8f5f !important;
+  border: 1px solid #0f8f5f !important;
+  color: #ffffff !important;
+  box-shadow: 0 12px 24px rgba(15, 143, 95, .22);
+}
+
+.whatsapp-payment-button:hover {
+  background: #0b734c !important;
+  text-decoration: none;
+}
+
+.payment-button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
 .payment-status {
   margin: 8px auto 0 !important;
   color: #b42318 !important;
@@ -2602,4 +2619,41 @@ blockquote {
 
 .payment-status.verified {
   color: #067647 !important;
+}
+
+
+/* Manual UPI payment proof flow */
+.payment-help-text {
+  display: block;
+  color: #516582;
+  font-size: .78rem;
+  line-height: 1.45;
+  margin: 8px auto 14px;
+  max-width: 340px;
+}
+
+.manual-payment-field {
+  text-align: left;
+  margin-top: 12px;
+}
+
+.manual-payment-field input[type="file"] {
+  padding: 12px;
+  background: #ffffff;
+}
+
+.payment-status.manual-pending {
+  color: #92400e !important;
+}
+
+.whatsapp-confirm-button {
+  background: #1f6feb !important;
+  border: 1px solid #1f6feb !important;
+  color: #ffffff !important;
+  box-shadow: 0 12px 24px rgba(31, 111, 235, .18);
+}
+
+.whatsapp-confirm-button:hover {
+  background: #185abc !important;
+  text-decoration: none;
 }

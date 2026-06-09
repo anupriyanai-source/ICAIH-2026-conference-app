@@ -109,7 +109,7 @@ Conference details used in the registration email:
 
 - Registration IDs are generated in order as `ICAIH-2026001`, `ICAIH-2026002`, `ICAIH-2026003`, and so on.
 - The sequence is protected using a MySQL transaction and row lock, so simultaneous submissions still receive separate IDs in order.
-- `Payment Reference / UTR Number` is no longer required in the registration form.
+- `Payment Reference / UTR Number` is required for paid registrations in the registration form.
 - User confirmation email is sent to the email address entered in the registration form.
 - Admin notification email is sent to `ADMIN_EMAIL`, normally `info@mrtech.co.in`.
 
@@ -201,42 +201,26 @@ http://localhost:3000/api/mail/test?to=info@mrtech.co.in
 
 If the test fails, check the terminal error. Most common causes are wrong mailbox password, blocked SMTP port, or using a GoDaddy account password instead of the `info@mrtech.co.in` mailbox password.
 
-## Real Payment Verification Fix
+## Manual UPI Payment Proof Flow
 
-A plain UPI QR image cannot tell the website whether the user actually paid. A checkbox can be clicked without payment, so it is not safe for registration confirmation.
+This project does not use a payment gateway. The full registration amount is paid directly to the linked UPI/bank account.
 
-This version uses Razorpay Checkout payment verification:
+Flow:
 
 1. User fills the registration form.
-2. User clicks **Pay Now and Verify Payment**.
-3. Razorpay opens a secure payment window.
-4. User can select UPI QR, UPI ID, card, or net banking.
-5. Backend verifies the Razorpay payment signature and paid amount.
-6. Only after verification, the **Submit Registration** button becomes active.
-7. Registration is saved only with verified payment details.
+2. Website shows the selected fee and the static ICAIH UPI QR image.
+3. User pays through Google Pay, PhonePe, Paytm, BHIM, or another UPI app.
+4. User enters UTR / transaction ID.
+5. User enters the UTR / transaction ID.
+6. Registration is saved with `payment_status = pending-verification`.
+7. Admin team manually verifies the UTR against the bank/UPI statement.
 
-Add Razorpay keys in `backend/.env`:
-
-```env
-RAZORPAY_KEY_ID=rzp_test_or_live_key_id
-RAZORPAY_KEY_SECRET=rzp_test_or_live_key_secret
-```
-
-If these keys are missing, payment order creation will fail and registration submit will remain disabled for paid categories.
-
-After editing `.env`, restart backend:
-
-```bash
-cd backend
-npm start
-```
+Important: Since there is no payment gateway, automatic payment verification is not possible. Manual admin verification is required.
 
 For old databases, these columns are added automatically on backend start:
 
 ```sql
 payment_status
-razorpay_order_id
-razorpay_payment_id
-razorpay_signature
-payment_verified_at
+payment_reference
+
 ```
