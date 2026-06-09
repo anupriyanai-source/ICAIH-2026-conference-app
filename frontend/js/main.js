@@ -121,6 +121,7 @@ function validatePhoneFields(form, messageId) {
 const UTR_PATTERN = /^[A-Za-z0-9]{10,30}$/;
 const PAYMENT_WHATSAPP_NUMBER = '917358327761';
 let paymentWhatsappShared = false;
+
 const EVENT_INFO = {
   date: '4 July 2026',
   time: '9:30 AM – 5:30 PM',
@@ -146,10 +147,6 @@ const BULK_OFFERS = {
 };
 
 const MANUAL_UPI = {
-  // id: '7004245277@indianbk',
-  // payeeName: 'gcare health care services',
-  // notePrefix: 'ICAIH 2026 Registration'
-
   id: 'anupriyanarasimman2004@okhdfcbank',
   payeeName: 'Anupriya Narasimman',
   notePrefix: 'ICAIH 2026 Registration'
@@ -276,12 +273,6 @@ function buildUpiPaymentLink(details) {
 function buildDynamicQrImageUrl(details) {
   const upiLink = buildUpiPaymentLink(details);
 
-  /*
-    Dynamic QR rule:
-    The QR code is generated from the same UPI link used by the button.
-    So when the selected fee is ₹499, ₹1,499, ₹1,999, etc.,
-    the scanned QR will also carry that exact amount.
-  */
   const qrParams = new URLSearchParams({
     size: '260x260',
     margin: '10',
@@ -291,6 +282,9 @@ function buildDynamicQrImageUrl(details) {
   return `https://api.qrserver.com/v1/create-qr-code/?${qrParams.toString()}`;
 }
 
+function buildGooglePayIntentUrl(upiLink) {
+  return `intent://${upiLink.replace('upi://', '')}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
+}
 
 function openManualUpiPayment() {
   const form = document.getElementById('registrationForm');
@@ -306,13 +300,30 @@ function openManualUpiPayment() {
 
   if (form && !validatePhoneFields(form, 'registrationMessage')) return;
 
+  const upiLink = buildUpiPaymentLink(details);
+  const isAndroid = /Android/i.test(navigator.userAgent);
+
   showMessage(
     'registrationMessage',
-    'Opening UPI app. After payment, return here and click the WhatsApp button to share your screenshot. Then enter the UTR / transaction ID.',
+    'Opening Google Pay. If Google Pay does not open, use the QR code or try another UPI app. After payment, send the screenshot on WhatsApp and enter the UTR / transaction ID.',
     ''
   );
 
-  window.location.href = buildUpiPaymentLink(details);
+  if (isAndroid) {
+    const gpayIntentUrl = buildGooglePayIntentUrl(upiLink);
+
+    window.location.href = gpayIntentUrl;
+
+    setTimeout(() => {
+      if (!document.hidden) {
+        window.location.href = upiLink;
+      }
+    }, 1800);
+
+    return;
+  }
+
+  window.location.href = upiLink;
 }
 
 function setUtrEntryEnabled(enabled) {
@@ -460,10 +471,12 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   if (paymentQrBox) paymentQrBox.hidden = !details.requiresPayment;
   if (openUpiBtn) openUpiBtn.disabled = !details.requiresPayment;
   if (sharePaymentWhatsappBtn) sharePaymentWhatsappBtn.disabled = !details.requiresPayment;
+
   if (confirmWhatsappSentBtn && !details.requiresPayment) {
     confirmWhatsappSentBtn.hidden = true;
     confirmWhatsappSentBtn.disabled = true;
   }
+
   if (paymentReference) paymentReference.required = details.requiresPayment && paymentWhatsappShared;
 
   if (!details.requiresPayment) {
@@ -496,7 +509,6 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
 document.getElementById('paymentReference')?.addEventListener('input', () => {
   validateManualPaymentFields(getRegistrationPaymentDetails(), false);
 });
-
 
 document.getElementById('openUpiBtn')?.addEventListener('click', openManualUpiPayment);
 document.getElementById('sharePaymentWhatsappBtn')?.addEventListener('click', sharePaymentScreenshotOnWhatsapp);
