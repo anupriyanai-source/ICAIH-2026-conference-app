@@ -147,8 +147,8 @@ const BULK_OFFERS = {
 };
 
 const MANUAL_UPI = {
-  id: 'anupriyanarasimman2004@okhdfcbank',
-  payeeName: 'Anupriya Narasimman',
+  id: '7004245277@indianbk',
+  payeeName: 'gcare health care services',
   notePrefix: 'ICAIH 2026 Registration'
 };
 
