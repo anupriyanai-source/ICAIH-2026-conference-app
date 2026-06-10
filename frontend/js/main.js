@@ -30,13 +30,30 @@ setInterval(updateCountdown, 1000);
 updateCountdown();
 
 /* ── Scroll reveal ── */
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) e.target.classList.add('visible');
-  });
-}, { threshold: 0.12 });
+const revealElements = document.querySelectorAll('.reveal');
 
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+if ('IntersectionObserver' in window) {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.04, rootMargin: '0px 0px -5% 0px' });
+
+  revealElements.forEach(el => observer.observe(el));
+} else {
+  revealElements.forEach(el => el.classList.add('visible'));
+}
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.speaker-grid.reveal, .card-grid.reveal').forEach(el => {
+      el.classList.add('visible');
+    });
+  }, 250);
+});
 
 /* ── Mobile nav ── */
 const menuToggle = document.getElementById('menuToggle');
