@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
    ICAIH 2026 – Main JS
-   Manual UPI Payment Flow
+   Crowdshaki / Razorpay Dynamic UPI Payment Flow
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── Countdown ── */
@@ -146,10 +146,21 @@ const BULK_OFFERS = {
   '50-plus': { min: 50, max: Infinity, discount: 25, label: 'Student Group: 50+ Students - 25% Discount' }
 };
 
-const MANUAL_UPI = {
-  id: '7004245277@indianbk',
-  payeeName: 'gcare health care services',
-  notePrefix: 'ICAIH 2026 Registration'
+const CROWDSHAKI_PAYMENT = {
+  baseUrl: 'https://www.crowdshaki.in/payment',
+  fundraiserId: '69c7b186eac7d838c9f98d37',
+  imageUrl: 'https://res.cloudinary.com/dooupjyum/image/upload/v1781069610/crowdshaki/campaigns/w5zufyrhjohbyi9tlxct.png',
+  reasonForFund: 'Health for all @ Gross root Level',
+  paymentForPrefix: 'ICAIH 2026 Registration'
+};
+
+const SPONSOR_FEES = {
+  'Platinum Sponsor': 99999,
+  'Gold Sponsor': 74999,
+  'Silver Sponsor': 49999,
+  'Premium Exhibitor': 24999,
+  'Standard Exhibitor': 22999,
+  'Startup Pavilion': 19999
 };
 
 function formatINR(amount) {
@@ -256,34 +267,36 @@ function validateManualPaymentFields(details, showError = false) {
   return true;
 }
 
-function buildUpiPaymentLink(details) {
-  const transactionNote = `${MANUAL_UPI.notePrefix} - ${details.role}`;
+function buildCrowdshakiPaymentUrl(details) {
+  const form = document.getElementById('registrationForm');
+  const formData = form ? new FormData(form) : new FormData();
+  const normalizedFields = getNormalizedRegistrationFields(formData);
 
   const params = new URLSearchParams({
-    pa: MANUAL_UPI.id,
-    pn: MANUAL_UPI.payeeName,
-    tn: transactionNote,
-    am: String(details.feeAmount),
-    cu: 'INR'
+    fundraiserId: CROWDSHAKI_PAYMENT.fundraiserId,
+    imageUrl: CROWDSHAKI_PAYMENT.imageUrl,
+    reasonForFund: CROWDSHAKI_PAYMENT.reasonForFund,
+    amount: String(details.feeAmount),
+    registrationRole: details.role,
+    paymentFor: `${CROWDSHAKI_PAYMENT.paymentForPrefix} - ${details.role}`,
+    name: normalizedFields.name,
+    email: normalizedFields.email,
+    phone: normalizedFields.phone
   });
 
-  return `upi://pay?${params.toString()}`;
+  return `${CROWDSHAKI_PAYMENT.baseUrl}?${params.toString()}`;
 }
 
 function buildDynamicQrImageUrl(details) {
-  const upiLink = buildUpiPaymentLink(details);
+  const paymentPageUrl = buildCrowdshakiPaymentUrl(details);
 
   const qrParams = new URLSearchParams({
     size: '260x260',
     margin: '10',
-    data: upiLink
+    data: paymentPageUrl
   });
 
   return `https://api.qrserver.com/v1/create-qr-code/?${qrParams.toString()}`;
-}
-
-function buildGooglePayIntentUrl(upiLink) {
-  return `intent://${upiLink.replace('upi://', '')}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
 }
 
 function openManualUpiPayment() {
@@ -300,30 +313,30 @@ function openManualUpiPayment() {
 
   if (form && !validatePhoneFields(form, 'registrationMessage')) return;
 
-  const upiLink = buildUpiPaymentLink(details);
-  const isAndroid = /Android/i.test(navigator.userAgent);
+  const formData = form ? new FormData(form) : new FormData();
+  const normalizedFields = getNormalizedRegistrationFields(formData);
 
-  showMessage(
-    'registrationMessage',
-    'Opening Google Pay. If Google Pay does not open, use the QR code or try another UPI app. After payment, send the screenshot on WhatsApp and enter the UTR / transaction ID.',
-    ''
-  );
-
-  if (isAndroid) {
-    const gpayIntentUrl = buildGooglePayIntentUrl(upiLink);
-
-    window.location.href = gpayIntentUrl;
-
-    setTimeout(() => {
-      if (!document.hidden) {
-        window.location.href = upiLink;
-      }
-    }, 1800);
-
+  if (!normalizedFields.name || !normalizedFields.email || !normalizedFields.phone || !normalizedFields.organization) {
+    showMessage(
+      'registrationMessage',
+      'Please fill Name, Email, Phone, and Organization before opening the payment page.',
+      'error'
+    );
     return;
   }
 
-  window.location.href = upiLink;
+  showMessage(
+    'registrationMessage',
+    'Opening the secure Crowdshaki / Razorpay payment page. Complete the UPI payment there, then return here, send the screenshot on WhatsApp, and enter the UTR / transaction ID.',
+    ''
+  );
+
+  const paymentPageUrl = buildCrowdshakiPaymentUrl(details);
+  const opened = window.open(paymentPageUrl, '_blank', 'noopener');
+
+  if (!opened) {
+    window.location.href = paymentPageUrl;
+  }
 }
 
 function setUtrEntryEnabled(enabled) {
@@ -431,7 +444,7 @@ function resetPaymentProof() {
 
   setPaymentStatus(
     'pending-verification',
-    'Pay first, open WhatsApp, send the payment screenshot, then confirm here to enable UTR entry.'
+    'Pay first through the secure payment page, open WhatsApp, send the payment screenshot, then confirm here to enable UTR entry.'
   );
 }
 
@@ -491,19 +504,25 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   }
 
   if (paymentQrText) {
-    paymentQrText.textContent = `Pay ${formatINR(details.feeAmount)} using Google Pay, PhonePe, Paytm, BHIM, or any UPI app. After payment, open WhatsApp, send the payment screenshot to 7358327761, return to this form, confirm the screenshot was sent, then enter the UTR / transaction ID.`;
+    paymentQrText.textContent = `Pay ${formatINR(details.feeAmount)} through the secure Crowdshaki / Razorpay page using Google Pay, PhonePe, Paytm, BHIM, or any UPI app. After payment, open WhatsApp, send the payment screenshot to 7358327761, return to this form, confirm the screenshot was sent, then enter the UTR / transaction ID.`;
   }
 
   if (paymentQrImage && details.requiresPayment) {
     paymentQrImage.src = buildDynamicQrImageUrl(details);
-    paymentQrImage.alt = `ICAIH 2026 UPI QR code for ${formatINR(details.feeAmount)}`;
-    paymentQrImage.title = `Scan to pay ${formatINR(details.feeAmount)}`;
+    paymentQrImage.alt = `ICAIH 2026 secure payment page QR code for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.title = `Scan to open secure payment page for ${formatINR(details.feeAmount)}`;
   }
 }
 
 ['registrationRole', 'bulkOffer', 'studentCount'].forEach(id => {
   document.getElementById(id)?.addEventListener('input', () => updateRegistrationPaymentUI());
   document.getElementById(id)?.addEventListener('change', () => updateRegistrationPaymentUI());
+});
+
+['name', 'fullName', 'participantName', 'email', 'emailAddress', 'phone', 'organization'].forEach(fieldName => {
+  document.querySelector(`[name="${fieldName}"]`)?.addEventListener('input', () => {
+    updateRegistrationPaymentUI({ keepPayment: true });
+  });
 });
 
 document.getElementById('paymentReference')?.addEventListener('input', () => {
@@ -667,6 +686,338 @@ document.getElementById('closeSponsorModal')?.addEventListener('click', closeSpo
 document.getElementById('sponsorModal')?.addEventListener('click', e => {
   if (e.target.id === 'sponsorModal') closeSponsorModal();
 });
+
+
+/* ════════════════════════════════════════════════════════════════
+   SPONSOR PAYMENT FLOW
+   ════════════════════════════════════════════════════════════════ */
+
+let sponsorWhatsappShared = false;
+
+function getSponsorPaymentDetails() {
+  const sponsorTier = document.getElementById('sponsorTier')?.value || '';
+  const feeAmount = Number(SPONSOR_FEES[sponsorTier] || 0);
+
+  return {
+    sponsorTier,
+    feeAmount,
+    requiresPayment: feeAmount > 0,
+    note: sponsorTier
+      ? `${sponsorTier} sponsorship fee`
+      : 'Select a sponsorship tier to view the fee.'
+  };
+}
+
+function setSponsorPaymentStatus(status, message) {
+  const paymentStatus = document.getElementById('sponsorPaymentStatus');
+  const paymentStatusText = document.getElementById('sponsorPaymentStatusText');
+
+  if (paymentStatus) paymentStatus.value = status;
+
+  if (paymentStatusText) {
+    paymentStatusText.textContent = message || '';
+    paymentStatusText.classList.toggle('verified', status === 'not-required');
+    paymentStatusText.classList.toggle('manual-pending', status === 'pending-verification');
+  }
+}
+
+function setSponsorUtrEntryEnabled(enabled) {
+  const paymentReference = document.getElementById('sponsorPaymentReference');
+  const utrField = document.getElementById('sponsorUtrField');
+  const whatsappSharedInput = document.getElementById('sponsorPaymentWhatsappShared');
+
+  sponsorWhatsappShared = Boolean(enabled);
+
+  if (whatsappSharedInput) whatsappSharedInput.value = enabled ? '1' : '0';
+
+  if (utrField) utrField.hidden = !enabled;
+
+  if (paymentReference) {
+    paymentReference.disabled = !enabled;
+    paymentReference.required = enabled;
+    if (!enabled) paymentReference.value = '';
+  }
+}
+
+function resetSponsorPaymentProof() {
+  const confirmBtn = document.getElementById('confirmSponsorWhatsappSentBtn');
+
+  setSponsorUtrEntryEnabled(false);
+
+  if (confirmBtn) {
+    confirmBtn.hidden = true;
+    confirmBtn.disabled = true;
+  }
+
+  setSponsorPaymentStatus(
+    'pending-verification',
+    'Pay first through the secure payment page, open WhatsApp, send the payment screenshot, then confirm here to enable UTR entry.'
+  );
+}
+
+function getNormalizedSponsorFields(formData) {
+  return {
+    companyName: String(formData.get('companyName') || '').trim(),
+    contactPerson: String(formData.get('contactPerson') || '').trim(),
+    email: String(formData.get('email') || '').trim(),
+    phone: String(formData.get('phone') || '').trim()
+  };
+}
+
+function buildSponsorPaymentUrl(details) {
+  const form = document.getElementById('sponsorForm');
+  const formData = form ? new FormData(form) : new FormData();
+  const fields = getNormalizedSponsorFields(formData);
+
+  const params = new URLSearchParams({
+    fundraiserId: CROWDSHAKI_PAYMENT.fundraiserId,
+    imageUrl: CROWDSHAKI_PAYMENT.imageUrl,
+    reasonForFund: CROWDSHAKI_PAYMENT.reasonForFund,
+    amount: String(details.feeAmount),
+    registrationRole: details.sponsorTier || 'Sponsor',
+    paymentFor: `ICAIH 2026 Sponsorship - ${details.sponsorTier || 'Sponsor'}`,
+    name: fields.contactPerson || fields.companyName,
+    email: fields.email,
+    phone: fields.phone
+  });
+
+  return `${CROWDSHAKI_PAYMENT.baseUrl}?${params.toString()}`;
+}
+
+function buildSponsorDynamicQrImageUrl(details) {
+  const paymentPageUrl = buildSponsorPaymentUrl(details);
+
+  const qrParams = new URLSearchParams({
+    size: '260x260',
+    margin: '10',
+    data: paymentPageUrl
+  });
+
+  return `https://api.qrserver.com/v1/create-qr-code/?${qrParams.toString()}`;
+}
+
+function validateSponsorPaymentFields(details, showError = false) {
+  if (!details.sponsorTier) {
+    if (showError) {
+      showMessage('sponsorMessage', 'Please select a sponsorship tier.', 'error');
+      document.getElementById('sponsorTier')?.focus();
+    }
+    return false;
+  }
+
+  const paymentReference = document.getElementById('sponsorPaymentReference');
+  const utrValue = paymentReference?.value.trim() || '';
+
+  if (!sponsorWhatsappShared) {
+    setSponsorPaymentStatus(
+      'pending-verification',
+      'Please open WhatsApp, send the sponsor payment screenshot, click the confirmation button, and then enter the UTR / transaction ID.'
+    );
+
+    if (showError) {
+      showMessage(
+        'sponsorMessage',
+        'Please open WhatsApp, send the payment screenshot, then click "I Sent the Screenshot on WhatsApp" before entering the UTR / transaction ID.',
+        'error'
+      );
+      document.getElementById('confirmSponsorWhatsappSentBtn')?.focus();
+    }
+
+    return false;
+  }
+
+  if (!UTR_PATTERN.test(utrValue)) {
+    setSponsorPaymentStatus(
+      'pending-verification',
+      'Enter a valid UTR / transaction ID before submitting. Use 10 to 30 letters or numbers only.'
+    );
+
+    if (showError) {
+      showMessage(
+        'sponsorMessage',
+        'Please enter a valid UTR / transaction ID. It must contain 10 to 30 letters or numbers only.',
+        'error'
+      );
+      paymentReference?.focus();
+    }
+
+    return false;
+  }
+
+  setSponsorPaymentStatus(
+    'pending-verification',
+    'UTR / transaction ID received. Admin will manually verify your sponsor payment after submission.'
+  );
+
+  return true;
+}
+
+function updateSponsorPaymentUI({ keepPayment = false } = {}) {
+  const details = getSponsorPaymentDetails();
+
+  const feeAmount = document.getElementById('sponsorFeeAmount');
+  const selectedFeeText = document.getElementById('sponsorSelectedFeeText');
+  const selectedFeeNote = document.getElementById('sponsorSelectedFeeNote');
+  const paymentQrText = document.getElementById('sponsorPaymentQrText');
+  const paymentQrImage = document.getElementById('sponsorPaymentQrImage');
+  const openPaymentBtn = document.getElementById('openSponsorPaymentBtn');
+  const shareWhatsappBtn = document.getElementById('shareSponsorWhatsappBtn');
+
+  if (feeAmount) feeAmount.value = details.feeAmount;
+
+  if (selectedFeeText) {
+    selectedFeeText.textContent = details.requiresPayment ? formatINR(details.feeAmount) : 'Select Tier';
+  }
+
+  if (selectedFeeNote) {
+    selectedFeeNote.textContent = details.note;
+  }
+
+  if (openPaymentBtn) openPaymentBtn.disabled = !details.requiresPayment;
+  if (shareWhatsappBtn) shareWhatsappBtn.disabled = !details.requiresPayment;
+
+  if (!keepPayment) resetSponsorPaymentProof();
+
+  if (paymentQrText) {
+    paymentQrText.textContent = details.requiresPayment
+      ? `Pay ${formatINR(details.feeAmount)} through the secure Crowdshaki / Razorpay page using Google Pay, PhonePe, Paytm, BHIM, or any UPI app. After payment, open WhatsApp, send the payment screenshot to 7358327761, return to this form, confirm the screenshot was sent, then enter the UTR / transaction ID.`
+      : 'Select a sponsorship tier to generate the secure payment page and QR code.';
+  }
+
+  if (paymentQrImage && details.requiresPayment) {
+    paymentQrImage.src = buildSponsorDynamicQrImageUrl(details);
+    paymentQrImage.alt = `ICAIH 2026 sponsor payment page QR code for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.title = `Scan to open sponsor payment page for ${formatINR(details.feeAmount)}`;
+  }
+
+  validateSponsorPaymentFields(details, false);
+}
+
+function openSponsorPaymentPage() {
+  const form = document.getElementById('sponsorForm');
+  const details = getSponsorPaymentDetails();
+
+  if (!details.sponsorTier) {
+    showMessage('sponsorMessage', 'Please select a sponsorship tier before opening the payment page.', 'error');
+    document.getElementById('sponsorTier')?.focus();
+    return;
+  }
+
+  if (form && !validatePhoneFields(form, 'sponsorMessage')) return;
+
+  const fields = getNormalizedSponsorFields(new FormData(form));
+
+  if (!fields.companyName || !fields.contactPerson || !fields.email || !fields.phone) {
+    showMessage(
+      'sponsorMessage',
+      'Please fill Company Name, Contact Person, Email, and Phone before opening the payment page.',
+      'error'
+    );
+    return;
+  }
+
+  showMessage(
+    'sponsorMessage',
+    'Opening the secure Crowdshaki / Razorpay payment page. Complete the UPI payment there, then return here, send the screenshot on WhatsApp, and enter the UTR / transaction ID.',
+    ''
+  );
+
+  const paymentPageUrl = buildSponsorPaymentUrl(details);
+  const opened = window.open(paymentPageUrl, '_blank', 'noopener');
+
+  if (!opened) {
+    window.location.href = paymentPageUrl;
+  }
+}
+
+function buildSponsorPaymentWhatsappUrl(details) {
+  const form = document.getElementById('sponsorForm');
+  const formData = new FormData(form);
+  const fields = getNormalizedSponsorFields(formData);
+
+  const message = [
+    'Hi, I have completed my ICAIH 2026 sponsorship payment.',
+    '',
+    `Company: ${fields.companyName || '-'}`,
+    `Contact Person: ${fields.contactPerson || '-'}`,
+    `Phone: ${fields.phone || '-'}`,
+    `Email: ${fields.email || '-'}`,
+    `Sponsorship Tier: ${details.sponsorTier || '-'}`,
+    `Amount: ${formatINR(details.feeAmount)}`,
+    '',
+    'Please attach your payment screenshot here.'
+  ].join('\n');
+
+  return `https://wa.me/${PAYMENT_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}
+
+function showSponsorWhatsappSentConfirmation() {
+  const confirmBtn = document.getElementById('confirmSponsorWhatsappSentBtn');
+
+  if (confirmBtn) {
+    confirmBtn.hidden = false;
+    confirmBtn.disabled = false;
+  }
+}
+
+function openSponsorPaymentWhatsapp() {
+  const form = document.getElementById('sponsorForm');
+  const details = getSponsorPaymentDetails();
+
+  if (!details.sponsorTier) {
+    showMessage('sponsorMessage', 'Please select a sponsorship tier before opening WhatsApp.', 'error');
+    document.getElementById('sponsorTier')?.focus();
+    return;
+  }
+
+  if (form && !validatePhoneFields(form, 'sponsorMessage')) return;
+
+  const fields = getNormalizedSponsorFields(new FormData(form));
+
+  if (!fields.companyName || !fields.contactPerson || !fields.email || !fields.phone) {
+    showMessage(
+      'sponsorMessage',
+      'Please fill Company Name, Contact Person, Email, and Phone before opening WhatsApp.',
+      'error'
+    );
+    return;
+  }
+
+  showSponsorWhatsappSentConfirmation();
+  setSponsorPaymentStatus(
+    'pending-verification',
+    'WhatsApp opened. Attach the payment screenshot and send it. Then return here and click "I Sent the Screenshot on WhatsApp" to enter the UTR / transaction ID.'
+  );
+
+  window.open(buildSponsorPaymentWhatsappUrl(details), '_blank');
+}
+
+document.getElementById('sponsorTier')?.addEventListener('input', () => updateSponsorPaymentUI());
+document.getElementById('sponsorTier')?.addEventListener('change', () => updateSponsorPaymentUI());
+
+['companyName', 'contactPerson', 'email', 'phone'].forEach(fieldName => {
+  document.querySelector(`#sponsorForm [name="${fieldName}"]`)?.addEventListener('input', () => {
+    updateSponsorPaymentUI({ keepPayment: true });
+  });
+});
+
+document.getElementById('sponsorPaymentReference')?.addEventListener('input', () => {
+  validateSponsorPaymentFields(getSponsorPaymentDetails(), false);
+});
+
+document.getElementById('openSponsorPaymentBtn')?.addEventListener('click', openSponsorPaymentPage);
+document.getElementById('shareSponsorWhatsappBtn')?.addEventListener('click', openSponsorPaymentWhatsapp);
+
+document.getElementById('confirmSponsorWhatsappSentBtn')?.addEventListener('click', () => {
+  setSponsorUtrEntryEnabled(true);
+  setSponsorPaymentStatus(
+    'pending-verification',
+    'Payment screenshot confirmed as sent on WhatsApp. Enter the UTR / transaction ID and submit the sponsor inquiry.'
+  );
+  document.getElementById('sponsorPaymentReference')?.focus();
+});
+
+updateSponsorPaymentUI();
 
 /* ════════════════════════════════════════════════════════════════
    REGISTRATION SUCCESS MODAL
@@ -838,29 +1189,56 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
   }
 });
 
-/* ── Contact form submit ── */
-document.getElementById('contactForm')?.addEventListener('submit', e => {
-  e.preventDefault();
-
-  submitJsonForm(
-    e.currentTarget,
-    '/api/contact',
-    'contactMessage'
-  );
-});
-
 /* ── Sponsor form submit ── */
 document.getElementById('sponsorForm')?.addEventListener('submit', async e => {
   e.preventDefault();
 
-  const { ok } = await submitJsonForm(
-    e.currentTarget,
-    '/api/sponsor-inquiry',
-    'sponsorMessage'
-  );
+  const form = e.currentTarget;
+  const details = getSponsorPaymentDetails();
 
-  if (ok) {
-    setTimeout(closeSponsorModal, 1600);
+  if (!validatePhoneFields(form, 'sponsorMessage')) return;
+
+  if (!validateSponsorPaymentFields(details, true)) return;
+
+  const formData = new FormData(form);
+  formData.set('feeAmount', String(details.feeAmount));
+  formData.set('paymentStatus', 'pending-verification');
+  formData.set('paymentWhatsappShared', '1');
+
+  showMessage('sponsorMessage', 'Submitting sponsor inquiry…', '');
+
+  try {
+    const payload = Object.fromEntries(formData.entries());
+
+    const response = await fetch(`${API_BASE}/api/sponsor-inquiry`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Sponsor inquiry failed.');
+    }
+
+    showMessage(
+      'sponsorMessage',
+      result.message || 'Sponsor inquiry submitted successfully. Payment UTR is pending manual verification.',
+      'ok'
+    );
+
+    form.reset();
+    resetSponsorPaymentProof();
+    updateSponsorPaymentUI();
+
+    setTimeout(closeSponsorModal, 2200);
+  } catch (error) {
+    showMessage(
+      'sponsorMessage',
+      error.message || 'Unable to submit. Please try again.',
+      'error'
+    );
   }
 });
 

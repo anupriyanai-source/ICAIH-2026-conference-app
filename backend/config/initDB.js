@@ -56,6 +56,9 @@ async function initDB() {
         email           VARCHAR(150) NOT NULL,
         phone           VARCHAR(30),
         sponsor_tier    VARCHAR(80)  NOT NULL,
+        fee_amount      DECIMAL(10,2) DEFAULT 0,
+        payment_status  VARCHAR(30) DEFAULT 'pending-verification',
+        payment_reference VARCHAR(120),
         message         TEXT,
         created_at      DATETIME     DEFAULT CURRENT_TIMESTAMP
       )
@@ -79,6 +82,21 @@ async function initDB() {
       }
     }
 
+
+
+    const sponsorColumns = [
+      ['fee_amount', 'DECIMAL(10,2) DEFAULT 0'],
+      ['payment_status', "VARCHAR(30) DEFAULT 'pending-verification'"],
+      ['payment_reference', 'VARCHAR(120)']
+    ];
+
+    for (const [column, definition] of sponsorColumns) {
+      const [existing] = await conn.query(`SHOW COLUMNS FROM sponsor_inquiries LIKE ?`, [column]);
+
+      if (existing.length === 0) {
+        await conn.query(`ALTER TABLE sponsor_inquiries ADD COLUMN ${column} ${definition}`);
+      }
+    }
 
 
     // Remove old payment gateway / screenshot columns that are no longer used.

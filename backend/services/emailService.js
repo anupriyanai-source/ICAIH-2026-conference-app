@@ -191,6 +191,84 @@ function createMailOptions(data) {
   ];
 }
 
+
+function sponsorRows(data) {
+  const rows = [
+    ['Sponsor Inquiry ID', data.refId],
+    ['Company Name', data.companyName],
+    ['Contact Person', data.contactPerson],
+    ['Email', data.email],
+    ['Phone', data.phone],
+    ['Sponsorship Tier', data.sponsorTier],
+    ['Paid Amount', formatINR(data.feeAmount)],
+    ['Payment Status', data.paymentStatus || 'pending-verification'],
+    ['UTR / Transaction ID', data.paymentReference || '-'],
+    ['Message', data.message || '-']
+  ];
+
+  return `
+    <table style="width:100%;border-collapse:collapse;margin-top:16px;">
+      ${rows.map(([label, value]) => `
+        <tr>
+          <td style="padding:10px;border:1px solid #dbe5f5;background:#f6f9ff;font-weight:700;width:38%;">${escapeHtml(label)}</td>
+          <td style="padding:10px;border:1px solid #dbe5f5;">${escapeHtml(value || '-')}</td>
+        </tr>`).join('')}
+    </table>`;
+}
+
+function buildSponsorUserHtml(data) {
+  return `
+    <div style="font-family:Arial,sans-serif;color:#12213f;line-height:1.6;max-width:680px;margin:auto;">
+      <h2>Thank you for your ICAIH 2026 sponsorship inquiry</h2>
+      <p>Dear ${escapeHtml(data.contactPerson)},</p>
+      <p>Your sponsorship inquiry for <strong>${escapeHtml(EVENT_INFO.title)}</strong> has been received successfully.</p>
+      <p>Your Sponsor Inquiry ID is <strong>${escapeHtml(data.refId)}</strong>.</p>
+      ${sponsorRows(data)}
+      ${getEventBlock()}
+      <p style="margin-top:18px;">Our team will manually verify your payment UTR and contact you for the next steps.</p>
+      <p>Regards,<br><strong>ICAIH 2026 Team</strong></p>
+    </div>`;
+}
+
+function buildSponsorAdminHtml(data) {
+  return `
+    <div style="font-family:Arial,sans-serif;color:#12213f;line-height:1.6;max-width:760px;margin:auto;">
+      <h2>New ICAIH 2026 Sponsor Inquiry Received</h2>
+      <p><strong>${escapeHtml(data.companyName)}</strong> has submitted a sponsorship inquiry.</p>
+      <p>Sponsor Inquiry ID: <strong>${escapeHtml(data.refId)}</strong></p>
+      ${sponsorRows(data)}
+      ${getEventBlock()}
+    </div>`;
+}
+
+function createSponsorMailOptions(data) {
+  const from = clean(process.env.MAIL_FROM) || `ICAIH 2026 <${clean(process.env.SMTP_USER)}>`;
+  const adminEmail = clean(process.env.ADMIN_EMAIL) || 'info@mrtech.co.in';
+
+  return [
+    {
+      type: 'sponsor-user',
+      message: {
+        from,
+        to: data.email,
+        replyTo: EVENT_INFO.email,
+        subject: `ICAIH 2026 Sponsor Inquiry Received - ${data.refId}`,
+        html: buildSponsorUserHtml(data)
+      }
+    },
+    {
+      type: 'sponsor-admin',
+      message: {
+        from,
+        to: adminEmail,
+        replyTo: data.email,
+        subject: `New ICAIH 2026 Sponsor Inquiry - ${data.refId}`,
+        html: buildSponsorAdminHtml(data)
+      }
+    }
+  ];
+}
+
 function simplifySmtpError(error) {
   const code = error.code || error.command || '';
   const message = error.message || 'Unknown SMTP error';
@@ -270,6 +348,36 @@ async function sendRegistrationEmails(data) {
   }
 }
 
+
+async function sendSponsorEmails(data) {
+  if (!mailConfigured()) {
+    const missing = getMissingMailFields();
+    const message = `Sponsor inquiry saved. Email not sent because these backend .env values are missing: ${missing.join(', ')}.`;
+    console.warn(message);
+    return { sent: false, message };
+  }
+
+  try {
+    const mailOptions = createSponsorMailOptions(data);
+    const result = await sendWithFallback(mailOptions);
+
+    if (!result.ok) {
+      throw new Error(result.error);
+    }
+
+    return {
+      sent: true,
+      message: `Sponsor inquiry saved. Confirmation emails sent to sponsor and admin using ${result.used}.`
+    };
+  } catch (error) {
+    console.error('Sponsor inquiry email error:', error);
+    return {
+      sent: false,
+      message: `Sponsor inquiry saved, but email failed. ${simplifySmtpError(error)} Actual error: ${error.message}`
+    };
+  }
+}
+
 async function sendSmtpTestEmail(toEmail) {
   if (!mailConfigured()) {
     const missing = getMissingMailFields();
@@ -308,4 +416,4 @@ async function sendSmtpTestEmail(toEmail) {
   return result;
 }
 
-module.exports = { sendRegistrationEmails, sendSmtpTestEmail, EVENT_INFO };
+module.exports = { sendRegistrationEmails, sendSponsorEmails, sendSmtpTestEmail, EVENT_INFO };

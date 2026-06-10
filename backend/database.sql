@@ -44,6 +44,9 @@ CREATE TABLE IF NOT EXISTS sponsor_inquiries (
   email VARCHAR(150) NOT NULL,
   phone VARCHAR(30),
   sponsor_tier VARCHAR(80) NOT NULL,
+  fee_amount DECIMAL(10,2) DEFAULT 0,
+  payment_status VARCHAR(30) DEFAULT 'pending-verification',
+  payment_reference VARCHAR(120),
   message TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -51,6 +54,23 @@ CREATE TABLE IF NOT EXISTS sponsor_inquiries (
 -- For existing databases, backend/config/initDB.js automatically adds required columns and removes old columns.
 -- Manual Workbench-safe migration for existing registrations table:
 SET @db_name := DATABASE();
+
+-- Sponsor inquiry payment columns for existing databases.
+SET @sql := IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @db_name AND TABLE_NAME = 'sponsor_inquiries' AND COLUMN_NAME = 'fee_amount') = 0,
+  'ALTER TABLE sponsor_inquiries ADD COLUMN fee_amount DECIMAL(10,2) DEFAULT 0',
+  'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql := IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @db_name AND TABLE_NAME = 'sponsor_inquiries' AND COLUMN_NAME = 'payment_status') = 0,
+  'ALTER TABLE sponsor_inquiries ADD COLUMN payment_status VARCHAR(30) DEFAULT ''pending-verification''',
+  'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql := IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @db_name AND TABLE_NAME = 'sponsor_inquiries' AND COLUMN_NAME = 'payment_reference') = 0,
+  'ALTER TABLE sponsor_inquiries ADD COLUMN payment_reference VARCHAR(120)',
+  'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
 
 SET @sql := IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @db_name AND TABLE_NAME = 'registrations' AND COLUMN_NAME = 'payment_status') = 0,
   'ALTER TABLE registrations ADD COLUMN payment_status VARCHAR(30) DEFAULT 'pending-verification'',

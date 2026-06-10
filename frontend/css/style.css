@@ -29,6 +29,13 @@
   --font-display: 'Playfair Display', Georgia, serif;
 }
 
+#site-logo {
+  width: 140px;
+  height: auto;
+  display: block;
+  margin: 10px auto;
+}
+
 html {
   scroll-behavior: smooth;
 }

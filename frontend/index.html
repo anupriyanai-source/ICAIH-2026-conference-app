@@ -12,6 +12,25 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=Playfair+Display:wght@700;800&family=Montserrat:wght@600;700;800&display=swap"
     rel="stylesheet">
+
+  <!-- Browser tab icon and Google search icon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/branding/myth-reality-logo.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/branding/myth-reality-logo.png" />
+  <link rel="apple-touch-icon" href="assets/branding/myth-reality-logo.png" />
+  <meta name="theme-color" content="#132a57" />
+
+  <!-- Google logo structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Myth Reality Technologies Private Limited",
+    "alternateName": "MR Tech",
+    "url": "https://www.icaih.in",
+    "logo": "https://www.icaih.in/assets/branding/myth-reality-logo.png"
+  }
+  </script>
+
   <link rel="stylesheet" href="css/style.css" />
 </head>
 
@@ -758,8 +777,8 @@
           </div>
 
           <div class="payment-qr-box" id="manualPaymentBox">
-            <h3>Manual UPI Payment</h3>
-            <p id="paymentQrText">Scan this QR code or use the UPI button to pay the selected fee. After payment, share the payment screenshot on WhatsApp. The UTR field will open after you click the WhatsApp share button.</p>
+            <h3>Secure UPI Payment</h3>
+            <p id="paymentQrText">Scan this QR code or use the payment button to open the secure Crowdshaki / Razorpay payment page for the selected fee. After payment, share the screenshot on WhatsApp. The UTR field will open after you click the WhatsApp confirmation button.</p>
             <img id="paymentQrImage" src="assets/qr/icaih-payment-qr.jpeg" alt="ICAIH 2026 payment QR code">
             <button class="btn primary payment-button" id="openUpiBtn" type="button">Open Google Pay / PhonePe / UPI App</button>
             <button class="btn secondary payment-button whatsapp-payment-button" id="sharePaymentWhatsappBtn" type="button">Open WhatsApp to Send Screenshot</button>
@@ -779,8 +798,8 @@
     </section>
 
     <section class="section" id="contact">
-      <div class="container two-col">
-        <div class="content-block reveal">
+      <div class="container">
+        <div class="content-block reveal" style="max-width:720px;">
           <p class="section-kicker">Contact Us</p>
           <h2>Get in touch</h2>
           <p>AI is not just a technology; it is a tool to unlock new possibilities.</p>
@@ -791,24 +810,6 @@
             <p><strong>Email:</strong> <a href="mailto:info@mrtech.co.in">info@mrtech.co.in</a></p>
           </div>
         </div>
-        <form class="form-card reveal" id="contactForm">
-          <label><span>YOUR NAME <b class="required-star">*</b></span><input name="name" required placeholder="Enter your full name"></label>
-          <label><span>Email Address <b class="required-star">*</b></span><input name="email" type="email" required placeholder="name@example.com"></label>
-          <label><span>Phone Number <b class="required-star">*</b></span><input name="phone" type="tel" inputmode="numeric" maxlength="10"
-  pattern="[0-9]{10}" data-phone-only required placeholder="Enter 10 digit phone number"
-  title="Please enter exactly 10 digits"></label>
-          <label><span>Subject</span><input name="subject" placeholder="Write the subject"></label>
-          <label>
-  <span>Message <b class="required-star">*</b></span>
-  <textarea
-    name="message"
-    required
-    placeholder="Write your message">
-  </textarea>
-</label>
-          <button class="btn primary" type="submit">Send Message</button>
-          <p class="form-message" id="contactMessage"></p>
-        </form>
       </div>
     </section>
   </main>
@@ -872,19 +873,39 @@
         <label><span>Company Name <b class="required-star">*</b></span><input name="companyName" required placeholder="Company name"></label>
         <label><span>Contact Person <b class="required-star">*</b></span><input name="contactPerson" required placeholder="Name"></label>
         <label><span>Email <b class="required-star">*</b></span><input name="email" type="email" required placeholder="email@company.com"></label>
-        <label><span>Phone</span><input name="phone" type="tel" inputmode="numeric" maxlength="10" pattern="[0-9]{10}"
-            data-phone-only placeholder="Enter 10 digit phone number" title="Please enter exactly 10 digits"></label>
-        <label><span>Sponsorship Tier <b class="required-star">*</b></span><select name="sponsorTier" required>
+        <label><span>Phone <b class="required-star">*</b></span><input name="phone" type="tel" inputmode="numeric" maxlength="10" pattern="[0-9]{10}"
+            data-phone-only required placeholder="Enter 10 digit phone number" title="Please enter exactly 10 digits"></label>
+        <label><span>Sponsorship Tier <b class="required-star">*</b></span><select name="sponsorTier" id="sponsorTier" required>
             <option value="">Select Tier</option>
-            <option>Platinum Sponsor – ₹74,999</option>
-            <option>Gold Sponsor – ₹49,999</option>
-            <option>Silver Sponsor – ₹24,999</option>
-            <option>Premium Exhibitor – ₹24,999</option>
-            <option>Standard Exhibitor – ₹22,999</option>
-            <option>Startup Pavilion – ₹19,999</option>
+            <option value="Platinum Sponsor">Platinum Sponsor – ₹99,999</option>
+            <option value="Gold Sponsor">Gold Sponsor – ₹74,999</option>
+            <option value="Silver Sponsor">Silver Sponsor – ₹49,999</option>
+            <option value="Premium Exhibitor">Premium Exhibitor – ₹24,999</option>
+            <option value="Standard Exhibitor">Standard Exhibitor – ₹22,999</option>
+            <option value="Startup Pavilion">Startup Pavilion – ₹19,999</option>
           </select></label>
         <label><span>Message</span><textarea name="message" placeholder="Specific requirements"></textarea></label>
-        <button class="btn primary" type="submit">Submit Inquiry</button>
+
+        <div class="fee-summary-box">
+          <div><span>Selected Sponsor Fee</span><strong id="sponsorSelectedFeeText">₹99,999</strong></div>
+          <small id="sponsorSelectedFeeNote">Select a sponsorship tier to view the fee.</small>
+        </div>
+
+        <div class="payment-qr-box" id="sponsorPaymentBox">
+          <h3>Secure Sponsor Payment</h3>
+          <p id="sponsorPaymentQrText">Select a sponsorship tier, open the secure Crowdshaki / Razorpay payment page, complete the payment, then share the screenshot on WhatsApp. The UTR field will open after you click the WhatsApp confirmation button.</p>
+          <img id="sponsorPaymentQrImage" src="assets/qr/icaih-payment-qr.jpeg" alt="ICAIH 2026 sponsor payment QR code">
+          <button class="btn primary payment-button" id="openSponsorPaymentBtn" type="button">Open Google Pay / PhonePe / UPI App</button>
+          <button class="btn secondary payment-button whatsapp-payment-button" id="shareSponsorWhatsappBtn" type="button">Open WhatsApp to Send Screenshot</button>
+          <button class="btn secondary payment-button whatsapp-confirm-button" id="confirmSponsorWhatsappSentBtn" type="button" hidden>I Sent the Screenshot on WhatsApp</button>
+          <label class="manual-payment-field" id="sponsorUtrField" hidden><span>UTR / Transaction ID <b class="required-star">*</b></span><input name="paymentReference" id="sponsorPaymentReference" placeholder="Enter UPI UTR / transaction ID" minlength="10" maxlength="30" pattern="[A-Za-z0-9]{10,30}" title="Enter 10 to 30 letters or numbers only" disabled></label>
+          <input type="hidden" name="feeAmount" id="sponsorFeeAmount" value="99999">
+          <input type="hidden" name="paymentWhatsappShared" id="sponsorPaymentWhatsappShared" value="0">
+          <input type="hidden" name="paymentStatus" id="sponsorPaymentStatus" value="pending-verification">
+          <p class="payment-status" id="sponsorPaymentStatusText">Pay first, then share the screenshot on WhatsApp to enable UTR entry.</p>
+        </div>
+
+        <button class="btn primary" id="sponsorSubmitBtn" type="submit">Submit Sponsor Inquiry</button>
         <p class="form-message" id="sponsorMessage"></p>
       </form>
     </div>
