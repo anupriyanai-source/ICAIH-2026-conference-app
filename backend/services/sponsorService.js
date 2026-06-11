@@ -10,12 +10,12 @@ function isEmail(val) {
 }
 
 const SPONSOR_FEES = {
-  'Platinum Sponsor': 99999,
-  'Gold Sponsor': 74999,
-  'Silver Sponsor': 49999,
-  'Premium Exhibitor': 24999,
-  'Standard Exhibitor': 22999,
-  'Startup Pavilion': 19999
+  'Platinum Sponsor': 499999,
+  'Gold Sponsor': 299999,
+  'Silver Sponsor': 99999,
+  'Premium Exhibitor': 39999,
+  'Standard Exhibitor': 34999,
+  'Startup Pavilion': 29999
 };
 
 const SponsorService = {
@@ -26,8 +26,6 @@ const SponsorService = {
     const phone = sanitize(body.phone);
     const sponsorTier = sanitize(body.sponsorTier);
     const message = sanitize(body.message);
-    const paymentReference = sanitize(body.paymentReference || body.payment_reference).toUpperCase();
-    const paymentWhatsappShared = sanitize(body.paymentWhatsappShared || body.payment_whatsapp_shared);
 
     if (!companyName || !contactPerson || !email || !phone || !sponsorTier) {
       throw { status: 400, message: 'Company name, contact person, email, phone, and sponsorship tier are required.' };
@@ -47,14 +45,6 @@ const SponsorService = {
       throw { status: 400, message: 'Please select a valid sponsorship tier.' };
     }
 
-    if (paymentWhatsappShared !== '1') {
-      throw { status: 400, message: 'Please share the sponsor payment screenshot on WhatsApp before entering the UTR / transaction ID.' };
-    }
-
-    if (!/^[A-Za-z0-9]{10,30}$/.test(paymentReference)) {
-      throw { status: 400, message: 'Please enter a valid UTR / transaction ID. It must contain 10 to 30 letters or numbers only.' };
-    }
-
     const paymentStatus = 'pending-verification';
 
     const sponsorData = {
@@ -65,7 +55,7 @@ const SponsorService = {
       sponsorTier,
       feeAmount,
       paymentStatus,
-      paymentReference,
+      paymentReference: '',
       message
     };
 
@@ -77,7 +67,7 @@ const SponsorService = {
     });
 
     return {
-      message: 'Sponsor inquiry submitted successfully. Payment UTR is pending manual verification.',
+      message: 'Sponsor inquiry submitted successfully. Payment is pending verification.',
       id: refId,
       emailStatus: emailResult.message
     };

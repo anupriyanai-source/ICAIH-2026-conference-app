@@ -15,7 +15,7 @@ const ROLE_FEES = {
   'Healthcare Professional': 1499,
   'Delegate': 1499,
   'Speaker': 0,
-  'Online Attendee': 1,
+  'Online Attendee': 325,
   'Startup Founder': 1999,
   'Industry Expert': 2499
 };
@@ -66,8 +66,6 @@ const RegistrationService = {
     const organization = sanitize(body.organization);
     const role = sanitize(body.role) || 'Delegate';
     const category = sanitize(body.category) || 'General';
-    const paymentReference = sanitize(body.paymentReference || body.payment_reference).toUpperCase();
-    const paymentWhatsappShared = sanitize(body.paymentWhatsappShared || body.payment_whatsapp_shared);
 
     if (!name || !email || !phone || !organization) {
       throw { status: 400, message: 'Name, email, phone, and organization are required.' };
@@ -89,14 +87,6 @@ const RegistrationService = {
 
     const requiresPayment = payment.feeAmount > 0;
 
-    if (requiresPayment && paymentWhatsappShared !== '1') {
-      throw { status: 400, message: 'Please share the payment screenshot on WhatsApp before entering the UTR / transaction ID.' };
-    }
-
-    if (requiresPayment && !/^[A-Za-z0-9]{10,30}$/.test(paymentReference)) {
-      throw { status: 400, message: 'Please enter a valid UTR / transaction ID. It must contain 10 to 30 letters or numbers only.' };
-    }
-
     const existing = await RegistrationModel.findByEmail(email);
     if (existing) {
       throw { status: 409, message: 'This email is already registered. Reference ID: ' + existing.ref_id };
@@ -117,7 +107,7 @@ const RegistrationService = {
       studentCount: payment.studentCount,
       paymentConfirmed: false,
       paymentStatus,
-      paymentReference
+      paymentReference: ''
     };
 
     const { refId } = await RegistrationModel.create(registrationData);
@@ -125,7 +115,7 @@ const RegistrationService = {
 
     return {
       message: requiresPayment
-        ? 'Registration submitted successfully. Payment UTR received and pending manual verification.'
+        ? 'Registration submitted successfully. Payment is pending verification.'
         : 'Registration submitted successfully.',
       id: refId,
       feeAmount: payment.feeAmount,

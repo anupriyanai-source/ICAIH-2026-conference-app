@@ -113,7 +113,6 @@ function registrationRows(data) {
     ['Role', data.role],
     ['Category', data.category],
     ['Paid Amount', formatINR(data.feeAmount)],
-    ['UTR / Transaction ID', data.paymentReference || '-'],
     ['Bulk Offer', data.bulkOffer || '-'],
     ['Student Count', data.studentCount || '-']
   ];
@@ -202,7 +201,6 @@ function sponsorRows(data) {
     ['Sponsorship Tier', data.sponsorTier],
     ['Paid Amount', formatINR(data.feeAmount)],
     ['Payment Status', data.paymentStatus || 'pending-verification'],
-    ['UTR / Transaction ID', data.paymentReference || '-'],
     ['Message', data.message || '-']
   ];
 
@@ -225,7 +223,7 @@ function buildSponsorUserHtml(data) {
       <p>Your Sponsor Inquiry ID is <strong>${escapeHtml(data.refId)}</strong>.</p>
       ${sponsorRows(data)}
       ${getEventBlock()}
-      <p style="margin-top:18px;">Our team will manually verify your payment UTR and contact you for the next steps.</p>
+      <p style="margin-top:18px;">Our team will verify your payment and contact you for the next steps.</p>
       <p>Regards,<br><strong>ICAIH 2026 Team</strong></p>
     </div>`;
 }

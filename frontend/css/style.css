@@ -1909,13 +1909,34 @@ blockquote {
   }
 }
 
-/* Final requested updates */
+/* Footer social media links */
 .footer-socials {
-  display: none !important;
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
 }
 
-.footer-brand-card p {
-  margin-bottom: 0 !important;
+.footer-socials a {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  padding: 0;
+  border-radius: 50%;
+  text-decoration: none;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.footer-socials a:hover {
+  transform: translateY(-3px);
+  border-color: rgba(0, 245, 255, 0.75);
+  box-shadow: 0 10px 24px rgba(0, 245, 255, 0.18);
+}
+
+.footer-socials svg {
+  width: 19px;
+  height: 19px;
+  fill: currentColor;
 }
 
 .focus-card .topic-image,
@@ -2599,14 +2620,14 @@ blockquote {
   justify-content: center;
 }
 
-.whatsapp-payment-button {
+.payment-page-payment-button {
   background: #0f8f5f !important;
   border: 1px solid #0f8f5f !important;
   color: #ffffff !important;
   box-shadow: 0 12px 24px rgba(15, 143, 95, .22);
 }
 
-.whatsapp-payment-button:hover {
+.payment-page-payment-button:hover {
   background: #0b734c !important;
   text-decoration: none;
 }
@@ -2653,14 +2674,14 @@ blockquote {
   color: #92400e !important;
 }
 
-.whatsapp-confirm-button {
+.payment-page-confirm-button {
   background: #1f6feb !important;
   border: 1px solid #1f6feb !important;
   color: #ffffff !important;
   box-shadow: 0 12px 24px rgba(31, 111, 235, .18);
 }
 
-.whatsapp-confirm-button:hover {
+.payment-page-confirm-button:hover {
   background: #185abc !important;
   text-decoration: none;
 }
@@ -2947,5 +2968,50 @@ body {
   .eyebrow {
     font-size: .62rem;
     letter-spacing: .12em !important;
+  }
+}
+
+
+/* Responsive payment box fixes */
+.payment-qr-box {
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.payment-qr-box img {
+  display: block;
+  max-width: min(260px, 100%);
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.payment-button {
+  width: min(330px, 100%);
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  line-height: 1.25;
+}
+
+@media (max-width: 640px) {
+  .form-card,
+  .payment-qr-box,
+  .fee-summary-box {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .payment-qr-box {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  .payment-button {
+    width: 100%;
+    min-height: 54px;
   }
 }

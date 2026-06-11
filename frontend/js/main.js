@@ -135,9 +135,7 @@ function validatePhoneFields(form, messageId) {
 }
 
 /* ── Registration fee, QR amount, and manual UPI payment ── */
-const UTR_PATTERN = /^[A-Za-z0-9]{10,30}$/;
-const PAYMENT_WHATSAPP_NUMBER = '917358327761';
-let paymentWhatsappShared = false;
+const PAYMENT_PAGE_REFERENCE_NUMBER = '917358327761';
 
 const EVENT_INFO = {
   date: '4 July 2026',
@@ -153,7 +151,7 @@ const REGISTRATION_FEES = {
   'Delegate': 1499,
   'Startup Founder': 1999,
   'Industry Expert': 2499,
-  'Online Attendee': 1,
+  'Online Attendee': 325,
   'Speaker': 0
 };
 
@@ -172,12 +170,12 @@ const CROWDSHAKI_PAYMENT = {
 };
 
 const SPONSOR_FEES = {
-  'Platinum Sponsor': 99999,
-  'Gold Sponsor': 74999,
-  'Silver Sponsor': 49999,
-  'Premium Exhibitor': 24999,
-  'Standard Exhibitor': 22999,
-  'Startup Pavilion': 19999
+  'Platinum Sponsor': 499999,
+  'Gold Sponsor': 299999,
+  'Silver Sponsor': 99999,
+  'Premium Exhibitor': 39999,
+  'Standard Exhibitor': 34999,
+  'Startup Pavilion': 29999
 };
 
 function formatINR(amount) {
@@ -237,48 +235,9 @@ function setPaymentStatus(status, message) {
 function validateManualPaymentFields(details, showError = false) {
   if (!details.requiresPayment) return true;
 
-  const paymentReference = document.getElementById('paymentReference');
-  const utrValue = paymentReference?.value.trim() || '';
-
-  if (!paymentWhatsappShared) {
-    setPaymentStatus(
-      'pending-verification',
-      'Please open WhatsApp, send the payment screenshot, click the confirmation button, and then enter the UTR / transaction ID.'
-    );
-
-    if (showError) {
-      showMessage(
-        'registrationMessage',
-        'Please open WhatsApp, send the payment screenshot, then click "I Sent the Screenshot on WhatsApp" before entering the UTR / transaction ID.',
-        'error'
-      );
-      document.getElementById('confirmWhatsappSentBtn')?.focus();
-    }
-
-    return false;
-  }
-
-  if (!UTR_PATTERN.test(utrValue)) {
-    setPaymentStatus(
-      'pending-verification',
-      'Enter a valid UTR / transaction ID before submitting. Use 10 to 30 letters or numbers only.'
-    );
-
-    if (showError) {
-      showMessage(
-        'registrationMessage',
-        'Please enter a valid UTR / transaction ID. It must contain 10 to 30 letters or numbers only.',
-        'error'
-      );
-      paymentReference?.focus();
-    }
-
-    return false;
-  }
-
   setPaymentStatus(
     'pending-verification',
-    'UTR / transaction ID received. Admin will manually verify your payment after registration submission.'
+    'Payment will be verified from the secure payment page after submission.'
   );
 
   return true;
@@ -344,7 +303,7 @@ function openManualUpiPayment() {
 
   showMessage(
     'registrationMessage',
-    'Opening the secure Crowdshaki / Razorpay payment page. Complete the UPI payment there, then return here, send the screenshot on WhatsApp, and enter the UTR / transaction ID.',
+    'Opening the secure Crowdshaki / Razorpay payment page. Complete the payment there, then return here and submit the sponsor inquiry.',
     ''
   );
 
@@ -360,11 +319,11 @@ function setUtrEntryEnabled(enabled) {
   const paymentReference = document.getElementById('paymentReference');
   const utrField = document.getElementById('utrField');
   const utrHelpText = document.getElementById('utrHelpText');
-  const whatsappSharedInput = document.getElementById('paymentWhatsappShared');
+  const paymentPageSharedInput = document.getElementById('paymentPageShared');
 
-  paymentWhatsappShared = Boolean(enabled);
+  
 
-  if (whatsappSharedInput) whatsappSharedInput.value = enabled ? '1' : '0';
+  if (paymentPageSharedInput) paymentPageSharedInput.value = enabled ? '1' : '0';
 
   if (utrField) utrField.hidden = !enabled;
   if (utrHelpText) utrHelpText.hidden = !enabled;
@@ -376,7 +335,7 @@ function setUtrEntryEnabled(enabled) {
   }
 }
 
-function buildPaymentWhatsappUrl(details) {
+function buildPaymentPaymentPageUrl(details) {
   const form = document.getElementById('registrationForm');
   const formData = new FormData(form);
   const normalizedFields = getNormalizedRegistrationFields(formData);
@@ -389,32 +348,32 @@ function buildPaymentWhatsappUrl(details) {
     `Role: ${details.role}`,
     `Amount: ${formatINR(details.feeAmount)}`,
     '',
-    'Please attach your payment screenshot in this WhatsApp chat for verification.',
-    'After sending the screenshot, you will return to the registration form and enter your UTR / transaction ID.'
+    'Please attach your payment screenshot in this payment page chat for verification.',
+    'Complete the payment and return to submit the registration form.'
   ].join('\n');
 
-  return `https://wa.me/${PAYMENT_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  return `https://example.com/${PAYMENT_PAGE_REFERENCE_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
-function showWhatsappSentConfirmation() {
-  const confirmWhatsappSentBtn = document.getElementById('confirmWhatsappSentBtn');
+function showPaymentPageSentConfirmation() {
+  const confirmPaymentPageSentBtn = document.getElementById('confirmPaymentPageSentBtn');
 
-  if (confirmWhatsappSentBtn) {
-    confirmWhatsappSentBtn.hidden = false;
-    confirmWhatsappSentBtn.disabled = false;
+  if (confirmPaymentPageSentBtn) {
+    confirmPaymentPageSentBtn.hidden = false;
+    confirmPaymentPageSentBtn.disabled = false;
   }
 }
 
-function confirmWhatsappScreenshotSent() {
+function confirmPaymentPageScreenshotSent() {
   setUtrEntryEnabled(true);
   setPaymentStatus(
     'pending-verification',
-    'Screenshot marked as sent on WhatsApp. Now enter the UTR / transaction ID below.'
+    'Payment page opened. You can now submit the form.'
   );
   document.getElementById('paymentReference')?.focus();
 }
 
-function sharePaymentScreenshotOnWhatsapp() {
+function sharePaymentScreenshotOnPaymentPage() {
   const form = document.getElementById('registrationForm');
   const details = getRegistrationPaymentDetails();
 
@@ -434,34 +393,34 @@ function sharePaymentScreenshotOnWhatsapp() {
   if (!normalizedFields.name || !normalizedFields.email || !normalizedFields.phone || !normalizedFields.organization) {
     showMessage(
       'registrationMessage',
-      'Please fill Name, Email, Phone, and Organization before opening WhatsApp.',
+      'Please fill Name, Email, Phone, and Organization before opening payment page.',
       'error'
     );
     return;
   }
 
-  showWhatsappSentConfirmation();
+  showPaymentPageSentConfirmation();
   setPaymentStatus(
     'pending-verification',
-    'WhatsApp opened. Attach the payment screenshot and send it. Then return here and click "I Sent the Screenshot on WhatsApp" to enter the UTR / transaction ID.'
+    'Payment page opened. Complete the payment there, then return here and submit the form.'
   );
 
-  window.open(buildPaymentWhatsappUrl(details), '_blank');
+  window.open(buildPaymentPaymentPageUrl(details), '_blank');
 }
 
 function resetPaymentProof() {
-  const confirmWhatsappSentBtn = document.getElementById('confirmWhatsappSentBtn');
+  const confirmPaymentPageSentBtn = document.getElementById('confirmPaymentPageSentBtn');
 
   setUtrEntryEnabled(false);
 
-  if (confirmWhatsappSentBtn) {
-    confirmWhatsappSentBtn.hidden = true;
-    confirmWhatsappSentBtn.disabled = true;
+  if (confirmPaymentPageSentBtn) {
+    confirmPaymentPageSentBtn.hidden = true;
+    confirmPaymentPageSentBtn.disabled = true;
   }
 
   setPaymentStatus(
     'pending-verification',
-    'Pay first through the secure payment page, open WhatsApp, send the payment screenshot, then confirm here to enable UTR entry.'
+    'Click Pay Now to open the secure payment page for this fee.'
   );
 }
 
@@ -470,8 +429,8 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   const bulkBox = document.getElementById('bulkBookingBox');
   const studentCount = document.getElementById('studentCount');
   const openUpiBtn = document.getElementById('openUpiBtn');
-  const sharePaymentWhatsappBtn = document.getElementById('sharePaymentWhatsappBtn');
-  const confirmWhatsappSentBtn = document.getElementById('confirmWhatsappSentBtn');
+  const sharePaymentPaymentPageBtn = document.getElementById('sharePaymentPaymentPageBtn');
+  const confirmPaymentPageSentBtn = document.getElementById('confirmPaymentPageSentBtn');
 
   if (bulkBox) bulkBox.hidden = role !== 'Bulk Booking';
   if (studentCount) studentCount.required = role === 'Bulk Booking';
@@ -500,14 +459,14 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
 
   if (paymentQrBox) paymentQrBox.hidden = !details.requiresPayment;
   if (openUpiBtn) openUpiBtn.disabled = !details.requiresPayment;
-  if (sharePaymentWhatsappBtn) sharePaymentWhatsappBtn.disabled = !details.requiresPayment;
+  if (sharePaymentPaymentPageBtn) sharePaymentPaymentPageBtn.disabled = !details.requiresPayment;
 
-  if (confirmWhatsappSentBtn && !details.requiresPayment) {
-    confirmWhatsappSentBtn.hidden = true;
-    confirmWhatsappSentBtn.disabled = true;
+  if (confirmPaymentPageSentBtn && !details.requiresPayment) {
+    confirmPaymentPageSentBtn.hidden = true;
+    confirmPaymentPageSentBtn.disabled = true;
   }
 
-  if (paymentReference) paymentReference.required = details.requiresPayment && paymentWhatsappShared;
+  if (paymentReference) paymentReference.required = false;
 
   if (!details.requiresPayment) {
     setUtrEntryEnabled(false);
@@ -521,7 +480,7 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   }
 
   if (paymentQrText) {
-    paymentQrText.textContent = `Pay ${formatINR(details.feeAmount)} through the secure Crowdshaki / Razorpay page using Google Pay, PhonePe, Paytm, BHIM, or any UPI app. After payment, open WhatsApp, send the payment screenshot to 7358327761, return to this form, confirm the screenshot was sent, then enter the UTR / transaction ID.`;
+    paymentQrText.textContent = `Pay ${formatINR(details.feeAmount)} through the secure Crowdshaki / Razorpay page using Google Pay, PhonePe, Paytm, BHIM, or any UPI app.`;
   }
 
   if (paymentQrImage && details.requiresPayment) {
@@ -547,8 +506,8 @@ document.getElementById('paymentReference')?.addEventListener('input', () => {
 });
 
 document.getElementById('openUpiBtn')?.addEventListener('click', openManualUpiPayment);
-document.getElementById('sharePaymentWhatsappBtn')?.addEventListener('click', sharePaymentScreenshotOnWhatsapp);
-document.getElementById('confirmWhatsappSentBtn')?.addEventListener('click', confirmWhatsappScreenshotSent);
+document.getElementById('sharePaymentPaymentPageBtn')?.addEventListener('click', sharePaymentScreenshotOnPaymentPage);
+document.getElementById('confirmPaymentPageSentBtn')?.addEventListener('click', confirmPaymentPageScreenshotSent);
 
 updateRegistrationPaymentUI();
 
@@ -709,7 +668,7 @@ document.getElementById('sponsorModal')?.addEventListener('click', e => {
    SPONSOR PAYMENT FLOW
    ════════════════════════════════════════════════════════════════ */
 
-let sponsorWhatsappShared = false;
+let sponsorPaymentPageShared = false;
 
 function getSponsorPaymentDetails() {
   const sponsorTier = document.getElementById('sponsorTier')?.value || '';
@@ -741,11 +700,11 @@ function setSponsorPaymentStatus(status, message) {
 function setSponsorUtrEntryEnabled(enabled) {
   const paymentReference = document.getElementById('sponsorPaymentReference');
   const utrField = document.getElementById('sponsorUtrField');
-  const whatsappSharedInput = document.getElementById('sponsorPaymentWhatsappShared');
+  const paymentPageSharedInput = document.getElementById('sponsorPaymentPaymentPageShared');
 
-  sponsorWhatsappShared = Boolean(enabled);
+  sponsorPaymentPageShared = Boolean(enabled);
 
-  if (whatsappSharedInput) whatsappSharedInput.value = enabled ? '1' : '0';
+  if (paymentPageSharedInput) paymentPageSharedInput.value = enabled ? '1' : '0';
 
   if (utrField) utrField.hidden = !enabled;
 
@@ -757,7 +716,7 @@ function setSponsorUtrEntryEnabled(enabled) {
 }
 
 function resetSponsorPaymentProof() {
-  const confirmBtn = document.getElementById('confirmSponsorWhatsappSentBtn');
+  const confirmBtn = document.getElementById('confirmSponsorPaymentPageSentBtn');
 
   setSponsorUtrEntryEnabled(false);
 
@@ -768,7 +727,7 @@ function resetSponsorPaymentProof() {
 
   setSponsorPaymentStatus(
     'pending-verification',
-    'Pay first through the secure payment page, open WhatsApp, send the payment screenshot, then confirm here to enable UTR entry.'
+    'Click Pay Now to open the secure payment page for this fee.'
   );
 }
 
@@ -822,48 +781,9 @@ function validateSponsorPaymentFields(details, showError = false) {
     return false;
   }
 
-  const paymentReference = document.getElementById('sponsorPaymentReference');
-  const utrValue = paymentReference?.value.trim() || '';
-
-  if (!sponsorWhatsappShared) {
-    setSponsorPaymentStatus(
-      'pending-verification',
-      'Please open WhatsApp, send the sponsor payment screenshot, click the confirmation button, and then enter the UTR / transaction ID.'
-    );
-
-    if (showError) {
-      showMessage(
-        'sponsorMessage',
-        'Please open WhatsApp, send the payment screenshot, then click "I Sent the Screenshot on WhatsApp" before entering the UTR / transaction ID.',
-        'error'
-      );
-      document.getElementById('confirmSponsorWhatsappSentBtn')?.focus();
-    }
-
-    return false;
-  }
-
-  if (!UTR_PATTERN.test(utrValue)) {
-    setSponsorPaymentStatus(
-      'pending-verification',
-      'Enter a valid UTR / transaction ID before submitting. Use 10 to 30 letters or numbers only.'
-    );
-
-    if (showError) {
-      showMessage(
-        'sponsorMessage',
-        'Please enter a valid UTR / transaction ID. It must contain 10 to 30 letters or numbers only.',
-        'error'
-      );
-      paymentReference?.focus();
-    }
-
-    return false;
-  }
-
   setSponsorPaymentStatus(
     'pending-verification',
-    'UTR / transaction ID received. Admin will manually verify your sponsor payment after submission.'
+    'Payment will be verified from the secure payment page after submission.'
   );
 
   return true;
@@ -878,7 +798,7 @@ function updateSponsorPaymentUI({ keepPayment = false } = {}) {
   const paymentQrText = document.getElementById('sponsorPaymentQrText');
   const paymentQrImage = document.getElementById('sponsorPaymentQrImage');
   const openPaymentBtn = document.getElementById('openSponsorPaymentBtn');
-  const shareWhatsappBtn = document.getElementById('shareSponsorWhatsappBtn');
+  const sharePaymentPageBtn = document.getElementById('shareSponsorPaymentPageBtn');
 
   if (feeAmount) feeAmount.value = details.feeAmount;
 
@@ -891,13 +811,13 @@ function updateSponsorPaymentUI({ keepPayment = false } = {}) {
   }
 
   if (openPaymentBtn) openPaymentBtn.disabled = !details.requiresPayment;
-  if (shareWhatsappBtn) shareWhatsappBtn.disabled = !details.requiresPayment;
+  if (sharePaymentPageBtn) sharePaymentPageBtn.disabled = !details.requiresPayment;
 
   if (!keepPayment) resetSponsorPaymentProof();
 
   if (paymentQrText) {
     paymentQrText.textContent = details.requiresPayment
-      ? `Pay ${formatINR(details.feeAmount)} through the secure Crowdshaki / Razorpay page using Google Pay, PhonePe, Paytm, BHIM, or any UPI app. After payment, open WhatsApp, send the payment screenshot to 7358327761, return to this form, confirm the screenshot was sent, then enter the UTR / transaction ID.`
+      ? `Pay ${formatINR(details.feeAmount)} through the secure Crowdshaki / Razorpay page using Google Pay, PhonePe, Paytm, BHIM, or any UPI app.`
       : 'Select a sponsorship tier to generate the secure payment page and QR code.';
   }
 
@@ -935,7 +855,7 @@ function openSponsorPaymentPage() {
 
   showMessage(
     'sponsorMessage',
-    'Opening the secure Crowdshaki / Razorpay payment page. Complete the UPI payment there, then return here, send the screenshot on WhatsApp, and enter the UTR / transaction ID.',
+    'Opening the secure Crowdshaki / Razorpay payment page. Complete the payment there, then return here and submit the sponsor inquiry.',
     ''
   );
 
@@ -947,7 +867,7 @@ function openSponsorPaymentPage() {
   }
 }
 
-function buildSponsorPaymentWhatsappUrl(details) {
+function buildSponsorPaymentPaymentPageUrl(details) {
   const form = document.getElementById('sponsorForm');
   const formData = new FormData(form);
   const fields = getNormalizedSponsorFields(formData);
@@ -965,11 +885,11 @@ function buildSponsorPaymentWhatsappUrl(details) {
     'Please attach your payment screenshot here.'
   ].join('\n');
 
-  return `https://wa.me/${PAYMENT_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  return `https://example.com/${PAYMENT_PAGE_REFERENCE_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
-function showSponsorWhatsappSentConfirmation() {
-  const confirmBtn = document.getElementById('confirmSponsorWhatsappSentBtn');
+function showSponsorPaymentPageSentConfirmation() {
+  const confirmBtn = document.getElementById('confirmSponsorPaymentPageSentBtn');
 
   if (confirmBtn) {
     confirmBtn.hidden = false;
@@ -977,12 +897,12 @@ function showSponsorWhatsappSentConfirmation() {
   }
 }
 
-function openSponsorPaymentWhatsapp() {
+function openSponsorPaymentPaymentPage() {
   const form = document.getElementById('sponsorForm');
   const details = getSponsorPaymentDetails();
 
   if (!details.sponsorTier) {
-    showMessage('sponsorMessage', 'Please select a sponsorship tier before opening WhatsApp.', 'error');
+    showMessage('sponsorMessage', 'Please select a sponsorship tier before opening payment page.', 'error');
     document.getElementById('sponsorTier')?.focus();
     return;
   }
@@ -994,19 +914,19 @@ function openSponsorPaymentWhatsapp() {
   if (!fields.companyName || !fields.contactPerson || !fields.email || !fields.phone) {
     showMessage(
       'sponsorMessage',
-      'Please fill Company Name, Contact Person, Email, and Phone before opening WhatsApp.',
+      'Please fill Company Name, Contact Person, Email, and Phone before opening payment page.',
       'error'
     );
     return;
   }
 
-  showSponsorWhatsappSentConfirmation();
+  showSponsorPaymentPageSentConfirmation();
   setSponsorPaymentStatus(
     'pending-verification',
-    'WhatsApp opened. Attach the payment screenshot and send it. Then return here and click "I Sent the Screenshot on WhatsApp" to enter the UTR / transaction ID.'
+    'Payment page opened. Complete the payment there, then return here and submit the form.'
   );
 
-  window.open(buildSponsorPaymentWhatsappUrl(details), '_blank');
+  window.open(buildSponsorPaymentPaymentPageUrl(details), '_blank');
 }
 
 document.getElementById('sponsorTier')?.addEventListener('input', () => updateSponsorPaymentUI());
@@ -1023,13 +943,13 @@ document.getElementById('sponsorPaymentReference')?.addEventListener('input', ()
 });
 
 document.getElementById('openSponsorPaymentBtn')?.addEventListener('click', openSponsorPaymentPage);
-document.getElementById('shareSponsorWhatsappBtn')?.addEventListener('click', openSponsorPaymentWhatsapp);
+document.getElementById('shareSponsorPaymentPageBtn')?.addEventListener('click', openSponsorPaymentPaymentPage);
 
-document.getElementById('confirmSponsorWhatsappSentBtn')?.addEventListener('click', () => {
+document.getElementById('confirmSponsorPaymentPageSentBtn')?.addEventListener('click', () => {
   setSponsorUtrEntryEnabled(true);
   setSponsorPaymentStatus(
     'pending-verification',
-    'Payment screenshot confirmed as sent on WhatsApp. Enter the UTR / transaction ID and submit the sponsor inquiry.'
+    'Payment page opened. Submit the sponsor inquiry after completing the payment.'
   );
   document.getElementById('sponsorPaymentReference')?.focus();
 });
@@ -1056,8 +976,7 @@ function openSuccessModal(formData, refId, emailStatus) {
       ['Category', formData.category || 'General'],
       ['Paid Amount', formatINR(formData.feeAmount)],
       ['Registration ID', refId || '—'],
-      ['Payment Status', formData.paymentStatus || '—'],
-      ['UTR / Transaction ID', formData.paymentReference || '—']
+      ['Payment Status', formData.paymentStatus || '—']
     ];
 
     detailsEl.innerHTML = rows.map(([label, value]) => `
@@ -1073,7 +992,7 @@ function openSuccessModal(formData, refId, emailStatus) {
   if (noteEl) {
     noteEl.textContent =
       emailStatus ||
-      'Registration saved. Payment UTR will be manually verified by the admin team.';
+      'Registration saved. Payment will be verified by the admin team.';
   }
 
   const eventInfoEl = modal.querySelector('.success-event-info');
@@ -1155,9 +1074,9 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
   formData.set('discountPercent', String(details.discountPercent));
   formData.set('studentCount', String(details.studentCount || ''));
   formData.set('bulkOffer', details.bulkOffer || '');
-  formData.set('paymentConfirmed', details.requiresPayment ? 'utr-submitted' : 'not-required');
+  formData.set('paymentConfirmed', details.requiresPayment ? 'payment-page-opened' : 'not-required');
   formData.set('paymentStatus', details.requiresPayment ? 'pending-verification' : 'not-required');
-  formData.set('paymentWhatsappShared', details.requiresPayment ? '1' : '0');
+  formData.delete('paymentPageShared');
 
   showMessage('registrationMessage', 'Submitting registration…', '');
 
@@ -1189,7 +1108,7 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
 
     showMessage(
       'registrationMessage',
-      result.message || 'Registration submitted successfully. Payment UTR is pending manual verification.',
+      result.message || 'Registration submitted successfully. Payment is pending verification.',
       'ok'
     );
 
@@ -1220,7 +1139,7 @@ document.getElementById('sponsorForm')?.addEventListener('submit', async e => {
   const formData = new FormData(form);
   formData.set('feeAmount', String(details.feeAmount));
   formData.set('paymentStatus', 'pending-verification');
-  formData.set('paymentWhatsappShared', '1');
+  formData.delete('paymentPageShared');
 
   showMessage('sponsorMessage', 'Submitting sponsor inquiry…', '');
 
@@ -1241,7 +1160,7 @@ document.getElementById('sponsorForm')?.addEventListener('submit', async e => {
 
     showMessage(
       'sponsorMessage',
-      result.message || 'Sponsor inquiry submitted successfully. Payment UTR is pending manual verification.',
+      result.message || 'Sponsor inquiry submitted successfully. Payment is pending verification.',
       'ok'
     );
 
