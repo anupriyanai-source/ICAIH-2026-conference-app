@@ -1,5 +1,5 @@
 const SponsorModel = require('../models/sponsorModel');
-const { sendSponsorEmails } = require('./emailService');
+const { queueSponsorEmails } = require('./emailService');
 
 function sanitize(val) {
   return String(val || '').trim();
@@ -61,7 +61,7 @@ const SponsorService = {
 
     const { refId } = await SponsorModel.create(sponsorData);
 
-    const emailResult = await sendSponsorEmails({
+    const emailResult = queueSponsorEmails({
       ...sponsorData,
       refId
     });

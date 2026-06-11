@@ -1078,6 +1078,14 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
   formData.set('paymentStatus', details.requiresPayment ? 'pending-verification' : 'not-required');
   formData.delete('paymentPageShared');
 
+  const submitButton = form.querySelector('button[type="submit"]');
+  const originalSubmitText = submitButton ? submitButton.textContent : '';
+
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+  }
+
   showMessage('registrationMessage', 'Submitting registration…', '');
 
   try {
@@ -1122,6 +1130,11 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
       error.message || 'Unable to submit. Please try again.',
       'error'
     );
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = originalSubmitText || 'Submit Registration';
+    }
   }
 });
 
@@ -1140,6 +1153,14 @@ document.getElementById('sponsorForm')?.addEventListener('submit', async e => {
   formData.set('feeAmount', String(details.feeAmount));
   formData.set('paymentStatus', 'pending-verification');
   formData.delete('paymentPageShared');
+
+  const submitButton = form.querySelector('button[type="submit"]');
+  const originalSubmitText = submitButton ? submitButton.textContent : '';
+
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+  }
 
   showMessage('sponsorMessage', 'Submitting sponsor inquiry…', '');
 
@@ -1175,6 +1196,11 @@ document.getElementById('sponsorForm')?.addEventListener('submit', async e => {
       error.message || 'Unable to submit. Please try again.',
       'error'
     );
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = originalSubmitText || 'Submit Sponsor Inquiry';
+    }
   }
 });
 

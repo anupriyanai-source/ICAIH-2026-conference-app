@@ -87,9 +87,9 @@ function createTransporter(config) {
     port: config.port,
     secure: config.secure,
     auth: config.auth,
-    connectionTimeout: 60000,
-    greetingTimeout: 60000,
-    socketTimeout: 60000,
+    connectionTimeout: Number(process.env.SMTP_TIMEOUT_MS || 5000),
+    greetingTimeout: Number(process.env.SMTP_TIMEOUT_MS || 5000),
+    socketTimeout: Number(process.env.SMTP_TIMEOUT_MS || 5000),
     requireTLS: config.port === 587,
     tls: {
       minVersion: 'TLSv1.2',
@@ -293,13 +293,13 @@ async function sendWithFallback(mailOptions) {
   for (const config of attempts) {
     try {
       const transporter = createTransporter(config);
-      await transporter.verify();
 
-      const results = [];
-      for (const item of mailOptions) {
-        const info = await transporter.sendMail(item.message);
-        results.push({ type: item.type, messageId: info.messageId });
-      }
+      const results = await Promise.all(
+        mailOptions.map(async (item) => {
+          const info = await transporter.sendMail(item.message);
+          return { type: item.type, messageId: info.messageId };
+        })
+      );
 
       console.log(`SMTP email sent using ${config.label}`);
       console.log('Email results:', results);
@@ -314,6 +314,55 @@ async function sendWithFallback(mailOptions) {
   return {
     ok: false,
     error: errors.join(' | ')
+  };
+}
+
+function runEmailJob(label, task) {
+  setImmediate(async () => {
+    try {
+      const result = await task();
+      if (result?.sent || result?.ok) {
+        console.log(`${label} completed successfully.`);
+      } else {
+        console.warn(`${label} completed with warning:`, result?.message || result?.error || result);
+      }
+    } catch (error) {
+      console.error(`${label} failed:`, error.message || error);
+    }
+  });
+}
+
+function queueRegistrationEmails(data) {
+  if (!mailConfigured()) {
+    const missing = getMissingMailFields();
+    const message = `Registration saved. Email service is not configured. Missing values: ${missing.join(', ')}.`;
+    console.warn(message);
+    return { sent: false, queued: false, message };
+  }
+
+  runEmailJob(`Registration email job ${data.refId}`, () => sendRegistrationEmails(data));
+
+  return {
+    sent: false,
+    queued: true,
+    message: 'Registration saved. Confirmation email is being sent to the user and admin.'
+  };
+}
+
+function queueSponsorEmails(data) {
+  if (!mailConfigured()) {
+    const missing = getMissingMailFields();
+    const message = `Sponsor inquiry saved. Email service is not configured. Missing values: ${missing.join(', ')}.`;
+    console.warn(message);
+    return { sent: false, queued: false, message };
+  }
+
+  runEmailJob(`Sponsor email job ${data.refId}`, () => sendSponsorEmails(data));
+
+  return {
+    sent: false,
+    queued: true,
+    message: 'Sponsor inquiry saved. Confirmation email is being sent to the sponsor and admin.'
   };
 }
 
@@ -414,4 +463,11 @@ async function sendSmtpTestEmail(toEmail) {
   return result;
 }
 
-module.exports = { sendRegistrationEmails, sendSponsorEmails, sendSmtpTestEmail, EVENT_INFO };
+module.exports = {
+  sendRegistrationEmails,
+  sendSponsorEmails,
+  queueRegistrationEmails,
+  queueSponsorEmails,
+  sendSmtpTestEmail,
+  EVENT_INFO
+};

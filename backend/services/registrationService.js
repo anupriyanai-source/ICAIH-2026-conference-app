@@ -1,5 +1,5 @@
 const RegistrationModel = require('../models/registrationModel');
-const { sendRegistrationEmails } = require('./emailService');
+const { queueRegistrationEmails } = require('./emailService');
 
 function isEmail(val) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(val || '').trim());
@@ -111,7 +111,7 @@ const RegistrationService = {
     };
 
     const { refId } = await RegistrationModel.create(registrationData);
-    const emailResult = await sendRegistrationEmails({ ...registrationData, refId });
+    const emailResult = queueRegistrationEmails({ ...registrationData, refId });
 
     return {
       message: requiresPayment
