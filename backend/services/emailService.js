@@ -34,6 +34,90 @@ function getMissingMailFields() {
     .filter((key) => !clean(process.env[key]));
 }
 
+
+function brevoConfigured() {
+  return Boolean(
+    clean(process.env.BREVO_API_KEY) &&
+    clean(process.env.ADMIN_EMAIL) &&
+    clean(process.env.MAIL_FROM_EMAIL)
+  );
+}
+
+function getMissingBrevoFields() {
+  return ['BREVO_API_KEY', 'ADMIN_EMAIL', 'MAIL_FROM_EMAIL']
+    .filter((key) => !clean(process.env[key]));
+}
+
+function emailConfigured() {
+  return brevoConfigured() || mailConfigured();
+}
+
+function getMissingEmailFields() {
+  if (brevoConfigured()) return [];
+  const brevoMissing = getMissingBrevoFields();
+  const smtpMissing = getMissingMailFields();
+  return [`Brevo API missing: ${brevoMissing.join(', ') || 'none'}`, `SMTP missing: ${smtpMissing.join(', ') || 'none'}`];
+}
+
+function getBrevoSender() {
+  return {
+    name: clean(process.env.MAIL_FROM_NAME) || 'ICAIH 2026',
+    email: clean(process.env.MAIL_FROM_EMAIL) || 'info@mrtech.co.in'
+  };
+}
+
+async function sendWithBrevoApi(mailOptions) {
+  const apiKey = clean(process.env.BREVO_API_KEY);
+  const sender = getBrevoSender();
+  const results = [];
+
+  for (const item of mailOptions) {
+    const payload = {
+      sender,
+      to: [{ email: clean(item.message.to) }],
+      replyTo: clean(item.message.replyTo) ? { email: clean(item.message.replyTo) } : { email: sender.email },
+      subject: item.message.subject,
+      htmlContent: item.message.html
+    };
+
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'api-key': apiKey,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const responseText = await response.text();
+
+    if (!response.ok) {
+      throw new Error(`Brevo API failed for ${item.type}: ${response.status} ${responseText}`);
+    }
+
+    results.push({
+      type: item.type,
+      response: responseText
+    });
+  }
+
+  console.log('Brevo API emails sent:', results);
+  return {
+    ok: true,
+    used: 'Brevo Email API',
+    results
+  };
+}
+
+async function sendEmailMessages(mailOptions) {
+  if (brevoConfigured()) {
+    return sendWithBrevoApi(mailOptions);
+  }
+
+  return sendWithFallback(mailOptions);
+}
+
 function getBooleanEnv(value, fallback) {
   if (value === undefined || value === null || value === '') return fallback;
   return String(value).toLowerCase() === 'true';
@@ -333,8 +417,8 @@ function runEmailJob(label, task) {
 }
 
 function queueRegistrationEmails(data) {
-  if (!mailConfigured()) {
-    const missing = getMissingMailFields();
+  if (!emailConfigured()) {
+    const missing = getMissingEmailFields();
     const message = `Registration saved. Email service is not configured. Missing values: ${missing.join(', ')}.`;
     console.warn(message);
     return { sent: false, queued: false, message };
@@ -350,8 +434,8 @@ function queueRegistrationEmails(data) {
 }
 
 function queueSponsorEmails(data) {
-  if (!mailConfigured()) {
-    const missing = getMissingMailFields();
+  if (!emailConfigured()) {
+    const missing = getMissingEmailFields();
     const message = `Sponsor inquiry saved. Email service is not configured. Missing values: ${missing.join(', ')}.`;
     console.warn(message);
     return { sent: false, queued: false, message };
@@ -367,8 +451,8 @@ function queueSponsorEmails(data) {
 }
 
 async function sendRegistrationEmails(data) {
-  if (!mailConfigured()) {
-    const missing = getMissingMailFields();
+  if (!emailConfigured()) {
+    const missing = getMissingEmailFields();
     const message = `Registration saved. Email not sent because these backend .env values are missing: ${missing.join(', ')}.`;
     console.warn(message);
     return { sent: false, message };
@@ -376,7 +460,7 @@ async function sendRegistrationEmails(data) {
 
   try {
     const mailOptions = createMailOptions(data);
-    const result = await sendWithFallback(mailOptions);
+    const result = await sendEmailMessages(mailOptions);
 
     if (!result.ok) {
       throw new Error(result.error);
@@ -397,8 +481,8 @@ async function sendRegistrationEmails(data) {
 
 
 async function sendSponsorEmails(data) {
-  if (!mailConfigured()) {
-    const missing = getMissingMailFields();
+  if (!emailConfigured()) {
+    const missing = getMissingEmailFields();
     const message = `Sponsor inquiry saved. Email not sent because these backend .env values are missing: ${missing.join(', ')}.`;
     console.warn(message);
     return { sent: false, message };
@@ -406,7 +490,7 @@ async function sendSponsorEmails(data) {
 
   try {
     const mailOptions = createSponsorMailOptions(data);
-    const result = await sendWithFallback(mailOptions);
+    const result = await sendEmailMessages(mailOptions);
 
     if (!result.ok) {
       throw new Error(result.error);
@@ -426,8 +510,8 @@ async function sendSponsorEmails(data) {
 }
 
 async function sendSmtpTestEmail(toEmail) {
-  if (!mailConfigured()) {
-    const missing = getMissingMailFields();
+  if (!emailConfigured()) {
+    const missing = getMissingEmailFields();
     throw new Error(`Missing backend .env values: ${missing.join(', ')}`);
   }
 
@@ -450,13 +534,13 @@ async function sendSmtpTestEmail(toEmail) {
       message: {
         from: clean(process.env.MAIL_FROM) || `ICAIH 2026 <${clean(process.env.SMTP_USER)}>`,
         to: testData.email,
-        subject: 'ICAIH 2026 SMTP Test Email',
+        subject: 'ICAIH 2026 Email Test',
         html: buildUserHtml(testData)
       }
     }
   ];
 
-  const result = await sendWithFallback(mailOptions);
+  const result = await sendEmailMessages(mailOptions);
   if (!result.ok) {
     throw new Error(result.error);
   }
