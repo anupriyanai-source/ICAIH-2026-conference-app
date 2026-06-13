@@ -5,7 +5,7 @@
 
 /* ── Countdown ── */
 function updateCountdown() {
-  const target = new Date('2026-07-04T09:30:00+05:30');
+  const target = new Date('2026-07-18T09:30:00+05:30');
   const diff = Math.max(target - new Date(), 0);
 
   const d = Math.floor(diff / 86400000);
@@ -138,10 +138,11 @@ function validatePhoneFields(form, messageId) {
 const PAYMENT_PAGE_REFERENCE_NUMBER = '917358327761';
 
 const EVENT_INFO = {
-  date: '4 July 2026',
+  date: '18 July 2026',
   time: '9:30 AM – 5:30 PM',
-  venue: 'VISTAS College, Pallavaram, Chennai',
-  email: 'info@mrtech.co.in'
+  venue: 'Anna Centenary Library, Kotturpuram, Chennai',
+  email: 'info@mrtech.co.in',
+  emailHref: 'https://mail.google.com/mail/?view=cm&fs=1&to=info%40mrtech.co.in&su=ICAIH%202026%20Inquiry&body=Dear%20ICAIH%202026%20Team%2C%0D%0A%0D%0A'
 };
 
 const REGISTRATION_FEES = {
@@ -169,14 +170,289 @@ const CROWDSHAKI_PAYMENT = {
   paymentForPrefix: 'ICAIH 2026 Registration'
 };
 
-const SPONSOR_FEES = {
-  'Platinum Sponsor': 499999,
-  'Gold Sponsor': 299999,
-  'Silver Sponsor': 99999,
-  'Premium Exhibitor': 39999,
-  'Standard Exhibitor': 34999,
-  'Startup Pavilion': 29999
+
+const SPONSOR_ICONS = {
+  title: `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M6 15.5L4.5 7.5l4.7 3.2L12 5l2.8 5.7 4.7-3.2-1.5 8H6z" />
+      <path d="M6.5 19h11" />
+    </svg>`,
+  partnership: `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M7.5 12.5l2.2 2.2c.7.7 1.8.7 2.5 0l4.3-4.3" />
+      <path d="M8.5 9.5l2-2c1.1-1.1 2.9-1.1 4 0l1 1" />
+      <path d="M5 12l-1.3 1.3c-.9.9-.9 2.3 0 3.2l2.8 2.8c.9.9 2.3.9 3.2 0l1.3-1.3" />
+      <path d="M19 12l1.3 1.3c.9.9.9 2.3 0 3.2l-2.8 2.8c-.9.9-2.3.9-3.2 0L13 18" />
+    </svg>`,
+  innovation: `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 3v3" />
+      <path d="M5.6 5.6l2.1 2.1" />
+      <path d="M18.4 5.6l-2.1 2.1" />
+      <path d="M9 15.5h6" />
+      <path d="M10 19h4" />
+      <path d="M8.5 12a3.5 3.5 0 117 0c0 1.4-.8 2.2-1.5 3h-4c-.7-.8-1.5-1.6-1.5-3z" />
+    </svg>`,
+  premium: `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 3l7 4v6c0 4.2-2.8 6.8-7 8-4.2-1.2-7-3.8-7-8V7l7-4z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>`,
+  ai: `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <rect x="6" y="6" width="12" height="12" rx="2.5" />
+      <path d="M9.5 3v3" />
+      <path d="M14.5 3v3" />
+      <path d="M9.5 18v3" />
+      <path d="M14.5 18v3" />
+      <path d="M3 9.5h3" />
+      <path d="M18 9.5h3" />
+      <path d="M3 14.5h3" />
+      <path d="M18 14.5h3" />
+      <path d="M10 14l1.2-4h1.6l1.2 4" />
+      <path d="M10.6 12.5h2.8" />
+    </svg>`,
+  award: `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M9.5 12l-1.8 7 4.3-2.2 4.3 2.2-1.8-7" />
+    </svg>`,
+  kit: `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M7 8V6.5A2.5 2.5 0 019.5 4h5A2.5 2.5 0 0117 6.5V8" />
+      <rect x="5" y="8" width="14" height="11" rx="2" />
+      <path d="M9 12h6" />
+      <path d="M9 15h4" />
+    </svg>`,
+  knowledge: `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M5 5.5A2.5 2.5 0 017.5 3H20v16H7.5A2.5 2.5 0 015 16.5v-11z" />
+      <path d="M5 16.5A2.5 2.5 0 017.5 14H20" />
+      <path d="M9 7h7" />
+      <path d="M9 10h5" />
+    </svg>`,
+  technology: `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <rect x="4" y="5" width="16" height="11" rx="2" />
+      <path d="M8 20h8" />
+      <path d="M12 16v4" />
+      <path d="M9 10l2 2 4-4" />
+    </svg>`,
+  healthcare: `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 21s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.5-7 10-7 10z" />
+      <path d="M12 8v6" />
+      <path d="M9 11h6" />
+    </svg>`,
+  silver: `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 3l2.4 5 5.4.8-3.9 3.8.9 5.4-4.8-2.6L7.2 18l.9-5.4-3.9-3.8 5.4-.8L12 3z" />
+    </svg>`,
+  associate: `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 5v14" />
+      <path d="M5 12h14" />
+      <circle cx="12" cy="12" r="7" />
+    </svg>`
 };
+
+const SPONSOR_PACKAGES = [
+  {
+    title: 'Title Sponsor',
+    amount: 2999999,
+    accent: '#f7d96b',
+    icon: SPONSOR_ICONS.title,
+    benefits: [
+      'Main conference branding and naming association',
+      'Chief Guest speaking opportunity',
+      'Logo on all branding materials, stage backdrop, and certificates',
+      'Exclusive exhibition pavilion',
+      'Premium media visibility and VIP networking access',
+      'Delegate registrations and premium passes'
+    ]
+  },
+  {
+    title: 'Co-Title Sponsor',
+    amount: 1999999,
+    accent: '#b0c4f7',
+    icon: SPONSOR_ICONS.partnership,
+    benefits: [
+      'Co-branding across conference materials',
+      'Speaking opportunity in a key session',
+      'Exhibition stall',
+      'Social media and website promotions',
+      'Delegate passes'
+    ]
+  },
+  {
+    title: 'Healthcare Innovation Sponsor',
+    amount: 999999,
+    accent: '#7ecba1',
+    icon: SPONSOR_ICONS.innovation,
+    benefits: [
+      'Recognition as Official Healthcare Innovation Sponsor',
+      'Keynote speaking opportunity',
+      'Dedicated exhibition pavilion',
+      'Healthcare innovation showcase session',
+      'Product or service demonstration',
+      'Panel discussion participation and VIP networking'
+    ]
+  },
+  {
+    title: 'Platinum Sponsor',
+    amount: 499999,
+    accent: '#c0c7d8',
+    icon: SPONSOR_ICONS.premium,
+    benefits: [
+      'Prominent logo placement',
+      'Technical session sponsorship',
+      'Product demonstration slot',
+      'Exhibition booth',
+      'Networking session access',
+      'Stage recognition'
+    ]
+  },
+  {
+    title: 'AI Transformation Sponsor',
+    amount: 499999,
+    accent: '#9bb7ff',
+    icon: SPONSOR_ICONS.ai,
+    benefits: [
+      'Recognition as Official AI Transformation Sponsor',
+      'Lead technical session on AI applications',
+      'Demonstration area for AI solutions',
+      'Branding across digital and print collateral',
+      'Panel participation with government and industry leaders',
+      'Dedicated promotional campaign'
+    ]
+  },
+  {
+    title: 'Gold Sponsor',
+    amount: 299999,
+    accent: '#f7d96b',
+    icon: SPONSOR_ICONS.award,
+    benefits: [
+      'Logo placement',
+      'Stall space',
+      'Website listing',
+      'Branding in event materials',
+      'Delegate participation',
+      'Promotional materials distribution'
+    ]
+  },
+  {
+    title: 'Delegate Kit Sponsor',
+    amount: 299999,
+    accent: '#f59e0b',
+    icon: SPONSOR_ICONS.kit,
+    benefits: [
+      'Logo on conference bags',
+      'Logo on delegate kits',
+      'Promotional inserts',
+      'Brand visibility among all delegates'
+    ]
+  },
+  {
+    title: 'Knowledge Partner',
+    amount: 199999,
+    accent: '#60a5fa',
+    icon: SPONSOR_ICONS.knowledge,
+    benefits: [
+      'Academic branding',
+      'Research visibility',
+      'Technical paper presentation',
+      'Session moderation rights',
+      'Suitable for universities, research institutions, and think tanks'
+    ]
+  },
+  {
+    title: 'Technology Partner',
+    amount: 199999,
+    accent: '#22c55e',
+    icon: SPONSOR_ICONS.technology,
+    benefits: [
+      'Technology showcase',
+      'Demo zone',
+      'Innovation awards sponsorship',
+      'Digital health and cloud solution visibility',
+      'Suitable for AI, software, digital health, and cloud providers'
+    ]
+  },
+  {
+    title: 'Healthcare Partner',
+    amount: 199999,
+    accent: '#38bdf8',
+    icon: SPONSOR_ICONS.healthcare,
+    benefits: [
+      'Healthcare sector visibility and branding',
+      'Clinical innovation showcase',
+      'Healthcare exhibition',
+      'Suitable for hospitals, medical device companies, and HealthTech organizations'
+    ]
+  },
+  {
+    title: 'Silver Sponsor',
+    amount: 99999,
+    accent: '#c0c0c0',
+    icon: SPONSOR_ICONS.silver,
+    benefits: [
+      'Logo visibility',
+      'Event recognition',
+      'Delegate entry',
+      'Small exhibition area',
+      'Conference kit inclusion'
+    ]
+  },
+  {
+    title: 'Associate Sponsor',
+    amount: 99999,
+    accent: '#a78bfa',
+    icon: SPONSOR_ICONS.associate,
+    benefits: [
+      'Basic sponsor branding and promotion',
+      'Event support recognition',
+      'Website and brochure visibility',
+      'Limited branding'
+    ]
+  }
+];
+
+const SPONSOR_FEES = SPONSOR_PACKAGES.reduce((fees, pkg) => {
+  fees[pkg.title] = pkg.amount;
+  return fees;
+}, {});
+
+function renderSponsorPackages() {
+  const grid = document.getElementById('sponsorPackagesGrid');
+  if (!grid) return;
+
+  grid.innerHTML = SPONSOR_PACKAGES.map((pkg, index) => `
+    <article class="feature-panel reveal sponsor-package-card" style="border-top:4px solid ${pkg.accent};">
+      <div class="sponsor-card-head">
+        <span class="sponsor-card-icon" style="color:${pkg.accent}; border-color:${pkg.accent}; background:${pkg.accent}1A;" aria-hidden="true">${pkg.icon}</span>
+        <h3 style="color:${pkg.accent};">${pkg.title}</h3>
+      </div>
+      <p class="sponsor-card-amount">${formatINR(pkg.amount)}</p>
+      <ul class="check-list">
+        ${pkg.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
+      </ul>
+    </article>
+  `).join('');
+
+  grid.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+}
+
+function populateSponsorTierOptions() {
+  const select = document.getElementById('sponsorTier');
+  if (!select) return;
+
+  select.innerHTML = '<option value="">Select Tier</option>' + SPONSOR_PACKAGES
+    .map(pkg => `<option value="${pkg.title}">${pkg.title} – ${formatINR(pkg.amount)}</option>`)
+    .join('');
+}
+
+renderSponsorPackages();
+populateSponsorTierOptions();
 
 function formatINR(amount) {
   return '₹' + Number(amount || 0).toLocaleString('en-IN');
@@ -633,7 +909,7 @@ function openSponsorModal() {
       <div><span>Date</span><strong>${EVENT_INFO.date}</strong></div>
       <div><span>Time</span><strong>${EVENT_INFO.time}</strong></div>
       <div><span>Venue</span><strong>${EVENT_INFO.venue}</strong></div>
-      <div><span>Email</span><strong>${EVENT_INFO.email}</strong></div>
+      <div><span>Email</span><strong><a href="${EVENT_INFO.emailHref}" target="_blank" rel="noopener">${EVENT_INFO.email}</a></strong></div>
     `;
   }
 
@@ -1002,7 +1278,7 @@ function openSuccessModal(formData, refId, emailStatus) {
       <div><span>Date</span><strong>${EVENT_INFO.date}</strong></div>
       <div><span>Time</span><strong>${EVENT_INFO.time}</strong></div>
       <div><span>Venue</span><strong>${EVENT_INFO.venue}</strong></div>
-      <div><span>Email</span><strong>${EVENT_INFO.email}</strong></div>
+      <div><span>Email</span><strong><a href="${EVENT_INFO.emailHref}" target="_blank" rel="noopener">${EVENT_INFO.email}</a></strong></div>
     `;
   }
 

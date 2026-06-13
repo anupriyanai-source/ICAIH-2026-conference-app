@@ -1109,6 +1109,12 @@ blockquote {
   font-size: .8rem;
 }
 
+.success-event-info strong a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .success-note {
   font-size: .8rem;
   color: var(--muted);
@@ -3166,5 +3172,97 @@ body {
 
   .hero-meta strong {
     font-size: 1rem !important;
+  }
+}
+
+/* ── Dynamic Sponsorship Package Cards ───────────────────────── */
+.sponsor-section-title {
+  text-align: center;
+  margin-bottom: 0.65rem;
+  font-size: 1.4rem;
+}
+
+.sponsor-section-subtitle {
+  max-width: 760px;
+  margin: 0 auto 1.75rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.sponsor-packages-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.sponsor-package-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 26px 28px;
+}
+
+.sponsor-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.45rem;
+  margin-bottom: 0.55rem;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.sponsor-card-head h3 {
+  margin: 0;
+  line-height: 1.15;
+  white-space: nowrap;
+  font-size: clamp(1.3rem, 1.02vw, 1.08rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sponsor-card-icon {
+  flex: 0 0 auto;
+  width: 2.45rem;
+  height: 2.45rem;
+  border-radius: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid currentColor;
+  line-height: 1;
+}
+
+.sponsor-card-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sponsor-card-amount {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0.35rem 0 0.85rem;
+}
+
+@media (max-width: 1024px) {
+  .sponsor-packages-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .sponsor-packages-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sponsor-card-head h3 {
+    white-space: nowrap;
+    font-size: 0.92rem;
   }
 }

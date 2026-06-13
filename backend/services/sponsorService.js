@@ -10,12 +10,18 @@ function isEmail(val) {
 }
 
 const SPONSOR_FEES = {
-  'Platinum Sponsor': 499999,
-  'Gold Sponsor': 299999,
-  'Silver Sponsor': 99999,
-  'Premium Exhibitor': 39999,
-  'Standard Exhibitor': 34999,
-  'Startup Pavilion': 29999
+  'Title Sponsor': 3000000,
+  'Co-Title Sponsor': 2000000,
+  'Healthcare Innovation Sponsor': 1000000,
+  'Platinum Sponsor': 500000,
+  'AI Transformation Sponsor': 500000,
+  'Gold Sponsor': 300000,
+  'Delegate Kit Sponsor': 300000,
+  'Knowledge Partner': 200000,
+  'Technology Partner': 200000,
+  'Healthcare Partner': 200000,
+  'Silver Sponsor': 100000,
+  'Associate Sponsor': 100000
 };
 
 const SponsorService = {

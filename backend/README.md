@@ -100,9 +100,9 @@ The registration email will not be sent unless `SMTP_HOST`, `SMTP_USER`, and `SM
 
 Conference details used in the registration email:
 
-- Date: 4 July 2026
+- Date: 18 July 2026
 - Time: 9:30 AM – 5:30 PM
-- Venue: VISTAS College, Pallavaram, Chennai
+- Venue: Anna Centenary Library, Kotturpuram, Chennai
 
 
 ## Latest registration rules

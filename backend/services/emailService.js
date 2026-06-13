@@ -2,9 +2,9 @@ const nodemailer = require('nodemailer');
 
 const EVENT_INFO = {
   title: 'International Conference on Artificial Intelligence in Healthcare',
-  date: '4 July 2026',
+  date: '18 July 2026',
   time: '9:30 AM – 5:30 PM',
-  venue: 'VISTAS College, Pallavaram, Chennai',
+  venue: 'Anna Centenary Library, Kotturpuram, Chennai',
   email: 'info@mrtech.co.in'
 };
 
