@@ -3266,3 +3266,1054 @@ body {
     font-size: 0.92rem;
   }
 }
+
+/* Apply Now application modal update */
+.nav-apply {
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-weight: 800;
+  margin-left: 18px;
+  white-space: nowrap;
+}
+
+.apply-now-side-btn {
+  margin-top: 20px;
+}
+
+.apply-now-help {
+  margin-top: 12px;
+  font-size: .92rem;
+  color: var(--muted);
+}
+
+.application-modal-card {
+  width: min(1120px, 96%);
+  padding: 0;
+  overflow: hidden;
+}
+
+.application-modal-layout {
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
+  min-height: 78vh;
+  max-height: 90vh;
+}
+
+.application-logo-panel {
+  padding: 38px 30px;
+  background: linear-gradient(180deg, #071b44 0%, #0b2456 100%);
+  color: white;
+  overflow-y: auto;
+}
+
+.application-logo-panel img {
+  width: 112px;
+  height: 112px;
+  object-fit: contain;
+  border-radius: 18px;
+  background: white;
+  padding: 10px;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, .25);
+  margin-bottom: 24px;
+}
+
+.application-logo-panel h2 {
+  color: white;
+  margin: 10px 0 12px;
+  line-height: 1.2;
+}
+
+.application-logo-panel p {
+  color: rgba(255, 255, 255, .78);
+}
+
+.application-pdf-link {
+  display: inline-flex;
+  margin-top: 18px;
+  padding: 11px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .12);
+  color: white;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, .22);
+}
+
+.application-pdf-link:hover {
+  background: rgba(255, 255, 255, .2);
+  text-decoration: none;
+}
+
+.application-form-panel {
+  padding: 34px;
+  overflow-y: auto;
+  background: #f8fbff;
+}
+
+.application-type-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.application-tab {
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: white;
+  color: var(--navy);
+  font-family: var(--font-head);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.application-tab.active {
+  color: white;
+  background: linear-gradient(135deg, #4f8cff, #3b82f6);
+  border-color: transparent;
+  box-shadow: 0 12px 28px rgba(59, 130, 246, .22);
+}
+
+.application-form-head {
+  margin-bottom: 18px;
+}
+
+.application-form-head h3 {
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.application-form-head p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.application-section {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: white;
+  margin-bottom: 16px;
+}
+
+.application-section h4 {
+  margin: 0 0 14px;
+  color: var(--navy);
+  font-family: var(--font-head);
+  font-size: .98rem;
+}
+
+.form-grid.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.full-row {
+  grid-column: 1 / -1;
+}
+
+.application-section small {
+  display: block;
+  color: var(--muted);
+  margin: -4px 0 12px;
+}
+
+.checkbox-line {
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: 10px !important;
+}
+
+.checkbox-line input {
+  width: auto;
+  margin-top: 2px;
+}
+
+.checkbox-line span {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-family: var(--font-body) !important;
+  color: var(--text) !important;
+  font-size: .92rem !important;
+  font-weight: 600 !important;
+}
+
+body.application-research-mode .pre-competition-fields {
+  display: none;
+}
+
+body.application-competition-mode .research-paper-fields {
+  display: none;
+}
+
+@media (max-width: 920px) {
+  .application-modal-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .application-logo-panel {
+    max-height: none;
+  }
+
+  .application-form-panel {
+    max-height: none;
+  }
+
+  .application-type-tabs,
+  .form-grid.two {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 820px) {
+  .nav-apply {
+    display: none;
+  }
+}
+
+/* Final Apply Now alignment and modal scroll refinements */
+.navbar {
+  grid-template-columns: 220px minmax(0, 1fr) auto auto !important;
+}
+
+.nav-apply,
+.nav-register {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 46px !important;
+  border-radius: 0 !important;
+  padding: 12px 18px !important;
+  margin-left: 0 !important;
+  white-space: nowrap !important;
+  font-family: var(--font-menu) !important;
+  font-weight: 800 !important;
+  font-size: .9rem !important;
+  background: linear-gradient(135deg, #4f8cff, #3b82f6) !important;
+  color: #ffffff !important;
+  box-shadow: 0 14px 24px rgba(59, 130, 246, .28) !important;
+}
+
+.nav-apply:hover,
+.nav-register:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+}
+
+.application-modal-card {
+  width: min(1120px, 96vw) !important;
+  max-height: 92vh !important;
+  overflow: hidden !important;
+}
+
+.application-modal-layout {
+  grid-template-columns: 300px minmax(0, 1fr) !important;
+  height: min(860px, 92vh) !important;
+  min-height: 0 !important;
+  max-height: 92vh !important;
+}
+
+.application-logo-panel {
+  overflow-y: auto !important;
+}
+
+.application-logo-panel .application-pdf-link {
+  display: none !important;
+}
+
+.application-form-panel {
+  height: 100% !important;
+  max-height: 92vh !important;
+  overflow-y: auto !important;
+  padding: 34px !important;
+}
+
+.application-type-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #f8fbff;
+  padding-bottom: 12px;
+  margin-bottom: 14px !important;
+}
+
+.application-tab {
+  min-height: 58px;
+  line-height: 1.22;
+}
+
+.application-form {
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.application-form-head,
+.application-section,
+.application-submit-row,
+#applicationMessage {
+  max-width: 100%;
+}
+
+.application-section {
+  padding: 20px !important;
+  margin-bottom: 18px !important;
+}
+
+.compact-form-grid {
+  align-items: start;
+}
+
+.application-section label {
+  gap: 8px !important;
+}
+
+.application-section input,
+.application-section select,
+.application-section textarea {
+  width: 100% !important;
+  min-height: 46px;
+}
+
+.application-section textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.application-submit-row {
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px 0 18px;
+}
+
+#applicationSubmitBtn {
+  min-width: 220px;
+}
+
+@media (max-width: 1280px) {
+  .navbar {
+    grid-template-columns: 190px minmax(0, 1fr) auto auto !important;
+  }
+
+  .nav-apply,
+  .nav-register {
+    padding: 11px 14px !important;
+    font-size: .78rem !important;
+  }
+}
+
+@media (max-width: 1080px) {
+  .navbar {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .nav-links {
+    display: none !important;
+  }
+
+  .menu-toggle {
+    display: block !important;
+  }
+
+  .nav-apply,
+  .nav-register {
+    margin-left: 0 !important;
+  }
+}
+
+@media (max-width: 920px) {
+  .application-modal-layout {
+    grid-template-columns: 1fr !important;
+    height: 92vh !important;
+  }
+
+  .application-logo-panel {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    column-gap: 18px;
+    padding: 22px !important;
+  }
+
+  .application-logo-panel img {
+    grid-row: span 3;
+    width: 80px !important;
+    height: 80px !important;
+    margin: 0 !important;
+  }
+
+  .application-form-panel {
+    padding: 22px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-apply {
+    display: none !important;
+  }
+
+  .application-type-tabs,
+  .form-grid.two {
+    grid-template-columns: 1fr !important;
+  }
+
+  .application-submit-row {
+    justify-content: stretch;
+  }
+
+  #applicationSubmitBtn {
+    width: 100%;
+  }
+}
+
+/* Final modal and navbar correction: buttons in one line, form-only scroll, PDF-style content */
+.navbar {
+  display: grid !important;
+  grid-template-columns: 230px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 16px !important;
+}
+
+.nav-links {
+  position: static !important;
+  transform: none !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+}
+
+.nav-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+  white-space: nowrap !important;
+}
+
+.nav-actions .nav-cta {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  min-height: 46px !important;
+  padding: 12px 18px !important;
+}
+
+.application-modal-card {
+  width: min(1120px, 96vw) !important;
+  height: min(780px, 92vh) !important;
+  max-height: 92vh !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 18px !important;
+}
+
+.application-modal-layout {
+  display: block !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+.application-logo-panel {
+  display: none !important;
+}
+
+.application-form-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  max-height: none !important;
+  padding: 32px 34px 0 !important;
+  overflow: hidden !important;
+  background: #f8fbff !important;
+}
+
+.application-type-tabs {
+  position: relative !important;
+  top: auto !important;
+  flex: 0 0 auto !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+  padding: 0 28px 14px 0 !important;
+  margin: 0 !important;
+  background: #f8fbff !important;
+  z-index: 2 !important;
+}
+
+.application-tab {
+  min-height: 58px !important;
+  border-radius: 14px !important;
+  text-align: center !important;
+  line-height: 1.25 !important;
+}
+
+.application-form {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+.application-form-scroll {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 0 10px 28px 0 !important;
+  scrollbar-gutter: stable !important;
+}
+
+.pdf-form-header {
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px 14px;
+  margin: 0 0 16px;
+}
+
+.pdf-form-header img {
+  width: 86px;
+  height: 86px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 10px;
+  border-radius: 8px;
+}
+
+.pdf-form-header h3 {
+  color: var(--navy);
+  margin: 0 0 6px;
+  font-family: var(--font-head);
+  font-size: 1.25rem;
+}
+
+.pdf-form-header p {
+  margin: 2px 0;
+  color: var(--text);
+  font-size: .92rem;
+}
+
+.application-section {
+  background: #ffffff !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 14px !important;
+  padding: 18px !important;
+  margin-bottom: 14px !important;
+}
+
+.application-section h4 {
+  color: var(--navy) !important;
+  font-family: var(--font-head) !important;
+  font-size: 1rem !important;
+  margin: 0 0 14px !important;
+}
+
+.choice-block {
+  margin-top: 14px;
+}
+
+.choice-title {
+  display: block;
+  color: var(--text);
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.checkbox-grid {
+  display: grid;
+  gap: 8px 16px;
+}
+
+.checkbox-grid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.checkbox-grid.one {
+  grid-template-columns: 1fr;
+}
+
+.checkbox-grid label,
+.inline-choice-row label,
+.checkbox-line {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  color: var(--text) !important;
+  font-family: var(--font-body) !important;
+  font-size: .94rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+.checkbox-grid input[type="checkbox"],
+.inline-choice-row input[type="radio"],
+.checkbox-line input[type="checkbox"] {
+  width: 16px !important;
+  height: 16px !important;
+  min-height: 16px !important;
+  flex: 0 0 16px !important;
+  margin: 0 !important;
+}
+
+.inline-choice-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.inline-choice-row .choice-title {
+  margin: 0 4px 0 0;
+}
+
+.inline-other {
+  flex-wrap: wrap;
+}
+
+.inline-other input[type="text"],
+.inline-other input:not([type]) {
+  width: min(220px, 100%) !important;
+  min-height: 34px !important;
+  padding: 8px 10px !important;
+}
+
+.application-section input,
+.application-section select,
+.application-section textarea {
+  min-height: 44px !important;
+  border-radius: 10px !important;
+}
+
+.application-section textarea {
+  min-height: 92px !important;
+}
+
+.office-use-section {
+  background: #f4f7fb !important;
+}
+
+.office-use-section input,
+.office-use-section textarea {
+  background: #eef2f7 !important;
+  color: #6b7280 !important;
+}
+
+body.application-research-mode .pre-competition-fields {
+  display: none !important;
+}
+
+body.application-competition-mode .research-paper-fields {
+  display: none !important;
+}
+
+.application-submit-row {
+  position: sticky;
+  bottom: 0;
+  display: flex !important;
+  justify-content: flex-end !important;
+  padding: 16px 0 0 !important;
+  background: linear-gradient(180deg, rgba(248,251,255,0), #f8fbff 35%) !important;
+  z-index: 2;
+}
+
+#applicationSubmitBtn {
+  min-width: 220px !important;
+}
+
+@media (max-width: 1280px) {
+  .navbar {
+    grid-template-columns: 205px minmax(0, 1fr) auto !important;
+    gap: 10px !important;
+  }
+
+  .nav-links {
+    gap: 4px !important;
+  }
+
+  .nav-links a {
+    padding: 8px 8px !important;
+    font-size: .75rem !important;
+  }
+
+  .nav-actions .nav-cta {
+    padding: 11px 14px !important;
+    font-size: .78rem !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .navbar {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .nav-links {
+    display: none !important;
+  }
+
+  .menu-toggle {
+    display: block !important;
+  }
+
+  .nav-actions {
+    margin-left: auto !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .application-form-panel {
+    padding: 22px 18px 0 !important;
+  }
+
+  .application-type-tabs,
+  .form-grid.two,
+  .checkbox-grid.two {
+    grid-template-columns: 1fr !important;
+  }
+
+  .nav-actions .nav-cta {
+    padding: 10px 12px !important;
+  }
+}
+
+/* Apply Now modal logo-side restore: left panel fixed, form content scroll only */
+.application-modal-card {
+  width: min(1120px, 96vw) !important;
+  height: min(780px, 92vh) !important;
+  max-height: 92vh !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 18px !important;
+}
+
+.application-modal-layout {
+  display: grid !important;
+  grid-template-columns: 300px minmax(0, 1fr) !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+.application-logo-panel {
+  display: block !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  padding: 38px 30px !important;
+  background: linear-gradient(180deg, #071b44 0%, #0b2456 100%) !important;
+  color: #ffffff !important;
+}
+
+.application-logo-panel img {
+  width: 112px !important;
+  height: 112px !important;
+  object-fit: contain !important;
+  display: block !important;
+  border-radius: 14px !important;
+  background: #ffffff !important;
+  padding: 10px !important;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, .25) !important;
+  margin: 0 0 24px !important;
+}
+
+.application-side-kicker {
+  margin: 0 0 10px !important;
+  color: rgba(255, 255, 255, .78) !important;
+  font-family: var(--font-head) !important;
+  font-size: .78rem !important;
+  font-weight: 900 !important;
+  letter-spacing: .16em !important;
+}
+
+.application-logo-panel h2 {
+  color: #ffffff !important;
+  margin: 0 0 14px !important;
+  font-family: var(--font-head) !important;
+  font-size: clamp(2rem, 3vw, 2.45rem) !important;
+  line-height: 1.18 !important;
+}
+
+.application-logo-panel p:not(.application-side-kicker) {
+  color: rgba(255, 255, 255, .78) !important;
+  font-size: 1rem !important;
+  line-height: 1.55 !important;
+  margin: 0 !important;
+}
+
+.application-logo-panel .application-pdf-link {
+  display: none !important;
+}
+
+.application-form-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  padding: 32px 34px 0 !important;
+  background: #f8fbff !important;
+}
+
+.application-type-tabs {
+  position: relative !important;
+  top: auto !important;
+  flex: 0 0 auto !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+  padding: 0 28px 14px 0 !important;
+  margin: 0 !important;
+  background: #f8fbff !important;
+  z-index: 2 !important;
+}
+
+.application-form {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.application-form-scroll {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 0 10px 28px 0 !important;
+  scrollbar-gutter: stable !important;
+}
+
+@media (max-width: 920px) {
+  .application-modal-layout {
+    grid-template-columns: 1fr !important;
+    height: 92vh !important;
+  }
+
+  .application-logo-panel {
+    display: grid !important;
+    grid-template-columns: 88px 1fr !important;
+    column-gap: 18px !important;
+    height: auto !important;
+    padding: 22px !important;
+  }
+
+  .application-logo-panel img {
+    grid-row: span 3 !important;
+    width: 80px !important;
+    height: 80px !important;
+    margin: 0 !important;
+  }
+
+  .application-logo-panel h2 {
+    font-size: 1.8rem !important;
+  }
+
+  .application-form-panel {
+    min-height: 0 !important;
+    padding: 22px !important;
+  }
+}
+
+/* Final Apply Now form behavior update: submit button stays at the real end, not fixed while scrolling. */
+.application-submit-row {
+  position: static !important;
+  bottom: auto !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  padding: 18px 0 22px !important;
+  margin-top: 4px !important;
+  background: transparent !important;
+  z-index: auto !important;
+}
+
+.checkbox-grid input[type="radio"] {
+  width: 16px !important;
+  height: 16px !important;
+  min-height: 16px !important;
+  flex: 0 0 16px !important;
+  margin: 0 !important;
+}
+
+
+/* Apply Now form clear/reset alignment fix */
+.application-submit-row {
+  position: static !important;
+  bottom: auto !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 18px 0 8px !important;
+  background: transparent !important;
+  z-index: auto !important;
+}
+
+.application-clear-btn {
+  min-width: 150px !important;
+  border: 1px solid #c7d6f4 !important;
+  background: #ffffff !important;
+  color: #10234f !important;
+  box-shadow: none !important;
+}
+
+.application-clear-btn:hover {
+  background: #eef5ff !important;
+}
+
+#applicationSubmitBtn {
+  min-width: 220px !important;
+}
+
+.application-form-scroll {
+  padding-bottom: 28px !important;
+}
+
+@media (max-width: 720px) {
+  .application-submit-row {
+    flex-direction: column-reverse !important;
+    align-items: stretch !important;
+  }
+
+  .application-clear-btn,
+  #applicationSubmitBtn {
+    width: 100% !important;
+  }
+}
+
+/* Apply Now popup close icon correction */
+#closeApplicationModal.modal-close {
+  top: 18px !important;
+  right: 18px !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: 1px solid #d7e2f7 !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  color: #50617c !important;
+  font-size: 24px !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  box-shadow: 0 8px 20px rgba(15, 35, 80, 0.12) !important;
+  z-index: 80 !important;
+}
+
+#closeApplicationModal.modal-close:hover,
+#closeApplicationModal.modal-close:focus-visible {
+  background: #eef5ff !important;
+  color: #0b2559 !important;
+  border-color: #b9ccf0 !important;
+  outline: none !important;
+}
+
+.application-modal-card {
+  position: relative !important;
+}
+
+/* Final application form cleanup requested: no inner MR logo, dynamic participation fields. */
+.pdf-form-header.no-header-logo {
+  padding-top: 28px !important;
+}
+
+.pdf-form-header.no-header-logo img {
+  display: none !important;
+}
+
+.participation-field {
+  display: none !important;
+}
+
+body.participation-individual .individual-field,
+body.participation-team .team-field {
+  display: flex !important;
+}
+
+.file-instruction-section {
+  background: #fbfdff;
+}
+
+.file-instruction-text {
+  margin: 0 0 12px;
+  color: var(--text);
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.file-mail-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: white;
+  margin-bottom: 12px;
+}
+
+.file-mail-label {
+  color: var(--muted);
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-size: .78rem;
+}
+
+.file-mail-link {
+  color: #2563eb;
+  font-weight: 900;
+  text-decoration: none;
+  word-break: break-word;
+  cursor: pointer;
+}
+
+.file-mail-link:hover {
+  text-decoration: underline;
+}
+
+
+.file-name-label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0 10px;
+}
+
+.file-name-label span {
+  color: var(--text);
+  font-size: .78rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.file-name-label input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+
+.file-name-label input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+}

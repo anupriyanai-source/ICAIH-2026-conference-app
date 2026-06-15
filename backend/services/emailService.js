@@ -1,4 +1,6 @@
 const nodemailer = require('nodemailer');
+const fs = require('fs');
+const path = require('path');
 
 const EVENT_INFO = {
   title: 'International Conference on Artificial Intelligence in Healthcare',
@@ -79,6 +81,15 @@ async function sendWithBrevoApi(mailOptions) {
       subject: item.message.subject,
       htmlContent: item.message.html
     };
+
+    if (Array.isArray(item.message.attachments) && item.message.attachments.length > 0) {
+      payload.attachment = item.message.attachments
+        .filter((attachment) => attachment?.path && fs.existsSync(attachment.path))
+        .map((attachment) => ({
+          name: attachment.filename || path.basename(attachment.path),
+          content: fs.readFileSync(attachment.path).toString('base64')
+        }));
+    }
 
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
@@ -351,6 +362,139 @@ function createSponsorMailOptions(data) {
   ];
 }
 
+
+function applicationRows(data) {
+  const isResearch = data.applicationType === 'research-paper';
+  const rows = [
+    ['Application ID', data.refId],
+    ['Application Type', isResearch ? 'Research Paper Presentation Submission' : 'Pre-Conference Competitions Application'],
+    ['Full Name', data.fullName],
+    ['Email', data.email],
+    ['Mobile', data.mobile],
+    ['WhatsApp', data.whatsapp || '-'],
+    ['City / State', data.cityState || '-'],
+    ['Institution / Organization', data.institutionName],
+    ['Department', data.department || '-'],
+    ['Designation / Year of Study', data.designation || '-'],
+    ['Category', data.participantCategory || '-'],
+    [isResearch ? 'Presentation Type' : 'Competition Category', isResearch ? (data.presentationType || '-') : (data.competitionCategory || '-')],
+    ['Title', data.submissionTitle],
+    ['Topic / Theme Area', data.topicTheme || '-'],
+    ['Keywords', data.keywords || '-'],
+    ['Primary / Corresponding Author', data.correspondingAuthor || '-'],
+    ['Co-author Name(s)', data.coAuthorNames || '-'],
+    ['Guide / Mentor', data.guideName || '-'],
+    ['Preferred Presentation Mode', data.preferredPresentationMode || '-'],
+    ['Attend In Person', data.attendInPerson || '-'],
+    ['Uploaded Main File', data.fileUploadOriginalName || data.mainFile?.originalName || '-'],
+    ['Uploaded ID File', data.idUploadOriginalName || data.idFile?.originalName || '-'],
+    ['Applicant Confirmation Name', data.applicantConfirmName || '-'],
+    ['Applicant Confirmation Date', data.applicantConfirmDate || '-'],
+    ['Signature', data.applicantSignature || '-']
+  ];
+
+  if (!isResearch) {
+    rows.splice(13, 0,
+      ['Participation Type', data.participationType || '-'],
+      ['Team Name', data.teamName || '-'],
+      ['Team Members Count', data.teamMembersCount || '-'],
+      ['Team Member Names', data.teamMemberNames || '-']
+    );
+  }
+
+  return `
+    <table style="width:100%;border-collapse:collapse;margin-top:16px;">
+      ${rows.map(([label, value]) => `
+        <tr>
+          <td style="padding:10px;border:1px solid #dbe5f5;background:#f6f9ff;font-weight:700;width:38%;">${escapeHtml(label)}</td>
+          <td style="padding:10px;border:1px solid #dbe5f5;">${escapeHtml(value || '-')}</td>
+        </tr>`).join('')}
+    </table>`;
+}
+
+function buildApplicationUserHtml(data) {
+  const isResearch = data.applicationType === 'research-paper';
+  return `
+    <div style="font-family:Arial,sans-serif;color:#12213f;line-height:1.6;max-width:680px;margin:auto;">
+      <h2>${isResearch ? 'Research Paper Submission Received' : 'Competition Application Received'}</h2>
+      <p>Dear ${escapeHtml(data.fullName)},</p>
+      <p>Your ${isResearch ? 'research paper presentation submission' : 'pre-conference competition application'} for <strong>${escapeHtml(EVENT_INFO.title)}</strong> has been received successfully.</p>
+      <p>Your Application ID is <strong>${escapeHtml(data.refId)}</strong>.</p>
+      ${applicationRows(data)}
+      ${getEventBlock()}
+      <p style="margin-top:18px;">Our team will review your submission and contact you for the next steps.</p>
+      <p>Regards,<br><strong>ICAIH 2026 Team</strong></p>
+    </div>`;
+}
+
+function buildApplicationAdminHtml(data) {
+  const isResearch = data.applicationType === 'research-paper';
+  return `
+    <div style="font-family:Arial,sans-serif;color:#12213f;line-height:1.6;max-width:760px;margin:auto;">
+      <h2>New ICAIH 2026 ${isResearch ? 'Research Paper Submission' : 'Competition Application'} Received</h2>
+      <p><strong>${escapeHtml(data.fullName)}</strong> has submitted an application.</p>
+      <p>Application ID: <strong>${escapeHtml(data.refId)}</strong></p>
+      ${applicationRows(data)}
+      <h3 style="margin-top:18px;">Description / Abstract</h3>
+      <p style="white-space:pre-line;">${escapeHtml(data.shortDescription || data.abstractText || '-')}</p>
+      ${data.expectedImpact ? `<h3 style="margin-top:18px;">Expected Impact</h3><p style="white-space:pre-line;">${escapeHtml(data.expectedImpact)}</p>` : ''}
+      ${getEventBlock()}
+    </div>`;
+}
+
+function getApplicationAttachments(data) {
+  const attachments = [];
+  const backendRoot = path.join(__dirname, '..');
+
+  if (data.mainFile?.path) {
+    attachments.push({
+      filename: data.mainFile.originalName || path.basename(data.mainFile.path),
+      path: path.join(backendRoot, data.mainFile.path.replace(/^\/+/, ''))
+    });
+  }
+
+  if (data.idFile?.path) {
+    attachments.push({
+      filename: data.idFile.originalName || path.basename(data.idFile.path),
+      path: path.join(backendRoot, data.idFile.path.replace(/^\/+/, ''))
+    });
+  }
+
+  return attachments;
+}
+
+function createApplicationMailOptions(data) {
+  const from = clean(process.env.MAIL_FROM) || `ICAIH 2026 <${clean(process.env.SMTP_USER)}>`;
+  const adminEmail = clean(process.env.ADMIN_EMAIL) || 'info@mrtech.co.in';
+  const isResearch = data.applicationType === 'research-paper';
+  const label = isResearch ? 'Research Paper Submission' : 'Competition Application';
+  const attachments = getApplicationAttachments(data);
+
+  return [
+    {
+      type: 'application-user',
+      message: {
+        from,
+        to: data.email,
+        replyTo: EVENT_INFO.email,
+        subject: `ICAIH 2026 ${label} Received - ${data.refId}`,
+        html: buildApplicationUserHtml(data)
+      }
+    },
+    {
+      type: 'application-admin',
+      message: {
+        from,
+        to: adminEmail,
+        replyTo: data.email,
+        subject: `New ICAIH 2026 ${label} - ${data.refId}`,
+        html: buildApplicationAdminHtml(data),
+        attachments
+      }
+    }
+  ];
+}
+
 function simplifySmtpError(error) {
   const code = error.code || error.command || '';
   const message = error.message || 'Unknown SMTP error';
@@ -509,6 +653,53 @@ async function sendSponsorEmails(data) {
   }
 }
 
+
+function queueApplicationEmails(data) {
+  if (!emailConfigured()) {
+    const missing = getMissingEmailFields();
+    const message = `Application saved. Email service is not configured. Missing values: ${missing.join(', ')}.`;
+    console.warn(message);
+    return { sent: false, queued: false, message };
+  }
+
+  runEmailJob(`Application email job ${data.refId}`, () => sendApplicationEmails(data));
+
+  return {
+    sent: false,
+    queued: true,
+    message: 'Application saved. Confirmation email is being sent to the applicant and admin with uploaded files.'
+  };
+}
+
+async function sendApplicationEmails(data) {
+  if (!emailConfigured()) {
+    const missing = getMissingEmailFields();
+    const message = `Application saved. Email not sent because these backend .env values are missing: ${missing.join(', ')}.`;
+    console.warn(message);
+    return { sent: false, message };
+  }
+
+  try {
+    const mailOptions = createApplicationMailOptions(data);
+    const result = await sendEmailMessages(mailOptions);
+
+    if (!result.ok) {
+      throw new Error(result.error);
+    }
+
+    return {
+      sent: true,
+      message: `Application saved. Confirmation emails sent to applicant and admin using ${result.used}.`
+    };
+  } catch (error) {
+    console.error('Application email error:', error);
+    return {
+      sent: false,
+      message: `Application saved, but email failed. ${simplifySmtpError(error)} Actual error: ${error.message}`
+    };
+  }
+}
+
 async function sendSmtpTestEmail(toEmail) {
   if (!emailConfigured()) {
     const missing = getMissingEmailFields();
@@ -550,8 +741,10 @@ async function sendSmtpTestEmail(toEmail) {
 module.exports = {
   sendRegistrationEmails,
   sendSponsorEmails,
+  sendApplicationEmails,
   queueRegistrationEmails,
   queueSponsorEmails,
+  queueApplicationEmails,
   sendSmtpTestEmail,
   EVENT_INFO
 };

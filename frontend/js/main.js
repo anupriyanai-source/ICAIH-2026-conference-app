@@ -414,6 +414,51 @@ const SPONSOR_PACKAGES = [
       'Website and brochure visibility',
       'Limited branding'
     ]
+  },
+  {
+    title: 'Premium Exhibitor',
+    amount: 39999,
+    accent: '#8a6a00',
+    icon: SPONSOR_ICONS.premium,
+    benefits: [
+      'Exhibition Booth (3m × 3m)',
+      'Spacious stall for product and service showcase',
+      'Display banners, brochures, standees, and live demos',
+      'Direct interaction with healthcare professionals and delegates',
+      'Brand visibility on ICAIH 2026 website',
+      'Company profile included in the official exhibitor directory',
+      'Two complimentary delegate passes'
+    ]
+  },
+  {
+    title: 'Standard Exhibitor',
+    amount: 34999,
+    accent: '#12315f',
+    icon: SPONSOR_ICONS.associate,
+    benefits: [
+      'Exhibition Booth (2m × 2m)',
+      'Dedicated stall space for showcasing products and services',
+      'Opportunity to engage directly with participants',
+      'Company information included in the exhibitor booklet',
+      'One free delegate pass for company representative',
+      'Brand exposure among healthcare professionals, students, and researchers'
+    ]
+  },
+  {
+    title: 'Standard Pavilion',
+    amount: 29999,
+    accent: '#087447',
+    icon: SPONSOR_ICONS.innovation,
+    benefits: [
+      'Startup showcase space',
+      'Dedicated table space in the Startup Pavilion',
+      'Present innovative healthcare and AI solutions',
+      'Startup profile included in the official conference directory',
+      'Meet potential investors and funding partners',
+      'Interact with AI experts, researchers, and industry leaders',
+      'Opportunity to demonstrate ideas and gain valuable feedback',
+      'Build collaborations for future growth'
+    ]
   }
 ];
 
@@ -1486,4 +1531,379 @@ document.addEventListener('keydown', e => {
     closeSponsorModal();
     closeSuccessModal();
   }
+});
+/* ════════════════════════════════════════════════════════════════
+   APPLY NOW: COMPETITION APPLICATION + RESEARCH PAPER SUBMISSION
+   ════════════════════════════════════════════════════════════════ */
+
+const APPLICATION_CATEGORY_OPTIONS = {
+  'pre-conference-competition': [
+    'School Student', 'UG Student', 'PG Student', 'Medical Student', 'Engineering Student',
+    'Nursing Student', 'Pharmacy Student', 'Research Scholar', 'PhD Scholar',
+    'Faculty / Researcher', 'Startup / Innovator', 'Other'
+  ],
+  'research-paper': [
+    'UG Student', 'PG Student', 'Research Scholar', 'Faculty Member',
+    'Doctor / Healthcare Professional', 'Industry Professional', 'Startup Founder', 'Other'
+  ]
+};
+
+const APPLICATION_TOPIC_OPTIONS = {
+  'pre-conference-competition': [
+    'AI in Healthcare', 'Medical Imaging', 'Digital Health', 'Healthcare Analytics',
+    'Healthcare Innovation', 'Rural Healthcare', 'Telemedicine', 'Healthcare 2035', 'Other'
+  ],
+  'research-paper': [
+    'AI in Diagnostics', 'AI in Medical Imaging', 'AI for Public Health', 'AI in Rural Healthcare',
+    'AI in Telemedicine', 'Clinical Decision Support Systems', 'Digital Health and Smart Hospitals',
+    'AI Ethics and Patient Safety', 'Healthcare Data Privacy and Security', 'Healthcare AI Startups',
+    'Biomedical AI Devices', 'Other'
+  ]
+};
+
+function populateSelectOptions(selectId, options, selectedValue = '') {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+
+  select.innerHTML = options
+    .map(value => `<option value="${value}">${value}</option>`)
+    .join('');
+
+  if (selectedValue && options.includes(selectedValue)) {
+    select.value = selectedValue;
+  }
+}
+
+function openApplicationModal() {
+  const modal = document.getElementById('applicationModal');
+  if (!modal) return;
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  setApplicationType(document.getElementById('applicationType')?.value || 'pre-conference-competition');
+}
+
+function closeApplicationModal() {
+  const modal = document.getElementById('applicationModal');
+  if (!modal) return;
+
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+function setInactiveApplicationFields() {
+  const applicationType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+  const inactiveSelector = applicationType === 'research-paper' ? '.pre-competition-fields' : '.research-paper-fields';
+  const activeSelector = applicationType === 'research-paper' ? '.research-paper-fields' : '.pre-competition-fields';
+
+  document.querySelectorAll(`${inactiveSelector} input, ${inactiveSelector} select, ${inactiveSelector} textarea`).forEach(field => {
+    field.disabled = true;
+  });
+
+  document.querySelectorAll(`${activeSelector} input, ${activeSelector} select, ${activeSelector} textarea`).forEach(field => {
+    field.disabled = false;
+  });
+
+  document.querySelectorAll('.office-use-section input, .office-use-section textarea').forEach(field => {
+    field.disabled = true;
+  });
+}
+
+function setApplicationType(type) {
+  const safeType = type === 'research-paper' ? 'research-paper' : 'pre-conference-competition';
+  const applicationTypeInput = document.getElementById('applicationType');
+  const submitButton = document.getElementById('applicationSubmitBtn');
+
+  if (applicationTypeInput) applicationTypeInput.value = safeType;
+
+  document.body.classList.toggle('application-research-mode', safeType === 'research-paper');
+  document.body.classList.toggle('application-competition-mode', safeType !== 'research-paper');
+
+  document.querySelectorAll('.application-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.applicationType === safeType);
+  });
+
+  if (submitButton) {
+    submitButton.textContent = safeType === 'research-paper' ? 'Submit Research Paper' : 'Submit Application';
+  }
+
+  const panel = document.querySelector('.application-form-scroll');
+  if (panel) panel.scrollTop = 0;
+
+  setInactiveApplicationFields();
+  updateApplicationFileMailLinks();
+  if (safeType !== 'research-paper') setParticipationType(document.querySelector('input[name="participationType"]:checked')?.value || 'Individual');
+}
+
+function validateApplicationFiles(form) {
+  const maxBytes = 15 * 1024 * 1024;
+  const applicationType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+  const allowedExt = applicationType === 'research-paper'
+    ? /\.(pdf|doc|docx)$/i
+    : /\.(pdf|doc|docx|ppt|pptx|png|jpg|jpeg)$/i;
+  const errorText = applicationType === 'research-paper'
+    ? 'Invalid file type. Accepted formats for research paper: PDF, DOC, DOCX.'
+    : 'Invalid file type. Accepted formats: PDF, DOC, DOCX, PPT, PPTX, PNG, JPG.';
+  const submissionFileInput = form.querySelector('input[name="submissionFile"]:not(:disabled)');
+  const idProofFileInput = form.querySelector('input[name="idProofFile"]:not(:disabled)');
+  const files = [submissionFileInput?.files?.[0], idProofFileInput?.files?.[0]].filter(Boolean);
+
+  for (const file of files) {
+    if (file.size > maxBytes) {
+      showMessage('applicationMessage', `${file.name} is larger than 15 MB.`, 'error');
+      return false;
+    }
+
+    if (!allowedExt.test(file.name)) {
+      showMessage('applicationMessage', errorText, 'error');
+      return false;
+    }
+  }
+
+  return true;
+}
+
+document.getElementById('openApplicationModal')?.addEventListener('click', openApplicationModal);
+document.getElementById('openApplicationModalNav')?.addEventListener('click', openApplicationModal);
+document.getElementById('closeApplicationModal')?.addEventListener('click', closeApplicationModal);
+
+document.getElementById('applicationModal')?.addEventListener('click', e => {
+  if (e.target.id === 'applicationModal') closeApplicationModal();
+});
+
+document.querySelectorAll('.application-tab').forEach(tab => {
+  tab.addEventListener('click', () => setApplicationType(tab.dataset.applicationType));
+});
+
+function clearApplicationForm() {
+  const form = document.getElementById('applicationForm');
+  const currentType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+  if (!form) return;
+
+  form.reset();
+  setApplicationType(currentType);
+  showMessage('applicationMessage', '', '');
+
+  const formScroll = document.querySelector('.application-form-scroll');
+  if (formScroll) formScroll.scrollTop = 0;
+}
+
+document.getElementById('applicationClearBtn')?.addEventListener('click', clearApplicationForm);
+
+function setParticipationType(type) {
+  const safeType = type === 'Team' ? 'Team' : 'Individual';
+  document.body.classList.toggle('participation-team', safeType === 'Team');
+  document.body.classList.toggle('participation-individual', safeType !== 'Team');
+
+  const selected = document.querySelector(`input[name="participationType"][value="${safeType}"]`);
+  if (selected) selected.checked = true;
+
+  const teamCount = document.querySelector('input[name="teamMembersCount"]');
+  const teamMembers = document.querySelector('textarea[name="teamMemberNames"]');
+  const individualMember = document.querySelector('input[name="individualMemberName"]');
+
+  if (safeType === 'Team') {
+    if (teamCount) teamCount.disabled = false;
+    if (teamMembers) teamMembers.disabled = false;
+    if (individualMember) individualMember.disabled = true;
+  } else {
+    if (teamCount) {
+      teamCount.value = '';
+      teamCount.disabled = true;
+    }
+    if (teamMembers) {
+      teamMembers.value = '';
+      teamMembers.disabled = true;
+    }
+    if (individualMember) individualMember.disabled = false;
+  }
+}
+
+document.querySelectorAll('input[name="participationType"]').forEach(input => {
+  input.addEventListener('change', () => setParticipationType(input.value));
+});
+
+function syncPreConferenceSubmissionTitle() {
+  const applicationType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+  const hiddenTitle = document.getElementById('applicationSubmissionTitle');
+  if (!hiddenTitle) return;
+
+  if (applicationType === 'research-paper') {
+    const presentationType = document.querySelector('input[name="presentationType"]:checked:not(:disabled)')?.value || '';
+    const topic = document.querySelector('input[name="topicTheme"]:checked:not(:disabled)')?.value || '';
+    hiddenTitle.value = presentationType || topic || 'Research Paper Presentation Submission';
+    return;
+  }
+
+  const selectedCompetition = document.querySelector('input[name="competitionCategory"]:checked:not(:disabled)')?.value || '';
+  const selectedTopic = document.querySelector('input[name="topicTheme"]:checked:not(:disabled)')?.value || '';
+  hiddenTitle.value = selectedCompetition || selectedTopic || 'Pre-Conference Competition Submission';
+}
+
+
+function buildSafeFileName(value, fallback = 'Topic') {
+  return String(value || '')
+    .trim()
+    .replace(/[^a-zA-Z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '') || fallback;
+}
+
+function getActiveApplicationTopic() {
+  const applicationType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+  if (applicationType === 'research-paper') {
+    return document.querySelector('.research-paper-fields input[name="topicTheme"]:checked:not(:disabled)')?.value
+      || document.querySelector('input[name="presentationType"]:checked:not(:disabled)')?.value
+      || 'Research_Topic';
+  }
+  return document.querySelector('.pre-competition-fields input[name="topicTheme"]:checked:not(:disabled)')?.value
+    || document.querySelector('input[name="competitionCategory"]:checked:not(:disabled)')?.value
+    || 'Competition_Topic';
+}
+
+function getTypedApplicationFileName(defaultName) {
+  const applicationType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+  const selector = applicationType === 'research-paper'
+    ? 'input[name="emailFileNameResearch"]'
+    : 'input[name="emailFileNamePre"]';
+  const typedName = document.querySelector(selector)?.value?.trim();
+  return typedName || defaultName;
+}
+
+function updateApplicationFileMailLinks() {
+  const applicationType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+  const enteredName = document.querySelector('input[name="fullName"]:not(:disabled)')?.value || '';
+  const fullName = String(enteredName).trim() || 'YourName';
+  const topic = getActiveApplicationTopic();
+  const suggestedBase = `${buildSafeFileName(fullName, 'YourName')}_${buildSafeFileName(topic, 'Topic')}`;
+  const suggestedName = `${suggestedBase}.pdf`;
+  const finalFileName = getTypedApplicationFileName(suggestedName);
+  const formName = applicationType === 'research-paper'
+    ? 'Research Paper Presentation Submission Form'
+    : 'Pre-Conference Competitions Application Form';
+  const subject = `ICAIH 2026 File Submission - ${finalFileName}`;
+  const body = [
+    `Dear ICAIH 2026 Team,`,
+    ``,
+    `I am sending my file for the ${formName}.`,
+    ``,
+    `Applicant Name: ${fullName}`,
+    `Topic / Category: ${topic}`,
+    `File Name: ${finalFileName}`,
+    ``,
+    `I will attach the file(s) in this email and send it.`,
+    ``,
+    `Regards,`,
+    `${fullName}`
+  ].join('\n');
+
+  document.querySelectorAll('[data-file-mail-link]').forEach(link => {
+    const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent('divyav16.ai@gmail.com')}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    link.href = gmailComposeUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.dataset.gmailComposeUrl = gmailComposeUrl;
+    link.setAttribute('aria-label', `Open Gmail and send files to divyav16.ai@gmail.com for ${formName}`);
+  });
+
+  document.querySelectorAll('[data-file-name-format]').forEach(item => {
+    item.textContent = suggestedBase;
+  });
+  document.querySelectorAll('[data-file-name-example]').forEach(item => {
+    item.textContent = suggestedName;
+  });
+}
+
+document.querySelectorAll('[data-file-mail-link]').forEach(link => {
+  link.addEventListener('click', event => {
+    updateApplicationFileMailLinks();
+    const gmailComposeUrl = link.dataset.gmailComposeUrl || link.getAttribute('href');
+    if (!gmailComposeUrl) return;
+    event.preventDefault();
+    window.open(gmailComposeUrl, '_blank', 'noopener,noreferrer');
+  });
+});
+
+
+document.querySelectorAll('input[name="competitionCategory"]').forEach(input => {
+  input.addEventListener('change', syncPreConferenceSubmissionTitle);
+});
+
+document.querySelectorAll('#applicationForm input, #applicationForm select, #applicationForm textarea').forEach(field => {
+  field.addEventListener('input', () => {
+    syncPreConferenceSubmissionTitle();
+    updateApplicationFileMailLinks();
+  });
+  field.addEventListener('change', () => {
+    syncPreConferenceSubmissionTitle();
+    updateApplicationFileMailLinks();
+  });
+});
+
+setApplicationType('pre-conference-competition');
+setParticipationType('Individual');
+syncPreConferenceSubmissionTitle();
+updateApplicationFileMailLinks();
+
+document.getElementById('applicationForm')?.addEventListener('submit', async e => {
+  e.preventDefault();
+
+  const form = e.currentTarget;
+
+  if (!validatePhoneFields(form, 'applicationMessage')) return;
+  if (!validateApplicationFiles(form)) return;
+
+  const submitButton = document.getElementById('applicationSubmitBtn');
+  const originalSubmitText = submitButton ? submitButton.textContent : '';
+
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+  }
+
+  updateApplicationFileMailLinks();
+  showMessage('applicationMessage', 'Submitting application…', '');
+
+  try {
+    const formData = new FormData(form);
+    const participationType = formData.get('participationType');
+    if (participationType === 'Individual') {
+      formData.set('teamMemberNames', formData.get('individualMemberName') || '');
+      formData.delete('teamMembersCount');
+    }
+
+    const response = await fetch(`${API_BASE}/api/applications`, {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Application submission failed. Please check the backend terminal error, MySQL connection, and file format.');
+    }
+
+    showMessage(
+      'applicationMessage',
+      `${result.message || 'Form submitted successfully. Admin has been notified at info@mrtech.co.in.'} Reference ID: ${result.refId || '—'}`,
+      'ok'
+    );
+
+    const submittedType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+    form.reset();
+    setApplicationType(submittedType);
+  } catch (error) {
+    showMessage('applicationMessage', error.message || 'Unable to submit. Please start the backend with npm start and check the terminal error.', 'error');
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = originalSubmitText || 'Submit Application';
+    }
+  }
+});
+
+/* Add Apply Now modal to ESC close behavior */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeApplicationModal();
 });
