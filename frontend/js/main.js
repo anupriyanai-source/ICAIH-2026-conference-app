@@ -1823,14 +1823,57 @@ function updateApplicationFileMailLinks() {
   });
 }
 
-document.querySelectorAll('[data-file-mail-link]').forEach(link => {
+function isMobileOrTabletDevice() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1 && window.innerWidth <= 1024);
+}
+
+function parseMailtoUrl(mailToUrl) {
+  const value = String(mailToUrl || '');
+  const withoutScheme = value.replace(/^mailto:/i, '');
+  const [toPart, queryPart = ''] = withoutScheme.split('?');
+  const params = new URLSearchParams(queryPart);
+  return {
+    to: decodeURIComponent(toPart || ''),
+    subject: params.get('subject') || '',
+    body: params.get('body') || ''
+  };
+}
+
+function buildGmailComposeUrl(mailToUrl) {
+  const mail = parseMailtoUrl(mailToUrl);
+  const params = new URLSearchParams({
+    view: 'cm',
+    fs: '1',
+    to: mail.to,
+    su: mail.subject,
+    body: mail.body
+  });
+  return `https://mail.google.com/mail/?${params.toString()}`;
+}
+
+function openEmailCompose(mailToUrl) {
+  if (!mailToUrl) return;
+
+  // Mobile/tablet: open the installed mail app directly.
+  // Laptop/desktop: open Gmail compose directly because many laptops do not have a default mail app configured.
+  if (isMobileOrTabletDevice()) {
+    window.location.href = mailToUrl;
+    return;
+  }
+
+  window.open(buildGmailComposeUrl(mailToUrl), '_blank', 'noopener,noreferrer');
+}
+
+document.querySelectorAll('a[href^="mailto:"], [data-file-mail-link]').forEach(link => {
   link.addEventListener('click', event => {
-    updateApplicationFileMailLinks();
+    if (link.matches('[data-file-mail-link]')) {
+      updateApplicationFileMailLinks();
+    }
     const mailToUrl = link.dataset.mailToUrl || link.getAttribute('href');
     if (!mailToUrl) return;
     event.preventDefault();
-    // Use mailto so laptop, mobile, and tablet open the default mail compose app directly.
-    window.location.assign(mailToUrl);
+    openEmailCompose(mailToUrl);
   });
 });
 
