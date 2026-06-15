@@ -142,7 +142,7 @@ const EVENT_INFO = {
   time: '9:30 AM – 5:30 PM',
   venue: 'Anna Centenary Library, Kotturpuram, Chennai',
   email: 'info@mrtech.co.in',
-  emailHref: 'https://mail.google.com/mail/?view=cm&fs=1&to=info%40mrtech.co.in&su=ICAIH%202026%20Inquiry&body=Dear%20ICAIH%202026%20Team%2C%0D%0A%0D%0A'
+  emailHref: 'mailto:info@mrtech.co.in?subject=ICAIH%202026%20Inquiry&body=Dear%20ICAIH%202026%20Team%2C%0D%0A%0D%0A'
 };
 
 const REGISTRATION_FEES = {
@@ -1807,12 +1807,12 @@ function updateApplicationFileMailLinks() {
   ].join('\n');
 
   document.querySelectorAll('[data-file-mail-link]').forEach(link => {
-    const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent('divyav16.ai@gmail.com')}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    link.href = gmailComposeUrl;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.dataset.gmailComposeUrl = gmailComposeUrl;
-    link.setAttribute('aria-label', `Open Gmail and send files to divyav16.ai@gmail.com for ${formName}`);
+    const mailToUrl = `mailto:divyav16.ai@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    link.href = mailToUrl;
+    link.removeAttribute('target');
+    link.removeAttribute('rel');
+    link.dataset.mailToUrl = mailToUrl;
+    link.setAttribute('aria-label', `Open mail app and send files to divyav16.ai@gmail.com for ${formName}`);
   });
 
   document.querySelectorAll('[data-file-name-format]').forEach(item => {
@@ -1826,10 +1826,11 @@ function updateApplicationFileMailLinks() {
 document.querySelectorAll('[data-file-mail-link]').forEach(link => {
   link.addEventListener('click', event => {
     updateApplicationFileMailLinks();
-    const gmailComposeUrl = link.dataset.gmailComposeUrl || link.getAttribute('href');
-    if (!gmailComposeUrl) return;
+    const mailToUrl = link.dataset.mailToUrl || link.getAttribute('href');
+    if (!mailToUrl) return;
     event.preventDefault();
-    window.open(gmailComposeUrl, '_blank', 'noopener,noreferrer');
+    // Use mailto so laptop, mobile, and tablet open the default mail compose app directly.
+    window.location.assign(mailToUrl);
   });
 });
 
