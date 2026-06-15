@@ -1667,6 +1667,14 @@ function validateApplicationFiles(form) {
 
 document.getElementById('openApplicationModal')?.addEventListener('click', openApplicationModal);
 document.getElementById('openApplicationModalNav')?.addEventListener('click', openApplicationModal);
+function openCompetitionFromButton() {
+  navLinks?.classList.remove('open');
+  openApplicationModal();
+}
+
+document.getElementById('openCompetitionModalNav')?.addEventListener('click', openCompetitionFromButton);
+document.getElementById('openCompetitionModalHero')?.addEventListener('click', openCompetitionFromButton);
+document.getElementById('openCompetitionModalFooter')?.addEventListener('click', openApplicationModal);
 document.getElementById('closeApplicationModal')?.addEventListener('click', closeApplicationModal);
 
 document.getElementById('applicationModal')?.addEventListener('click', e => {
