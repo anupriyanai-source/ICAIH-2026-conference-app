@@ -51,6 +51,7 @@ async function initDB() {
       CREATE TABLE IF NOT EXISTS sponsor_inquiries (
         id              INT AUTO_INCREMENT PRIMARY KEY,
         ref_id          VARCHAR(40) UNIQUE NOT NULL,
+        inquiry_type    VARCHAR(20) DEFAULT 'sponsor',
         company_name    VARCHAR(200) NOT NULL,
         contact_person  VARCHAR(150) NOT NULL,
         email           VARCHAR(150) NOT NULL,
@@ -63,6 +64,23 @@ async function initDB() {
         created_at      DATETIME     DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS sponsor_inquiry_sequence (
+        sequence_key VARCHAR(20) PRIMARY KEY,
+        last_number INT NOT NULL DEFAULT 0
+      )
+    `);
+
+    try {
+      await conn.query(`
+        ALTER TABLE sponsor_inquiries
+        ADD COLUMN inquiry_type VARCHAR(20) DEFAULT 'sponsor'
+        AFTER ref_id
+      `);
+    } catch (error) {
+      if (error.code !== 'ER_DUP_FIELDNAME') throw error;
+    }
 
 
 
