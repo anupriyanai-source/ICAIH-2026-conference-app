@@ -51,6 +51,98 @@ function normalizeFile(file) {
   };
 }
 
+
+
+function validateApplicationRequiredDetails(body, applicationType) {
+  const commonFields = [
+    ['fullName', 'Full name'],
+    ['email', 'Email ID'],
+    ['mobile', 'Mobile number'],
+    ['institutionName', 'Institution / organization name'],
+    ['department', 'Department'],
+    ['designation', 'Designation / position / year of study'],
+    ['applicantConfirmationName', 'Applicant confirmation name'],
+    ['applicantConfirmationDate', 'Applicant confirmation date'],
+    ['signatureName', 'Signature / typed name']
+  ];
+
+  const typeFields = {
+    'pre-conference-competition': [
+      ['whatsapp', 'WhatsApp number'],
+      ['cityState', 'City / state'],
+      ['participantCategory', 'Participant category'],
+      ['competitionCategory', 'Competition category'],
+      ['participationType', 'Participation type'],
+      ['topicTheme', 'Topic / theme area'],
+      ['shortDescription', 'Short description'],
+      ['expectedImpact', 'Expected impact'],
+      ['competitionDeclarationRules', 'Competition rules declaration'],
+      ['competitionDeclarationPresent', 'Presentation declaration'],
+      ['competitionDeclarationTrue', 'Information declaration']
+    ],
+    'research-paper': [
+      ['whatsapp', 'WhatsApp number'],
+      ['cityState', 'City / state'],
+      ['participantCategory', 'Applicant category'],
+      ['presentationType', 'Presentation type'],
+      ['topicTheme', 'Conference theme / topic area'],
+      ['shortDescription', 'Abstract / short summary'],
+      ['keywords', 'Keywords'],
+      ['correspondingAuthor', 'Primary author name'],
+      ['coAuthorNames', 'Co-author name(s)'],
+      ['guideName', 'Guide / mentor name'],
+      ['preferredPresentationMode', 'Preferred presentation mode'],
+      ['attendInPerson', 'Conference attendance option'],
+      ['researchDeclarationPresent', 'Research presentation declaration'],
+      ['researchDeclarationRules', 'Research rules declaration'],
+      ['researchDeclarationTrue', 'Research information declaration']
+    ],
+    'award-nomination': [
+      ['country', 'Country'],
+      ['linkedinProfile', 'LinkedIn profile / website'],
+      ['awardCategory', 'Award category'],
+      ['shortDescription', 'Short biography'],
+      ['keyAchievements', 'Key achievements and contributions'],
+      ['researchPublications', 'Research publications'],
+      ['patents', 'Patents / intellectual property'],
+      ['previousAwards', 'Previous awards and recognitions'],
+      ['expectedImpact', 'Award justification'],
+      ['supportingDocuments', 'Supporting documents included']
+    ]
+  };
+
+  const requiredFields = [...commonFields, ...(typeFields[applicationType] || [])];
+
+  for (const [field, label] of requiredFields) {
+    if (!clean(body[field])) {
+      const err = new Error(`${label} is required. Please fill all required fields marked in red.`);
+      err.status = 400;
+      throw err;
+    }
+  }
+
+  if (clean(body.participantCategory) === 'Other' && !clean(body.participantCategoryOther || body.participantCategoryOtherResearch)) {
+    const err = new Error('Please specify the participant/applicant category.');
+    err.status = 400;
+    throw err;
+  }
+
+  if (clean(body.topicTheme) === 'Other' && !clean(body.topicThemeOther || body.topicThemeOtherResearch)) {
+    const err = new Error('Please specify the topic/theme area.');
+    err.status = 400;
+    throw err;
+  }
+
+  if (applicationType === 'pre-conference-competition') {
+    const participationType = clean(body.participationType);
+    if (participationType === 'Team') {
+      validateRequired(body, ['teamName', 'teamMembersCount', 'teamMemberNames']);
+    } else {
+      validateRequired(body, ['teamName', 'individualMemberName']);
+    }
+  }
+}
+
 function validateRequired(data, fields) {
   for (const field of fields) {
     if (!clean(data[field])) {
@@ -86,6 +178,8 @@ const ApplicationService = {
       err.status = 400;
       throw err;
     }
+
+    validateApplicationRequiredDetails(body, applicationType);
 
     const mainFile = normalizeFile(files.submissionFile?.[0]);
     const idFile = normalizeFile(files.idProofFile?.[0]);

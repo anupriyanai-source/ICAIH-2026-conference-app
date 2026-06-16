@@ -399,9 +399,7 @@ function applicationRows(data) {
     ['Guide / Mentor', data.guideName || '-'],
     ['Preferred Presentation Mode', data.preferredPresentationMode || '-'],
     ['Attend In Person', data.attendInPerson || '-'],
-    ['Uploaded Main File', data.fileUploadOriginalName || data.mainFile?.originalName || '-'],
-    ['Uploaded Supporting File', data.idUploadOriginalName || data.idFile?.originalName || '-'],
-    ['Separate Email File Name', data.emailFileName || '-'],
+    ['Supporting Documents', 'To be sent directly by email to divyav16.ai@gmail.com if required.'],
     ['Applicant Confirmation Name', data.applicantConfirmName || '-'],
     ['Applicant Confirmation Date', data.applicantConfirmDate || '-'],
     ['Signature', data.applicantSignature || '-']
@@ -690,7 +688,7 @@ function queueApplicationEmails(data) {
   return {
     sent: false,
     queued: true,
-    message: 'Application saved. Confirmation email is being sent to the applicant and admin with uploaded files.'
+    message: 'Application saved. Confirmation email is being sent to the applicant and admin.'
   };
 }
 

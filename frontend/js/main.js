@@ -512,6 +512,11 @@ function renderSponsorPackages() {
   if (!grid) return;
 
   grid.innerHTML = SPONSOR_PACKAGES.map((pkg, index) => `
+    ${pkg.title === 'Premium Exhibitor' ? `
+      <div class="sponsor-grid-heading reveal">
+        <span>Exhibitor Stall Opportunities</span>
+      </div>
+    ` : ''}
     <article class="feature-panel reveal sponsor-package-card" style="border-top:4px solid ${pkg.accent};">
       <div class="sponsor-card-head">
         <span class="sponsor-card-icon" style="color:${pkg.accent}; border-color:${pkg.accent}; background:${pkg.accent}1A;" aria-hidden="true">${pkg.icon}</span>
@@ -1693,11 +1698,14 @@ function setApplicationType(type) {
   if (panel) panel.scrollTop = 0;
 
   setInactiveApplicationFields();
+  setConditionalOtherFields();
+  applyApplicationRequiredFields();
   updateApplicationFileMailLinks();
   if (safeType === 'pre-conference-competition') {
     setParticipationType(document.querySelector('input[name="participationType"]:checked')?.value || 'Individual');
   }
   syncPreConferenceSubmissionTitle();
+  applyApplicationRequiredFields();
 }
 
 function validateApplicationFiles(form) {
@@ -1722,6 +1730,139 @@ function validateApplicationFiles(form) {
       showMessage('applicationMessage', errorText, 'error');
       return false;
     }
+  }
+
+  return true;
+}
+
+
+function isVisibleApplicationElement(element) {
+  if (!element || element.disabled) return false;
+  return Boolean(element.offsetParent || element.getClientRects().length);
+}
+
+function setConditionalOtherFields() {
+  document.querySelectorAll('#applicationForm .inline-other').forEach(label => {
+    const radio = label.querySelector('input[type="radio"]');
+    const textInput = label.querySelector('input:not([type="radio"])');
+    if (!radio || !textInput) return;
+
+    const active = !radio.disabled && radio.checked;
+    textInput.disabled = radio.disabled || !active;
+    textInput.required = active;
+    if (!active) textInput.value = '';
+  });
+}
+
+function addRequiredStar(target) {
+  if (!target || target.querySelector('[data-auto-required-star]') || target.querySelector('.required-star')) return;
+  target.insertAdjacentHTML('beforeend', ' <b class="required-star" data-auto-required-star>*</b>');
+}
+
+function removeAutoRequiredStars(scope) {
+  scope.querySelectorAll('[data-auto-required-star]').forEach(star => star.remove());
+}
+
+function applyApplicationRequiredFields() {
+  const form = document.getElementById('applicationForm');
+  if (!form) return;
+
+  removeAutoRequiredStars(form);
+  setConditionalOtherFields();
+
+  const fields = Array.from(form.querySelectorAll('input, select, textarea'));
+
+  fields.forEach(field => {
+    if (field.type === 'hidden' || field.type === 'file' || field.disabled) return;
+
+    const visible = isVisibleApplicationElement(field);
+    if (!visible) {
+      field.required = false;
+      return;
+    }
+
+    if (field.type === 'radio') {
+      const block = field.closest('.choice-block');
+      addRequiredStar(block?.querySelector('.choice-title'));
+      field.required = true;
+      return;
+    }
+
+    if (field.type === 'checkbox') {
+      const group = field.closest('.choice-block');
+      if (group) {
+        addRequiredStar(group.querySelector('.choice-title'));
+      } else {
+        addRequiredStar(field.closest('label')?.querySelector('span'));
+        field.required = true;
+      }
+      return;
+    }
+
+    if (!field.matches('[data-file-name-input]')) {
+      field.required = true;
+      addRequiredStar(field.closest('label')?.querySelector('span'));
+    }
+  });
+}
+
+function getFieldLabel(field) {
+  const label = field.closest('label');
+  if (!label) return field.name || 'This field';
+  const span = label.querySelector('span');
+  return (span ? span.textContent : label.textContent).replace('*', '').trim() || field.name || 'This field';
+}
+
+function validateActiveApplicationRequiredFields(form) {
+  applyApplicationRequiredFields();
+
+  const controls = Array.from(form.querySelectorAll('input, select, textarea'))
+    .filter(field => field.type !== 'hidden' && field.type !== 'file' && isVisibleApplicationElement(field));
+
+  const firstEmpty = controls.find(field => {
+    if (field.type === 'radio') return false;
+    if (field.type === 'checkbox') return field.required && !field.checked;
+    return field.required && !String(field.value || '').trim();
+  });
+
+  if (firstEmpty) {
+    firstEmpty.classList.add('field-error');
+    firstEmpty.focus({ preventScroll: false });
+    showMessage('applicationMessage', `${getFieldLabel(firstEmpty)} is required. Please fill all required fields marked in red.`, 'error');
+    return false;
+  }
+
+  const radioNames = [...new Set(controls.filter(field => field.type === 'radio' && field.required).map(field => field.name))];
+  for (const name of radioNames) {
+    const group = controls.filter(field => field.type === 'radio' && field.name === name);
+    if (!group.some(field => field.checked)) {
+      const first = group[0];
+      first.focus({ preventScroll: false });
+      const title = first.closest('.choice-block')?.querySelector('.choice-title')?.textContent.replace('*', '').trim() || 'Please select one option';
+      showMessage('applicationMessage', `${title} is required. Please select one option.`, 'error');
+      return false;
+    }
+  }
+
+  const checkboxGroups = [...new Set(controls
+    .filter(field => field.type === 'checkbox' && field.closest('.choice-block'))
+    .map(field => field.name))];
+
+  for (const name of checkboxGroups) {
+    const group = controls.filter(field => field.type === 'checkbox' && field.name === name);
+    if (group.length && !group.some(field => field.checked)) {
+      const first = group[0];
+      first.focus({ preventScroll: false });
+      const title = first.closest('.choice-block')?.querySelector('.choice-title')?.textContent.replace('*', '').trim() || 'Please select at least one option';
+      showMessage('applicationMessage', `${title} is required. Please select at least one option.`, 'error');
+      return false;
+    }
+  }
+
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    showMessage('applicationMessage', 'Please fill all required fields marked in red before submitting.', 'error');
+    return false;
   }
 
   return true;
@@ -1789,6 +1930,8 @@ function setParticipationType(type) {
     }
     if (individualMember) individualMember.disabled = false;
   }
+
+  if (typeof applyApplicationRequiredFields === 'function') applyApplicationRequiredFields();
 }
 
 document.querySelectorAll('input[name="participationType"]').forEach(input => {
@@ -1951,11 +2094,17 @@ document.querySelectorAll('input[name="competitionCategory"], input[name="presen
 
 document.querySelectorAll('#applicationForm input, #applicationForm select, #applicationForm textarea').forEach(field => {
   field.addEventListener('input', () => {
+    field.classList.remove('field-error');
     syncPreConferenceSubmissionTitle();
+    setConditionalOtherFields();
+    applyApplicationRequiredFields();
     updateApplicationFileMailLinks();
   });
   field.addEventListener('change', () => {
+    field.classList.remove('field-error');
     syncPreConferenceSubmissionTitle();
+    setConditionalOtherFields();
+    applyApplicationRequiredFields();
     updateApplicationFileMailLinks();
   });
 });
@@ -1970,6 +2119,7 @@ document.getElementById('applicationForm')?.addEventListener('submit', async e =
 
   const form = e.currentTarget;
 
+  if (!validateActiveApplicationRequiredFields(form)) return;
   if (!validatePhoneFields(form, 'applicationMessage')) return;
   if (!validateApplicationFiles(form)) return;
 

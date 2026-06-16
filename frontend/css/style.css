@@ -3196,6 +3196,26 @@ body {
   margin-bottom: 3rem;
 }
 
+
+.sponsor-grid-heading {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin: 0.5rem 0 -0.25rem;
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(30, 58, 138, 0.1), rgba(59, 130, 246, 0.12));
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  color: var(--primary);
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sponsor-grid-heading span {
+  display: inline-block;
+}
+
 .sponsor-package-card {
   display: flex;
   flex-direction: column;
@@ -5277,5 +5297,98 @@ body.application-award-mode .pdf-form-header.award-nomination-fields {
     min-width: 46px !important;
     min-height: 46px !important;
     font-size: 30px !important;
+  }
+}
+
+/* ICAIH 2026 competition forms: required-field validation and no-upload flow */
+.application-form input.field-error,
+.application-form select.field-error,
+.application-form textarea.field-error {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.14) !important;
+}
+
+.application-form input:required,
+.application-form select:required,
+.application-form textarea:required {
+  scroll-margin-top: 120px;
+}
+
+.application-form .choice-title .required-star,
+.application-form label span .required-star,
+.application-form .checkbox-line span .required-star {
+  color: #dc2626 !important;
+  font-weight: 800 !important;
+}
+
+.file-instruction-section .file-mail-card {
+  margin-top: 12px;
+}
+
+.file-instruction-section small {
+  display: block;
+  margin-top: 10px;
+  line-height: 1.45;
+}
+
+.file-name-instruction-card {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 14px;
+  background: #f8fbff;
+  color: #102247;
+}
+
+.file-name-instruction-card strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.84rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1d4ed8;
+}
+
+.file-name-instruction-card p {
+  margin: 0 0 8px;
+  line-height: 1.45;
+}
+
+.file-name-instruction-card code {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #eef4ff;
+  border: 1px dashed rgba(37, 99, 235, 0.35);
+  color: #0f172a;
+  font-family: inherit;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.file-name-instruction-card small {
+  display: block;
+  margin-top: 8px;
+  color: #64748b;
+  overflow-wrap: anywhere;
+}
+
+.file-name-input-label {
+  margin-top: 12px;
+}
+
+.file-name-input-label input {
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .file-name-instruction-card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .file-name-instruction-card code {
+    font-size: 0.9rem;
   }
 }
