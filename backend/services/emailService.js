@@ -7,7 +7,8 @@ const EVENT_INFO = {
   date: '18 July 2026',
   time: '9:30 AM – 5:30 PM',
   venue: 'Anna Centenary Library, Kotturpuram, Chennai',
-  email: 'info@mrtech.co.in'
+  email: 'info@mrtech.co.in',
+  competitionEmail: 'divyav16.ai@gmail.com'
 };
 
 function escapeHtml(value) {
@@ -208,6 +209,8 @@ function registrationRows(data) {
     ['Role', data.role],
     ['Category', data.category],
     ['Paid Amount', formatINR(data.feeAmount)],
+    ['Payment Status', data.paymentStatus || 'pending-verification'],
+    ['UTR / Transaction ID', data.paymentReference || '-'],
     ['Bulk Offer', data.bulkOffer || '-'],
     ['Student Count', data.studentCount || '-']
   ];
@@ -296,6 +299,7 @@ function sponsorRows(data) {
     ['Sponsorship Tier', data.sponsorTier],
     ['Paid Amount', formatINR(data.feeAmount)],
     ['Payment Status', data.paymentStatus || 'pending-verification'],
+    ['UTR / Transaction ID', data.paymentReference || '-'],
     ['Message', data.message || '-']
   ];
 
@@ -363,21 +367,30 @@ function createSponsorMailOptions(data) {
 }
 
 
+function getApplicationLabel(applicationType) {
+  if (applicationType === 'research-paper') return 'Research Paper Submission';
+  if (applicationType === 'award-nomination') return 'ICAIH 2026 International Awards Nomination';
+  return 'Pre-Conference Competitions Application';
+}
+
 function applicationRows(data) {
   const isResearch = data.applicationType === 'research-paper';
+  const isAward = data.applicationType === 'award-nomination';
   const rows = [
     ['Application ID', data.refId],
-    ['Application Type', isResearch ? 'Research Paper Presentation Submission' : 'Pre-Conference Competitions Application'],
+    ['Application Type', getApplicationLabel(data.applicationType)],
     ['Full Name', data.fullName],
     ['Email', data.email],
     ['Mobile', data.mobile],
     ['WhatsApp', data.whatsapp || '-'],
+    ['Country', data.country || '-'],
+    ['LinkedIn / Website', data.linkedinProfile || '-'],
     ['City / State', data.cityState || '-'],
     ['Institution / Organization', data.institutionName],
     ['Department', data.department || '-'],
     ['Designation / Year of Study', data.designation || '-'],
     ['Category', data.participantCategory || '-'],
-    [isResearch ? 'Presentation Type' : 'Competition Category', isResearch ? (data.presentationType || '-') : (data.competitionCategory || '-')],
+    [isAward ? 'Award Category' : isResearch ? 'Presentation Type' : 'Competition Category', isAward ? (data.awardCategory || data.competitionCategory || '-') : isResearch ? (data.presentationType || '-') : (data.competitionCategory || '-')],
     ['Title', data.submissionTitle],
     ['Topic / Theme Area', data.topicTheme || '-'],
     ['Keywords', data.keywords || '-'],
@@ -387,18 +400,29 @@ function applicationRows(data) {
     ['Preferred Presentation Mode', data.preferredPresentationMode || '-'],
     ['Attend In Person', data.attendInPerson || '-'],
     ['Uploaded Main File', data.fileUploadOriginalName || data.mainFile?.originalName || '-'],
-    ['Uploaded ID File', data.idUploadOriginalName || data.idFile?.originalName || '-'],
+    ['Uploaded Supporting File', data.idUploadOriginalName || data.idFile?.originalName || '-'],
+    ['Separate Email File Name', data.emailFileName || '-'],
     ['Applicant Confirmation Name', data.applicantConfirmName || '-'],
     ['Applicant Confirmation Date', data.applicantConfirmDate || '-'],
     ['Signature', data.applicantSignature || '-']
   ];
 
-  if (!isResearch) {
-    rows.splice(13, 0,
+  if (!isResearch && !isAward) {
+    rows.splice(14, 0,
       ['Participation Type', data.participationType || '-'],
       ['Team Name', data.teamName || '-'],
       ['Team Members Count', data.teamMembersCount || '-'],
       ['Team Member Names', data.teamMemberNames || '-']
+    );
+  }
+
+  if (isAward) {
+    rows.splice(16, 0,
+      ['Key Achievements and Contributions', data.keyAchievements || '-'],
+      ['Research Publications', data.researchPublications || '-'],
+      ['Patents / Intellectual Property', data.patents || '-'],
+      ['Previous Awards and Recognitions', data.previousAwards || '-'],
+      ['Supporting Documents Included', data.supportingDocuments || '-']
     );
   }
 
@@ -407,18 +431,18 @@ function applicationRows(data) {
       ${rows.map(([label, value]) => `
         <tr>
           <td style="padding:10px;border:1px solid #dbe5f5;background:#f6f9ff;font-weight:700;width:38%;">${escapeHtml(label)}</td>
-          <td style="padding:10px;border:1px solid #dbe5f5;">${escapeHtml(value || '-')}</td>
+          <td style="padding:10px;border:1px solid #dbe5f5;white-space:pre-line;">${escapeHtml(value || '-')}</td>
         </tr>`).join('')}
     </table>`;
 }
 
 function buildApplicationUserHtml(data) {
-  const isResearch = data.applicationType === 'research-paper';
+  const label = getApplicationLabel(data.applicationType);
   return `
     <div style="font-family:Arial,sans-serif;color:#12213f;line-height:1.6;max-width:680px;margin:auto;">
-      <h2>${isResearch ? 'Research Paper Submission Received' : 'Competition Application Received'}</h2>
+      <h2>${escapeHtml(label)} Received</h2>
       <p>Dear ${escapeHtml(data.fullName)},</p>
-      <p>Your ${isResearch ? 'research paper presentation submission' : 'pre-conference competition application'} for <strong>${escapeHtml(EVENT_INFO.title)}</strong> has been received successfully.</p>
+      <p>Your <strong>${escapeHtml(label)}</strong> for <strong>${escapeHtml(EVENT_INFO.title)}</strong> has been received successfully.</p>
       <p>Your Application ID is <strong>${escapeHtml(data.refId)}</strong>.</p>
       ${applicationRows(data)}
       ${getEventBlock()}
@@ -428,16 +452,16 @@ function buildApplicationUserHtml(data) {
 }
 
 function buildApplicationAdminHtml(data) {
-  const isResearch = data.applicationType === 'research-paper';
+  const label = getApplicationLabel(data.applicationType);
   return `
     <div style="font-family:Arial,sans-serif;color:#12213f;line-height:1.6;max-width:760px;margin:auto;">
-      <h2>New ICAIH 2026 ${isResearch ? 'Research Paper Submission' : 'Competition Application'} Received</h2>
+      <h2>New ICAIH 2026 ${escapeHtml(label)} Received</h2>
       <p><strong>${escapeHtml(data.fullName)}</strong> has submitted an application.</p>
       <p>Application ID: <strong>${escapeHtml(data.refId)}</strong></p>
       ${applicationRows(data)}
       <h3 style="margin-top:18px;">Description / Abstract</h3>
       <p style="white-space:pre-line;">${escapeHtml(data.shortDescription || data.abstractText || '-')}</p>
-      ${data.expectedImpact ? `<h3 style="margin-top:18px;">Expected Impact</h3><p style="white-space:pre-line;">${escapeHtml(data.expectedImpact)}</p>` : ''}
+      ${data.expectedImpact ? `<h3 style="margin-top:18px;">${data.applicationType === 'award-nomination' ? 'Award Justification' : 'Expected Impact'}</h3><p style="white-space:pre-line;">${escapeHtml(data.expectedImpact)}</p>` : ''}
       ${getEventBlock()}
     </div>`;
 }
@@ -465,9 +489,8 @@ function getApplicationAttachments(data) {
 
 function createApplicationMailOptions(data) {
   const from = clean(process.env.MAIL_FROM) || `ICAIH 2026 <${clean(process.env.SMTP_USER)}>`;
-  const adminEmail = clean(process.env.ADMIN_EMAIL) || 'info@mrtech.co.in';
-  const isResearch = data.applicationType === 'research-paper';
-  const label = isResearch ? 'Research Paper Submission' : 'Competition Application';
+  const adminEmail = clean(process.env.APPLICATION_ADMIN_EMAIL) || EVENT_INFO.competitionEmail;
+  const label = getApplicationLabel(data.applicationType);
   const attachments = getApplicationAttachments(data);
 
   return [

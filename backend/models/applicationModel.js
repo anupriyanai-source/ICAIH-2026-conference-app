@@ -31,7 +31,7 @@ const ApplicationModel = {
     try {
       await conn.beginTransaction();
 
-      const prefix = data.applicationType === 'research-paper' ? 'ICAIH-RP-' : 'ICAIH-PC-';
+      const prefix = data.applicationType === 'research-paper' ? 'ICAIH-RP-' : data.applicationType === 'award-nomination' ? 'ICAIH-AW-' : 'ICAIH-PC-';
       const refId = await getNextApplicationRef(conn, prefix);
 
       await conn.query(

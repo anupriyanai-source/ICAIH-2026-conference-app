@@ -9,15 +9,19 @@ function sanitize(val) {
   return String(val || '').trim();
 }
 
+function isValidPaymentReference(val) {
+  const cleaned = sanitize(val).replace(/\s+/g, '').toUpperCase();
+  return /^[A-Z0-9][A-Z0-9_-]{9,35}$/.test(cleaned) && /\d/.test(cleaned);
+}
+
 const ROLE_FEES = {
-  'Student': 499,
-  'Research Scholar': 999,
-  'Healthcare Professional': 1499,
-  'Delegate': 1499,
-  'Speaker': 0,
-  'Online Attendee': 325,
+  'Student': 999,
+  'Delegate': 1999,
   'Startup Founder': 1999,
-  'Industry Expert': 2499
+  'Industry Expert': 2499,
+  'Research Scholar': 2999,
+  'Speaker': 0,
+  'Online Attendee': 325
 };
 
 const BULK_OFFERS = {
@@ -51,7 +55,7 @@ function calculatePayment({ role, bulkOffer, studentCount }) {
   }
 
   return {
-    feeAmount: Number(ROLE_FEES[role] ?? 1499),
+    feeAmount: Number(ROLE_FEES[role] ?? 1999),
     discountPercent: 0,
     bulkOffer: '',
     studentCount: null
@@ -66,6 +70,7 @@ const RegistrationService = {
     const organization = sanitize(body.organization);
     const role = sanitize(body.role) || 'Delegate';
     const category = sanitize(body.category) || 'General';
+    const paymentReference = sanitize(body.paymentReference).replace(/\s+/g, '').toUpperCase();
 
     if (!name || !email || !phone || !organization) {
       throw { status: 400, message: 'Name, email, phone, and organization are required.' };
@@ -77,6 +82,10 @@ const RegistrationService = {
 
     if (!/^\d{10}$/.test(phone)) {
       throw { status: 400, message: 'Please enter a valid 10 digit phone number.' };
+    }
+
+    if (role !== 'Bulk Booking' && !Object.prototype.hasOwnProperty.call(ROLE_FEES, role)) {
+      throw { status: 400, message: 'Please select a valid registration fee category.' };
     }
 
     const payment = calculatePayment({
@@ -92,6 +101,14 @@ const RegistrationService = {
       throw { status: 409, message: 'This email is already registered. Reference ID: ' + existing.ref_id };
     }
 
+    if (requiresPayment && !paymentReference) {
+      throw { status: 400, message: 'UTR / Transaction ID is required after completing the payment.' };
+    }
+
+    if (requiresPayment && !isValidPaymentReference(paymentReference)) {
+      throw { status: 400, message: 'Please enter a valid UTR / Transaction ID.' };
+    }
+
     const paymentStatus = requiresPayment ? 'pending-verification' : 'not-required';
 
     const registrationData = {
@@ -105,9 +122,9 @@ const RegistrationService = {
       discountPercent: payment.discountPercent,
       bulkOffer: payment.bulkOffer,
       studentCount: payment.studentCount,
-      paymentConfirmed: false,
+      paymentConfirmed: requiresPayment ? 'payment-reference-submitted' : 'not-required',
       paymentStatus,
-      paymentReference: ''
+      paymentReference: requiresPayment ? paymentReference : ''
     };
 
     const { refId } = await RegistrationModel.create(registrationData);

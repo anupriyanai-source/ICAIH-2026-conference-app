@@ -4761,3 +4761,295 @@ body.participation-team .team-field {
     font-size: .84rem !important;
   }
 }
+
+
+/* ICAIH 2026 competition modal: three-form responsive update */
+body.application-competition-mode .research-paper-fields,
+body.application-competition-mode .award-nomination-fields,
+body.application-research-mode .pre-competition-fields,
+body.application-research-mode .award-nomination-fields,
+body.application-award-mode .pre-competition-fields,
+body.application-award-mode .research-paper-fields,
+body.application-award-mode .non-award-fields {
+  display: none !important;
+}
+
+body.application-competition-mode .pre-competition-fields,
+body.application-research-mode .research-paper-fields,
+body.application-award-mode .award-nomination-fields {
+  display: revert;
+}
+
+body.application-competition-mode .application-section.pre-competition-fields,
+body.application-research-mode .application-section.research-paper-fields,
+body.application-award-mode .application-section.award-nomination-fields,
+body.application-competition-mode .pdf-form-header.pre-competition-fields,
+body.application-research-mode .pdf-form-header.research-paper-fields,
+body.application-award-mode .pdf-form-header.award-nomination-fields {
+  display: block !important;
+}
+
+.application-type-tabs {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.application-tab {
+  padding: 12px 10px !important;
+  word-break: normal !important;
+}
+
+.file-mail-card.side-mail-card {
+  margin-top: 18px;
+  background: rgba(255, 255, 255, .92);
+}
+
+.application-section input[type="file"] {
+  padding: 10px !important;
+  background: #ffffff !important;
+  cursor: pointer;
+}
+
+.file-instruction-section .form-grid {
+  margin: 12px 0;
+}
+
+@media (max-width: 1024px) {
+  .application-modal-card {
+    width: min(96vw, 940px) !important;
+    height: min(88vh, 820px) !important;
+  }
+
+  .application-form-panel {
+    padding: 24px 22px 0 !important;
+  }
+
+  .application-type-tabs {
+    grid-template-columns: 1fr !important;
+    padding-right: 22px !important;
+  }
+
+  .application-tab {
+    min-height: 48px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .application-modal-card {
+    width: 96vw !important;
+    height: 90vh !important;
+    border-radius: 14px !important;
+  }
+
+  .application-form-panel {
+    padding: 20px 16px 0 !important;
+  }
+
+  .application-form-scroll {
+    padding-right: 4px !important;
+  }
+
+  .checkbox-grid.two,
+  .form-grid.two,
+  .compact-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .application-section {
+    padding: 15px !important;
+  }
+
+  .pdf-form-header h3 {
+    font-size: 1.05rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .application-type-tabs {
+    gap: 8px !important;
+    padding-right: 18px !important;
+  }
+
+  .application-tab {
+    font-size: .86rem !important;
+    min-height: 44px !important;
+  }
+
+  .application-submit-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Final fix: Competition modal coordinator email card alignment and responsive visibility */
+#applicationModal .application-logo-panel {
+  box-sizing: border-box !important;
+}
+
+#applicationModal .file-mail-card.side-mail-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  padding: 14px 16px !important;
+  margin: 18px 0 0 !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, .94) !important;
+  overflow: visible !important;
+}
+
+#applicationModal .file-mail-card.side-mail-card .file-mail-label,
+#applicationModal .file-mail-card.side-mail-card .file-mail-link {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  text-align: left !important;
+  line-height: 1.35 !important;
+}
+
+#applicationModal .file-mail-card.side-mail-card .file-mail-link {
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+}
+
+@media (min-width: 769px) {
+  #applicationModal .application-logo-panel {
+    overflow-y: auto !important;
+    padding: 30px 30px !important;
+    scrollbar-width: thin !important;
+  }
+
+  #applicationModal .application-logo-panel img {
+    width: 104px !important;
+    height: 104px !important;
+    margin-bottom: 22px !important;
+  }
+
+  #applicationModal .application-logo-panel h2 {
+    font-size: clamp(1.85rem, 2.6vw, 2.32rem) !important;
+    margin-bottom: 12px !important;
+  }
+
+  #applicationModal .application-logo-panel p:not(.application-side-kicker) {
+    font-size: .95rem !important;
+    line-height: 1.48 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #applicationModal .file-mail-card.side-mail-card {
+    grid-column: 1 / -1 !important;
+    margin-top: 12px !important;
+    padding: 12px 14px !important;
+  }
+
+  #applicationModal .file-mail-card.side-mail-card .file-mail-label {
+    font-size: .72rem !important;
+  }
+
+  #applicationModal .file-mail-card.side-mail-card .file-mail-link {
+    font-size: .95rem !important;
+  }
+}
+
+@media (max-width: 420px) {
+  #applicationModal .application-logo-panel {
+    grid-template-columns: 64px 1fr !important;
+    column-gap: 14px !important;
+    padding: 18px 14px 16px !important;
+  }
+
+  #applicationModal .application-logo-panel img {
+    width: 64px !important;
+    height: 64px !important;
+  }
+
+  #applicationModal .application-logo-panel h2 {
+    font-size: 1.28rem !important;
+  }
+
+  #applicationModal .file-mail-card.side-mail-card {
+    padding: 11px 12px !important;
+  }
+}
+
+/* UTR / transaction ID capture after payment */
+.payment-reference-box {
+  width: min(100%, 460px);
+  margin: 16px auto 0;
+  padding: 16px;
+  background: #f8fbff;
+  border: 1px solid #cfe0ff;
+  border-radius: 16px;
+  text-align: left;
+}
+
+.payment-reference-box label {
+  display: block;
+  margin: 0;
+}
+
+.payment-reference-box label span {
+  display: block;
+  margin-bottom: 8px;
+  color: #071b4d;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.payment-reference-box input {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
+  border: 1px solid #bcd2ff;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #071b4d;
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  outline: none;
+  text-transform: uppercase;
+}
+
+.payment-reference-box input:focus {
+  border-color: #3d7df5;
+  box-shadow: 0 0 0 4px rgba(61, 125, 245, .12);
+}
+
+.payment-reference-box .payment-help-text {
+  max-width: none;
+  margin: 8px 0 6px;
+}
+
+.payment-reference-box .payment-status {
+  margin: 8px 0 0 !important;
+}
+
+@media (max-width: 768px) {
+  .payment-reference-box {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .payment-reference-box input {
+    min-height: 48px;
+    font-size: .9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-reference-box {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .payment-reference-box label span {
+    font-size: .74rem;
+  }
+}

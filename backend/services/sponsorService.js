@@ -9,6 +9,11 @@ function isEmail(val) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(val || '').trim());
 }
 
+function isValidPaymentReference(val) {
+  const cleaned = sanitize(val).replace(/\s+/g, '').toUpperCase();
+  return /^[A-Z0-9][A-Z0-9_-]{9,35}$/.test(cleaned) && /\d/.test(cleaned);
+}
+
 const SPONSOR_FEES = {
   'Title Sponsor': 3000000,
   'Co-Title Sponsor': 2000000,
@@ -32,6 +37,7 @@ const SponsorService = {
     const phone = sanitize(body.phone);
     const sponsorTier = sanitize(body.sponsorTier);
     const message = sanitize(body.message);
+    const paymentReference = sanitize(body.paymentReference).replace(/\s+/g, '').toUpperCase();
 
     if (!companyName || !contactPerson || !email || !phone || !sponsorTier) {
       throw { status: 400, message: 'Company name, contact person, email, phone, and sponsorship tier are required.' };
@@ -51,6 +57,14 @@ const SponsorService = {
       throw { status: 400, message: 'Please select a valid sponsorship tier.' };
     }
 
+    if (!paymentReference) {
+      throw { status: 400, message: 'UTR / Transaction ID is required after completing the sponsor payment.' };
+    }
+
+    if (!isValidPaymentReference(paymentReference)) {
+      throw { status: 400, message: 'Please enter a valid UTR / Transaction ID.' };
+    }
+
     const paymentStatus = 'pending-verification';
 
     const sponsorData = {
@@ -61,7 +75,7 @@ const SponsorService = {
       sponsorTier,
       feeAmount,
       paymentStatus,
-      paymentReference: '',
+      paymentReference,
       message
     };
 

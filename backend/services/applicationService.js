@@ -36,6 +36,7 @@ function normalizeSubmissionTitle(body) {
     || clean(body.topicTheme)
     || clean(body.competitionCategory)
     || clean(body.presentationType)
+    || clean(body.awardCategory)
     || 'ICAIH 2026 Application';
 }
 
@@ -64,7 +65,7 @@ const ApplicationService = {
   async submit(body, files) {
     const applicationType = clean(body.applicationType) || 'pre-conference-competition';
 
-    if (!['pre-conference-competition', 'research-paper'].includes(applicationType)) {
+    if (!['pre-conference-competition', 'research-paper', 'award-nomination'].includes(applicationType)) {
       const err = new Error('Invalid application type.');
       err.status = 400;
       throw err;
@@ -99,8 +100,8 @@ const ApplicationService = {
       institutionName: clean(body.institutionName) || '-',
       department: clean(body.department),
       designation: clean(body.designation),
-      participantCategory: cleanWithOther(body, 'participantCategory', applicationType === 'research-paper' ? 'participantCategoryOtherResearch' : 'participantCategoryOther'),
-      competitionCategory: clean(body.competitionCategory),
+      participantCategory: applicationType === 'award-nomination' ? 'Awards Nominee' : cleanWithOther(body, 'participantCategory', applicationType === 'research-paper' ? 'participantCategoryOtherResearch' : 'participantCategoryOther'),
+      competitionCategory: clean(body.awardCategory || body.competitionCategory),
       participationType: clean(body.participationType),
       teamName: clean(body.teamName),
       teamMembersCount: clean(body.teamMembersCount),
@@ -118,6 +119,15 @@ const ApplicationService = {
       guideName: clean(body.guideName),
       preferredPresentationMode: clean(body.preferredPresentationMode),
       attendInPerson: clean(body.attendInPerson),
+      country: clean(body.country),
+      linkedinProfile: clean(body.linkedinProfile),
+      awardCategory: clean(body.awardCategory || body.competitionCategory),
+      keyAchievements: clean(body.keyAchievements),
+      researchPublications: clean(body.researchPublications),
+      patents: clean(body.patents),
+      previousAwards: clean(body.previousAwards),
+      supportingDocuments: clean(body.supportingDocuments),
+      emailFileName: clean(body.emailFileNameAward || body.emailFileNameResearch || body.emailFileNamePre),
       fileUploadPath: mainFile?.path || null,
       fileUploadOriginalName: mainFile?.originalName || null,
       idUploadPath: idFile?.path || null,
@@ -142,8 +152,10 @@ const ApplicationService = {
 
     return {
       message: applicationType === 'research-paper'
-        ? 'Form submitted successfully. Your research paper presentation submission has been received. Admin has been notified at info@mrtech.co.in.'
-        : 'Form submitted successfully. Your pre-conference competition application has been received. Admin has been notified at info@mrtech.co.in.',
+        ? 'Form submitted successfully. Your research paper submission has been received. Coordinator has been notified at divyav16.ai@gmail.com.'
+        : applicationType === 'award-nomination'
+          ? 'Form submitted successfully. Your ICAIH 2026 international awards nomination has been received. Coordinator has been notified at divyav16.ai@gmail.com.'
+          : 'Form submitted successfully. Your pre-conference competition application has been received. Coordinator has been notified at divyav16.ai@gmail.com.',
       refId,
       applicationType,
       emailStatus

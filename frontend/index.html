@@ -653,8 +653,7 @@
         <div class="content-block reveal">
           <p class="section-kicker">Registration</p>
           <h2>Register your interest</h2>
-          <p>Submit your details to participate in ICAIH 2026 as a delegate, speaker, researcher, healthcare
-            professional, startup founder, or industry representative.</p>
+          <p>Submit your details to participate in ICAIH 2026 as a student, delegate, research scholar, startup founder, industry expert, speaker, or online attendee.</p>
         </div>
         <form class="form-card reveal" id="registrationForm">
           <label><span>Full Name <b class="required-star">*</b></span><input name="name" required placeholder="Enter your full name"></label>
@@ -666,13 +665,12 @@
           <label><span>Organization <b class="required-star">*</b></span><input name="organization" required
               placeholder="Institution / Company"></label>
           <label><span>Role / Fee Category</span><select name="role" id="registrationRole">
+              <option value="Student">Student</option>
               <option value="Delegate">Delegate</option>
-              <option value="Healthcare Professional">Healthcare Professional</option>
-              <option value="Research Scholar">Research Scholar</option>
               <option value="Startup Founder">Startup Founder</option>
               <option value="Industry Expert">Industry Expert</option>
+              <option value="Research Scholar">Research Scholar</option>
               <option value="Online Attendee">Online Attendee</option>
-              <option value="Student">Student</option>
               <option value="Speaker">Speaker</option>
               <option value="Bulk Booking">Bulk Booking</option>
             </select></label>
@@ -681,7 +679,6 @@
               <option value="Medical College / Academic Institution">Medical College / Academic Institution</option>
               <option value="Startup / Innovator">Startup / Innovator</option>
               <option value="AI Technology Expert">AI Technology Expert</option>
-              <option value="Healthcare Professional">Healthcare Professional</option>
               <option value="Sponsor / Exhibitor">Sponsor / Exhibitor</option>
             </select></label>
 
@@ -695,8 +692,8 @@
           </div>
 
           <div class="fee-summary-box">
-            <div><span>Selected Fee</span><strong id="selectedFeeText">₹1,499</strong></div>
-            <small id="selectedFeeNote">Delegate registration fee</small>
+            <div><span>Selected Fee</span><strong id="selectedFeeText">₹999</strong></div>
+            <small id="selectedFeeNote">Student registration fee</small>
           </div>
 
           <div class="payment-qr-box" id="manualPaymentBox">
@@ -704,9 +701,19 @@
             <p id="paymentQrText">Scan this QR code or click Pay Now to open the secure Crowdshaki / Razorpay payment page for the selected fee.</p>
             <img id="paymentQrImage" src="assets/qr/icaih-payment-qr.jpeg" alt="ICAIH 2026 payment QR code">
             <button class="btn primary payment-button" id="openUpiBtn" type="button">Pay Now</button>
+            <div class="payment-reference-box" id="utrField">
+              <label for="paymentReference">
+                <span>UTR / Transaction ID <b class="required-star">*</b></span>
+                <input name="paymentReference" id="paymentReference" type="text" inputmode="text" maxlength="36"
+                  autocomplete="off" placeholder="Enter UTR / Transaction ID after payment"
+                  title="Enter a valid UTR or transaction ID. Use 10 to 36 letters, numbers, underscore, or hyphen.">
+              </label>
+              <small class="payment-help-text" id="utrHelpText">After completing the payment, enter the UTR / Transaction ID shown in your UPI, bank, or payment app. Example: 12-digit UPI reference number.</small>
+              <p class="payment-status manual-pending" id="paymentStatusText">Complete the payment, then enter the UTR / Transaction ID before submitting.</p>
+            </div>
           </div>
 
-          <input type="hidden" name="feeAmount" id="feeAmount" value="1499">
+          <input type="hidden" name="feeAmount" id="feeAmount" value="999">
           <input type="hidden" name="discountPercent" id="discountPercent" value="0">
           <input type="hidden" name="paymentStatus" id="paymentStatus" value="pending-verification">
           <button class="btn primary" id="registrationSubmitBtn" type="submit">Submit Registration</button>
@@ -823,6 +830,16 @@
           <p id="sponsorPaymentQrText">Select a sponsorship tier, then click Pay Now to open the secure Crowdshaki / Razorpay payment page for the selected sponsor fee.</p>
           <img id="sponsorPaymentQrImage" src="assets/qr/icaih-payment-qr.jpeg" alt="ICAIH 2026 sponsor payment QR code">
           <button class="btn primary payment-button" id="openSponsorPaymentBtn" type="button">Pay Now</button>
+          <div class="payment-reference-box" id="sponsorUtrField">
+            <label for="sponsorPaymentReference">
+              <span>UTR / Transaction ID <b class="required-star">*</b></span>
+              <input name="paymentReference" id="sponsorPaymentReference" type="text" inputmode="text" maxlength="36"
+                autocomplete="off" placeholder="Enter UTR / Transaction ID after payment"
+                title="Enter a valid UTR or transaction ID. Use 10 to 36 letters, numbers, underscore, or hyphen.">
+            </label>
+            <small class="payment-help-text" id="sponsorUtrHelpText">After completing the sponsor payment, enter the UTR / Transaction ID shown in your payment app.</small>
+            <p class="payment-status manual-pending" id="sponsorPaymentStatusText">Select a sponsorship tier, complete the payment, then enter the UTR / Transaction ID.</p>
+          </div>
           <input type="hidden" name="feeAmount" id="sponsorFeeAmount" value="0">
           <input type="hidden" name="paymentStatus" id="sponsorPaymentStatus" value="pending-verification">
         </div>
@@ -837,18 +854,23 @@
 
   <div class="modal" id="applicationModal" aria-hidden="true" role="dialog" aria-labelledby="applicationModalTitle">
     <div class="modal-card application-modal-card">
-      <button class="modal-close" id="closeApplicationModal" type="button" aria-label="Close application form">×</button>
+      <button class="modal-close" id="closeApplicationModal" type="button" aria-label="Close competition forms">×</button>
       <div class="application-modal-layout">
-        <aside class="application-logo-panel" aria-label="ICAIH 2026 application information">
+        <aside class="application-logo-panel" aria-label="ICAIH 2026 competition information">
           <img src="assets/branding/myth-reality-logo.png" alt="Myth Reality Technologies logo">
-          <p class="application-side-kicker">COMPETITION</p>
-          <h2>ICAIH 2026<br>Competition</h2>
-          <p>Choose Pre-Conference Competition or Research Paper Presentation and complete the required application details.</p>
+          <p class="application-side-kicker">COMPETITIONS</p>
+          <h2>ICAIH 2026<br>Competition Forms</h2>
+          <p>Choose the required form, complete the details, upload supporting files, and submit. Application details and files will be sent to the competition coordinator.</p>
+          <div class="file-mail-card side-mail-card">
+            <span class="file-mail-label">Coordinator Email</span>
+            <a class="file-mail-link" data-file-mail-link href="mailto:divyav16.ai@gmail.com">divyav16.ai@gmail.com</a>
+          </div>
         </aside>
         <div class="application-form-panel">
-          <div class="application-type-tabs" role="tablist" aria-label="Application type">
+          <div class="application-type-tabs" role="tablist" aria-label="Competition application type">
             <button class="application-tab active" type="button" data-application-type="pre-conference-competition">Pre-Conference Competitions Application Form</button>
-            <button class="application-tab" type="button" data-application-type="research-paper">Research Paper Presentation Submission Form</button>
+            <button class="application-tab" type="button" data-application-type="research-paper">Research Paper Submission Form</button>
+            <button class="application-tab" type="button" data-application-type="award-nomination">ICAIH 2026 International Awards Nomination Form</button>
           </div>
 
           <form id="applicationForm" class="form-card embedded application-form" enctype="multipart/form-data">
@@ -870,24 +892,34 @@
                 <p>Date: 18 July 2026 | Venue: Anna Centenary Library, Kotturpuram, Chennai</p>
               </div>
 
+              <div class="pdf-form-header award-nomination-fields no-header-logo">
+                <h3>ICAIH 2026 International Awards Nomination Form</h3>
+                <p><strong>International Conference on Artificial Intelligence in Healthcare</strong></p>
+                <p>Theme: AI for Health, Humanity and Inclusive Growth</p>
+                <p>Date: 18 July 2026 | Venue: Anna Centenary Library, Kotturpuram, Chennai</p>
+              </div>
+
               <div class="application-section">
-                <h4>1. Applicant Details</h4>
+                <h4>1. Applicant / Nominee Details</h4>
                 <div class="form-grid two compact-form-grid">
                   <label><span>Full Name <b class="required-star">*</b></span><input name="fullName" required placeholder="Full Name"></label>
                   <label><span>Email ID <b class="required-star">*</b></span><input name="email" type="email" required placeholder="Email ID"></label>
                   <label><span>Mobile Number <b class="required-star">*</b></span><input name="mobile" type="tel" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" data-phone-only required placeholder="Mobile Number"></label>
-                  <label><span>WhatsApp Number</span><input name="whatsapp" type="tel" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" data-phone-only placeholder="WhatsApp Number"></label>
-                  <label class="full-row"><span>City / State</span><input name="cityState" placeholder="City / State"></label>
+                  <label class="non-award-fields"><span>WhatsApp Number</span><input name="whatsapp" type="tel" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" data-phone-only placeholder="WhatsApp Number"></label>
+                  <label class="non-award-fields full-row"><span>City / State</span><input name="cityState" placeholder="City / State"></label>
+                  <label class="award-nomination-fields"><span>Country</span><input name="country" placeholder="Country"></label>
+                  <label class="award-nomination-fields full-row"><span>LinkedIn Profile / Website</span><input name="linkedinProfile" placeholder="LinkedIn Profile / Website"></label>
                 </div>
               </div>
 
               <div class="application-section">
                 <h4 class="pre-competition-fields">2. Institution / Organization Details</h4>
                 <h4 class="research-paper-fields">2. Academic / Professional Details</h4>
+                <h4 class="award-nomination-fields">2. Professional / Organization Details</h4>
                 <div class="form-grid two compact-form-grid">
                   <label><span>Institution / Organization Name <b class="required-star">*</b></span><input name="institutionName" required placeholder="Institution / Organization Name"></label>
                   <label><span>Department</span><input name="department" placeholder="Department"></label>
-                  <label class="full-row"><span>Designation / Year of Study</span><input name="designation" placeholder="Designation / Year of Study"></label>
+                  <label class="full-row"><span>Designation / Position / Year of Study</span><input name="designation" placeholder="Designation / Position / Year of Study"></label>
                 </div>
                 <div class="choice-block pre-competition-fields">
                   <span class="choice-title">Participant Category:</span>
@@ -930,6 +962,30 @@
                     <label><input type="radio" name="competitionCategory" value="Research Paper / Poster Presentation Competition"> Research Paper / Poster Presentation Competition</label>
                     <label><input type="radio" name="competitionCategory" value="Healthcare Case Study Challenge"> Healthcare Case Study Challenge</label>
                     <label><input type="radio" name="competitionCategory" value="Ideathon – Healthcare 2035"> Ideathon – Healthcare 2035</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="application-section award-nomination-fields">
+                <h4>3. Award Category</h4>
+                <div class="choice-block">
+                  <span class="choice-title">Please select the award category you are applying for:</span>
+                  <div class="checkbox-grid one">
+                    <label><input type="radio" name="awardCategory" value="Global Excellence Award in AI for Healthcare"> Global Excellence Award in AI for Healthcare</label>
+                    <label><input type="radio" name="awardCategory" value="Lifetime Achievement Award"> Lifetime Achievement Award</label>
+                    <label><input type="radio" name="awardCategory" value="Distinguished Healthcare Leadership Award"> Distinguished Healthcare Leadership Award</label>
+                    <label><input type="radio" name="awardCategory" value="Academic Institution Excellence Award"> Academic Institution Excellence Award</label>
+                    <label><input type="radio" name="awardCategory" value="Research Excellence Award"> Research Excellence Award</label>
+                    <label><input type="radio" name="awardCategory" value="Healthcare Innovation Excellence Award"> Healthcare Innovation Excellence Award</label>
+                    <label><input type="radio" name="awardCategory" value="Digital Health Transformation Award"> Digital Health Transformation Award</label>
+                    <label><input type="radio" name="awardCategory" value="Industry Collaboration Excellence Award"> Industry Collaboration Excellence Award</label>
+                    <label><input type="radio" name="awardCategory" value="Young Researcher Award"> Young Researcher Award</label>
+                    <label><input type="radio" name="awardCategory" value="Women Leadership in Healthcare & AI Award"> Women Leadership in Healthcare & AI Award</label>
+                    <label><input type="radio" name="awardCategory" value="Best Research Paper Award"> Best Research Paper Award</label>
+                    <label><input type="radio" name="awardCategory" value="Best Innovation Award"> Best Innovation Award</label>
+                    <label><input type="radio" name="awardCategory" value="Startup Excellence Award"> Startup Excellence Award</label>
+                    <label><input type="radio" name="awardCategory" value="Poster Presentation Award"> Poster Presentation Award</label>
+                    <label><input type="radio" name="awardCategory" value="Jury Special Recognition Award"> Jury Special Recognition Award</label>
                   </div>
                 </div>
               </div>
@@ -1012,6 +1068,15 @@
                 <label><span>Expected Impact</span><textarea name="expectedImpact" placeholder="How will your submission improve healthcare?"></textarea></label>
               </div>
 
+              <div class="application-section award-nomination-fields">
+                <h4>4. Professional Profile</h4>
+                <label><span>Short Biography - Maximum 250 Words</span><textarea name="shortDescription" maxlength="1800" placeholder="Write a short professional biography."></textarea></label>
+                <label><span>Key Achievements and Contributions</span><textarea name="keyAchievements" placeholder="Mention important achievements, leadership, innovation, service, or impact."></textarea></label>
+                <label><span>Research Publications, if applicable</span><textarea name="researchPublications" placeholder="Mention journal papers, conference papers, books, or citations."></textarea></label>
+                <label><span>Patents / Intellectual Property, if applicable</span><textarea name="patents" placeholder="Mention patents, IP filings, prototypes, or technology assets."></textarea></label>
+                <label><span>Previous Awards and Recognitions</span><textarea name="previousAwards" placeholder="Mention previous awards, recognitions, fellowships, or honours."></textarea></label>
+              </div>
+
               <div class="application-section research-paper-fields">
                 <h4>5. Author Details</h4>
                 <div class="form-grid two compact-form-grid">
@@ -1021,30 +1086,69 @@
                 </div>
               </div>
 
+              <div class="application-section award-nomination-fields">
+                <h4>5. Award Justification</h4>
+                <label><span>Why do you believe you deserve this award?</span><textarea name="expectedImpact" placeholder="Describe achievements, impact, innovation, leadership, research contributions, or other relevant accomplishments."></textarea></label>
+              </div>
+
               <div class="application-section pre-competition-fields file-instruction-section">
-                <h4>7. File Upload Instructions</h4>
-                <p class="file-instruction-text">Please send your proposal, abstract, poster, PPT, case study, or student/institution ID by email instead of uploading it in this form.</p>
+                <h4>7. File Upload / Attach Instructions</h4>
+                <p class="file-instruction-text">Upload your proposal, abstract, poster, PPT, case study, or student/institution ID here. These files will be sent with the submitted form details.</p>
+                <div class="form-grid two compact-form-grid">
+                  <label><span>Submission File</span><input name="submissionFile" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.png,.jpg,.jpeg"></label>
+                  <label><span>ID / Supporting File</span><input name="idProofFile" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.png,.jpg,.jpeg"></label>
+                </div>
                 <div class="file-mail-card">
-                  <span class="file-mail-label">Send files to</span>
+                  <span class="file-mail-label">Direct email option</span>
                   <a class="file-mail-link" data-file-mail-link href="mailto:divyav16.ai@gmail.com">divyav16.ai@gmail.com</a>
                 </div>
-                <small>Accepted formats: PDF / DOC / DOCX / PPT / PPTX / PNG / JPG.</small>
-                <label class="file-name-label"><span>Type the file name you will send</span><input name="emailFileNamePre" data-file-name-input="pre" placeholder="Example: Anupriya_Telemedicine.pdf"></label>
+                <small>Accepted formats: PDF / DOC / DOCX / PPT / PPTX / PNG / JPG. Maximum file size: 15 MB per file.</small>
+                <label class="file-name-label"><span>Type the file name you will send separately by email, if any</span><input name="emailFileNamePre" data-file-name-input="pre" placeholder="Example: YourName_Telemedicine.pdf"></label>
                 <small>Suggested file name: <strong data-file-name-example>YourName_Competition_Topic.pdf</strong></small>
-                <small>Click the email ID above. On mobile or tablet, your mail app will open directly. On laptop or desktop, Gmail compose will open directly with the recipient, subject, and message prepared automatically. Attach the file with the file name you typed above and send the email.</small>
               </div>
 
               <div class="application-section research-paper-fields file-instruction-section">
-                <h4>6. File Attach Instructions</h4>
-                <p class="file-instruction-text">Please send your research paper or presentation file by email instead of uploading it in this form.</p>
+                <h4>6. File Upload / Attach Instructions</h4>
+                <p class="file-instruction-text">Upload your research paper or presentation file here. The file will be sent with the submitted form details.</p>
+                <div class="form-grid two compact-form-grid">
+                  <label><span>Research Paper / Presentation File</span><input name="submissionFile" type="file" accept=".pdf,.doc,.docx"></label>
+                  <label><span>Additional Supporting File</span><input name="idProofFile" type="file" accept=".pdf,.doc,.docx"></label>
+                </div>
                 <div class="file-mail-card">
-                  <span class="file-mail-label">Send files to</span>
+                  <span class="file-mail-label">Direct email option</span>
                   <a class="file-mail-link" data-file-mail-link href="mailto:divyav16.ai@gmail.com">divyav16.ai@gmail.com</a>
                 </div>
-                <small>Accepted formats: PDF / DOC / DOCX.</small>
-                <label class="file-name-label"><span>Type the file name you will send</span><input name="emailFileNameResearch" data-file-name-input="research" placeholder="Example: Anupriya_AI_in_Diagnostics.pdf"></label>
+                <small>Accepted formats: PDF / DOC / DOCX. Maximum file size: 15 MB per file.</small>
+                <label class="file-name-label"><span>Type the file name you will send separately by email, if any</span><input name="emailFileNameResearch" data-file-name-input="research" placeholder="Example: YourName_AI_in_Diagnostics.pdf"></label>
                 <small>Suggested file name: <strong data-file-name-example>YourName_Research_Topic.pdf</strong></small>
-                <small>Click the email ID above. On mobile or tablet, your mail app will open directly. On laptop or desktop, Gmail compose will open directly with the recipient, subject, and message prepared automatically. Attach the file with the file name you typed above and send the email.</small>
+              </div>
+
+              <div class="application-section award-nomination-fields file-instruction-section">
+                <h4>6. Supporting Documents</h4>
+                <p class="file-instruction-text">Upload your updated CV/resume, passport-size photograph, research papers/publications, patent documents, innovation/project details, certificates, or additional supporting documents. These files will be sent with the submitted nomination details.</p>
+                <div class="choice-block">
+                  <span class="choice-title">Documents included:</span>
+                  <div class="checkbox-grid two">
+                    <label><input type="checkbox" name="supportingDocuments" value="Updated CV / Resume"> Updated CV / Resume</label>
+                    <label><input type="checkbox" name="supportingDocuments" value="Passport Size Photograph"> Passport Size Photograph</label>
+                    <label><input type="checkbox" name="supportingDocuments" value="Research Papers / Publications"> Research Papers / Publications</label>
+                    <label><input type="checkbox" name="supportingDocuments" value="Patent Documents"> Patent Documents</label>
+                    <label><input type="checkbox" name="supportingDocuments" value="Innovation / Project Details"> Innovation / Project Details</label>
+                    <label><input type="checkbox" name="supportingDocuments" value="Supporting Certificates and Achievements"> Supporting Certificates and Achievements</label>
+                    <label><input type="checkbox" name="supportingDocuments" value="Additional Supporting Documents"> Additional Supporting Documents</label>
+                  </div>
+                </div>
+                <div class="form-grid two compact-form-grid">
+                  <label><span>Main Supporting Document</span><input name="submissionFile" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.png,.jpg,.jpeg"></label>
+                  <label><span>Additional Supporting Document</span><input name="idProofFile" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.png,.jpg,.jpeg"></label>
+                </div>
+                <div class="file-mail-card">
+                  <span class="file-mail-label">Direct email option</span>
+                  <a class="file-mail-link" data-file-mail-link href="mailto:divyav16.ai@gmail.com">divyav16.ai@gmail.com</a>
+                </div>
+                <small>Accepted formats: PDF / DOC / DOCX / PPT / PPTX / PNG / JPG. Maximum file size: 15 MB per file.</small>
+                <label class="file-name-label"><span>Type the file name you will send separately by email, if any</span><input name="emailFileNameAward" data-file-name-input="award" placeholder="Example: YourName_Award_Nomination.pdf"></label>
+                <small>Suggested file name: <strong data-file-name-example>YourName_Award_Category.pdf</strong></small>
               </div>
 
               <div class="application-section research-paper-fields">
@@ -1081,6 +1185,12 @@
                 <label class="checkbox-line"><input name="researchDeclarationTrue" type="checkbox"> <span>I confirm that the information provided in this form is true and correct.</span></label>
               </div>
 
+              <div class="application-section declaration-section award-nomination-fields">
+                <h4>7. Declaration</h4>
+                <p>I hereby declare that all information provided in this nomination form is true and accurate to the best of my knowledge. I understand that the organizing committee reserves the right to verify the submitted information and make the final decision regarding award selection.</p>
+                <label class="checkbox-line"><input name="declarationConfirmed" type="checkbox" required> <span>I confirm that the above declaration is true and correct.</span></label>
+              </div>
+
               <div class="application-section pre-competition-fields">
                 <h4>9. Applicant Confirmation</h4>
                 <div class="form-grid two compact-form-grid">
@@ -1092,6 +1202,15 @@
 
               <div class="application-section research-paper-fields">
                 <h4>9. Applicant Confirmation</h4>
+                <div class="form-grid two compact-form-grid">
+                  <label><span>Applicant Name</span><input name="applicantConfirmationName" placeholder="Applicant Name"></label>
+                  <label><span>Date</span><input name="applicantConfirmationDate" type="date"></label>
+                  <label class="full-row"><span>Signature</span><input name="signatureName" placeholder="Signature / Typed Name"></label>
+                </div>
+              </div>
+
+              <div class="application-section award-nomination-fields">
+                <h4>8. Applicant Confirmation</h4>
                 <div class="form-grid two compact-form-grid">
                   <label><span>Applicant Name</span><input name="applicantConfirmationName" placeholder="Applicant Name"></label>
                   <label><span>Date</span><input name="applicantConfirmationDate" type="date"></label>

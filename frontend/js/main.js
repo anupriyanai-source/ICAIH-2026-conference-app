@@ -146,12 +146,11 @@ const EVENT_INFO = {
 };
 
 const REGISTRATION_FEES = {
-  'Student': 499,
-  'Research Scholar': 999,
-  'Healthcare Professional': 1499,
-  'Delegate': 1499,
+  'Student': 999,
+  'Delegate': 1999,
   'Startup Founder': 1999,
   'Industry Expert': 2499,
+  'Research Scholar': 2999,
   'Online Attendee': 325,
   'Speaker': 0
 };
@@ -169,6 +168,47 @@ const CROWDSHAKI_PAYMENT = {
   reasonForFund: 'Health for all @ Gross root Level',
   paymentForPrefix: 'ICAIH 2026 Registration'
 };
+
+const PAYMENT_REFERENCE_PATTERN = /^[A-Z0-9][A-Z0-9_-]{9,35}$/i;
+
+function cleanPaymentReference(value) {
+  return String(value || '').trim().replace(/\s+/g, '').toUpperCase();
+}
+
+function isValidPaymentReference(value) {
+  const cleaned = cleanPaymentReference(value);
+  return PAYMENT_REFERENCE_PATTERN.test(cleaned) && /\d/.test(cleaned);
+}
+
+function validatePaymentReferenceInput(inputId, messageId, statusSetter, showError = false) {
+  const input = document.getElementById(inputId);
+  if (!input) return true;
+
+  const cleaned = cleanPaymentReference(input.value);
+  input.value = cleaned;
+
+  if (!cleaned) {
+    if (showError) {
+      showMessage(messageId, 'Please enter the UTR / Transaction ID after completing the payment.', 'error');
+      statusSetter('pending-verification', 'UTR / Transaction ID is required for payment verification.');
+      input.focus();
+    }
+    return false;
+  }
+
+  if (!isValidPaymentReference(cleaned)) {
+    if (showError) {
+      showMessage(messageId, 'Please enter a valid UTR / Transaction ID. Use 10 to 36 characters: letters, numbers, underscore, or hyphen. Spaces and special symbols are not allowed.', 'error');
+      statusSetter('pending-verification', 'Invalid UTR / Transaction ID format.');
+      input.focus();
+    }
+    return false;
+  }
+
+  statusSetter('pending-verification', 'UTR / Transaction ID captured. Payment will be verified by the admin team.');
+  return true;
+}
+
 
 
 const SPONSOR_ICONS = {
@@ -523,11 +563,11 @@ function getRegistrationPaymentDetails() {
       bulkOffer: offer.label,
       studentCount: count,
       requiresPayment: payableAmount > 0,
-      note: `${offer.label}. ${count} students × ₹499. Payable amount after discount: ${formatINR(payableAmount)}.`
+      note: `${offer.label}. ${count} students × ₹999. Payable amount after discount: ${formatINR(payableAmount)}.`
     };
   }
 
-  const fee = Number(REGISTRATION_FEES[role] ?? 1499);
+  const fee = Number(REGISTRATION_FEES[role] ?? 1999);
 
   return {
     role,
@@ -556,12 +596,12 @@ function setPaymentStatus(status, message) {
 function validateManualPaymentFields(details, showError = false) {
   if (!details.requiresPayment) return true;
 
-  setPaymentStatus(
-    'pending-verification',
-    'Payment will be verified from the secure payment page after submission.'
+  return validatePaymentReferenceInput(
+    'paymentReference',
+    'registrationMessage',
+    setPaymentStatus,
+    showError
   );
-
-  return true;
 }
 
 function buildCrowdshakiPaymentUrl(details) {
@@ -624,7 +664,7 @@ function openManualUpiPayment() {
 
   showMessage(
     'registrationMessage',
-    'Opening the secure Crowdshaki / Razorpay payment page. Complete the payment there, then return here and submit the sponsor inquiry.',
+    'Opening the secure Crowdshaki / Razorpay payment page. Complete the payment there, then return here and enter the UTR / Transaction ID before submitting.',
     ''
   );
 
@@ -641,8 +681,6 @@ function setUtrEntryEnabled(enabled) {
   const utrField = document.getElementById('utrField');
   const utrHelpText = document.getElementById('utrHelpText');
   const paymentPageSharedInput = document.getElementById('paymentPageShared');
-
-  
 
   if (paymentPageSharedInput) paymentPageSharedInput.value = enabled ? '1' : '0';
 
@@ -723,7 +761,7 @@ function sharePaymentScreenshotOnPaymentPage() {
   showPaymentPageSentConfirmation();
   setPaymentStatus(
     'pending-verification',
-    'Payment page opened. Complete the payment there, then return here and submit the form.'
+    'Payment page opened. Complete the payment there, then return here and enter the UTR / Transaction ID.'
   );
 
   window.open(buildPaymentPaymentPageUrl(details), '_blank');
@@ -796,8 +834,15 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
       'No payment is required for this category. You can submit the registration directly.'
     );
   } else {
-    if (!keepPayment) resetPaymentProof();
-    validateManualPaymentFields(details, false);
+    setUtrEntryEnabled(true);
+    if (!keepPayment) {
+      setPaymentStatus(
+        'pending-verification',
+        'Complete the payment, then enter the UTR / Transaction ID before submitting.'
+      );
+    } else {
+      validateManualPaymentFields(details, false);
+    }
   }
 
   if (paymentQrText) {
@@ -822,7 +867,8 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   });
 });
 
-document.getElementById('paymentReference')?.addEventListener('input', () => {
+document.getElementById('paymentReference')?.addEventListener('input', e => {
+  e.currentTarget.value = cleanPaymentReference(e.currentTarget.value);
   validateManualPaymentFields(getRegistrationPaymentDetails(), false);
 });
 
@@ -1021,6 +1067,7 @@ function setSponsorPaymentStatus(status, message) {
 function setSponsorUtrEntryEnabled(enabled) {
   const paymentReference = document.getElementById('sponsorPaymentReference');
   const utrField = document.getElementById('sponsorUtrField');
+  const utrHelpText = document.getElementById('sponsorUtrHelpText');
   const paymentPageSharedInput = document.getElementById('sponsorPaymentPaymentPageShared');
 
   sponsorPaymentPageShared = Boolean(enabled);
@@ -1028,6 +1075,7 @@ function setSponsorUtrEntryEnabled(enabled) {
   if (paymentPageSharedInput) paymentPageSharedInput.value = enabled ? '1' : '0';
 
   if (utrField) utrField.hidden = !enabled;
+  if (utrHelpText) utrHelpText.hidden = !enabled;
 
   if (paymentReference) {
     paymentReference.disabled = !enabled;
@@ -1102,12 +1150,12 @@ function validateSponsorPaymentFields(details, showError = false) {
     return false;
   }
 
-  setSponsorPaymentStatus(
-    'pending-verification',
-    'Payment will be verified from the secure payment page after submission.'
+  return validatePaymentReferenceInput(
+    'sponsorPaymentReference',
+    'sponsorMessage',
+    setSponsorPaymentStatus,
+    showError
   );
-
-  return true;
 }
 
 function updateSponsorPaymentUI({ keepPayment = false } = {}) {
@@ -1148,7 +1196,19 @@ function updateSponsorPaymentUI({ keepPayment = false } = {}) {
     paymentQrImage.title = `Scan to open sponsor payment page for ${formatINR(details.feeAmount)}`;
   }
 
-  validateSponsorPaymentFields(details, false);
+  if (details.requiresPayment) {
+    setSponsorUtrEntryEnabled(true);
+    if (!keepPayment) {
+      setSponsorPaymentStatus(
+        'pending-verification',
+        'Complete the sponsor payment, then enter the UTR / Transaction ID before submitting.'
+      );
+    } else {
+      validateSponsorPaymentFields(details, false);
+    }
+  } else {
+    setSponsorUtrEntryEnabled(false);
+  }
 }
 
 function openSponsorPaymentPage() {
@@ -1176,7 +1236,7 @@ function openSponsorPaymentPage() {
 
   showMessage(
     'sponsorMessage',
-    'Opening the secure Crowdshaki / Razorpay payment page. Complete the payment there, then return here and submit the sponsor inquiry.',
+    'Opening the secure Crowdshaki / Razorpay payment page. Complete the payment there, then return here and enter the UTR / Transaction ID before submitting.',
     ''
   );
 
@@ -1244,7 +1304,7 @@ function openSponsorPaymentPaymentPage() {
   showSponsorPaymentPageSentConfirmation();
   setSponsorPaymentStatus(
     'pending-verification',
-    'Payment page opened. Complete the payment there, then return here and submit the form.'
+    'Payment page opened. Complete the payment there, then return here and enter the UTR / Transaction ID.'
   );
 
   window.open(buildSponsorPaymentPaymentPageUrl(details), '_blank');
@@ -1259,7 +1319,8 @@ document.getElementById('sponsorTier')?.addEventListener('change', () => updateS
   });
 });
 
-document.getElementById('sponsorPaymentReference')?.addEventListener('input', () => {
+document.getElementById('sponsorPaymentReference')?.addEventListener('input', e => {
+  e.currentTarget.value = cleanPaymentReference(e.currentTarget.value);
   validateSponsorPaymentFields(getSponsorPaymentDetails(), false);
 });
 
@@ -1270,7 +1331,7 @@ document.getElementById('confirmSponsorPaymentPageSentBtn')?.addEventListener('c
   setSponsorUtrEntryEnabled(true);
   setSponsorPaymentStatus(
     'pending-verification',
-    'Payment page opened. Submit the sponsor inquiry after completing the payment.'
+    'Payment page opened. Complete the payment, then enter the UTR / Transaction ID before submitting.'
   );
   document.getElementById('sponsorPaymentReference')?.focus();
 });
@@ -1297,7 +1358,8 @@ function openSuccessModal(formData, refId, emailStatus) {
       ['Category', formData.category || 'General'],
       ['Paid Amount', formatINR(formData.feeAmount)],
       ['Registration ID', refId || '—'],
-      ['Payment Status', formData.paymentStatus || '—']
+      ['Payment Status', formData.paymentStatus || '—'],
+      ['UTR / Transaction ID', formData.paymentReference || '—']
     ];
 
     detailsEl.innerHTML = rows.map(([label, value]) => `
@@ -1548,30 +1610,20 @@ const APPLICATION_CATEGORY_OPTIONS = {
   ]
 };
 
-const APPLICATION_TOPIC_OPTIONS = {
-  'pre-conference-competition': [
-    'AI in Healthcare', 'Medical Imaging', 'Digital Health', 'Healthcare Analytics',
-    'Healthcare Innovation', 'Rural Healthcare', 'Telemedicine', 'Healthcare 2035', 'Other'
-  ],
-  'research-paper': [
-    'AI in Diagnostics', 'AI in Medical Imaging', 'AI for Public Health', 'AI in Rural Healthcare',
-    'AI in Telemedicine', 'Clinical Decision Support Systems', 'Digital Health and Smart Hospitals',
-    'AI Ethics and Patient Safety', 'Healthcare Data Privacy and Security', 'Healthcare AI Startups',
-    'Biomedical AI Devices', 'Other'
-  ]
+const APPLICATION_LABELS = {
+  'pre-conference-competition': 'Pre-Conference Competitions Application Form',
+  'research-paper': 'Research Paper Submission Form',
+  'award-nomination': 'ICAIH 2026 International Awards Nomination Form'
 };
 
-function populateSelectOptions(selectId, options, selectedValue = '') {
-  const select = document.getElementById(selectId);
-  if (!select) return;
+const APPLICATION_FIELD_CLASS = {
+  'pre-conference-competition': 'pre-competition-fields',
+  'research-paper': 'research-paper-fields',
+  'award-nomination': 'award-nomination-fields'
+};
 
-  select.innerHTML = options
-    .map(value => `<option value="${value}">${value}</option>`)
-    .join('');
-
-  if (selectedValue && options.includes(selectedValue)) {
-    select.value = selectedValue;
-  }
+function getSafeApplicationType(type) {
+  return Object.prototype.hasOwnProperty.call(APPLICATION_LABELS, type) ? type : 'pre-conference-competition';
 }
 
 function openApplicationModal() {
@@ -1594,16 +1646,19 @@ function closeApplicationModal() {
 }
 
 function setInactiveApplicationFields() {
-  const applicationType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
-  const inactiveSelector = applicationType === 'research-paper' ? '.pre-competition-fields' : '.research-paper-fields';
-  const activeSelector = applicationType === 'research-paper' ? '.research-paper-fields' : '.pre-competition-fields';
+  const applicationType = getSafeApplicationType(document.getElementById('applicationType')?.value);
+  const activeClass = APPLICATION_FIELD_CLASS[applicationType];
+  const typedClasses = Object.values(APPLICATION_FIELD_CLASS);
 
-  document.querySelectorAll(`${inactiveSelector} input, ${inactiveSelector} select, ${inactiveSelector} textarea`).forEach(field => {
-    field.disabled = true;
+  typedClasses.forEach(className => {
+    const disabled = className !== activeClass;
+    document.querySelectorAll(`.${className} input, .${className} select, .${className} textarea`).forEach(field => {
+      field.disabled = disabled;
+    });
   });
 
-  document.querySelectorAll(`${activeSelector} input, ${activeSelector} select, ${activeSelector} textarea`).forEach(field => {
-    field.disabled = false;
+  document.querySelectorAll('.non-award-fields input, .non-award-fields select, .non-award-fields textarea').forEach(field => {
+    field.disabled = applicationType === 'award-nomination';
   });
 
   document.querySelectorAll('.office-use-section input, .office-use-section textarea').forEach(field => {
@@ -1612,21 +1667,26 @@ function setInactiveApplicationFields() {
 }
 
 function setApplicationType(type) {
-  const safeType = type === 'research-paper' ? 'research-paper' : 'pre-conference-competition';
+  const safeType = getSafeApplicationType(type);
   const applicationTypeInput = document.getElementById('applicationType');
   const submitButton = document.getElementById('applicationSubmitBtn');
 
   if (applicationTypeInput) applicationTypeInput.value = safeType;
 
+  document.body.classList.toggle('application-competition-mode', safeType === 'pre-conference-competition');
   document.body.classList.toggle('application-research-mode', safeType === 'research-paper');
-  document.body.classList.toggle('application-competition-mode', safeType !== 'research-paper');
+  document.body.classList.toggle('application-award-mode', safeType === 'award-nomination');
 
   document.querySelectorAll('.application-tab').forEach(tab => {
     tab.classList.toggle('active', tab.dataset.applicationType === safeType);
   });
 
   if (submitButton) {
-    submitButton.textContent = safeType === 'research-paper' ? 'Submit Research Paper' : 'Submit Application';
+    submitButton.textContent = safeType === 'research-paper'
+      ? 'Submit Research Paper'
+      : safeType === 'award-nomination'
+        ? 'Submit Award Nomination'
+        : 'Submit Competition Application';
   }
 
   const panel = document.querySelector('.application-form-scroll');
@@ -1634,21 +1694,23 @@ function setApplicationType(type) {
 
   setInactiveApplicationFields();
   updateApplicationFileMailLinks();
-  if (safeType !== 'research-paper') setParticipationType(document.querySelector('input[name="participationType"]:checked')?.value || 'Individual');
+  if (safeType === 'pre-conference-competition') {
+    setParticipationType(document.querySelector('input[name="participationType"]:checked')?.value || 'Individual');
+  }
+  syncPreConferenceSubmissionTitle();
 }
 
 function validateApplicationFiles(form) {
   const maxBytes = 15 * 1024 * 1024;
-  const applicationType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+  const applicationType = getSafeApplicationType(document.getElementById('applicationType')?.value);
   const allowedExt = applicationType === 'research-paper'
     ? /\.(pdf|doc|docx)$/i
     : /\.(pdf|doc|docx|ppt|pptx|png|jpg|jpeg)$/i;
   const errorText = applicationType === 'research-paper'
     ? 'Invalid file type. Accepted formats for research paper: PDF, DOC, DOCX.'
     : 'Invalid file type. Accepted formats: PDF, DOC, DOCX, PPT, PPTX, PNG, JPG.';
-  const submissionFileInput = form.querySelector('input[name="submissionFile"]:not(:disabled)');
-  const idProofFileInput = form.querySelector('input[name="idProofFile"]:not(:disabled)');
-  const files = [submissionFileInput?.files?.[0], idProofFileInput?.files?.[0]].filter(Boolean);
+  const fileInputs = Array.from(form.querySelectorAll('input[type="file"]:not(:disabled)'));
+  const files = fileInputs.flatMap(input => Array.from(input.files || []));
 
   for (const file of files) {
     if (file.size > maxBytes) {
@@ -1687,7 +1749,7 @@ document.querySelectorAll('.application-tab').forEach(tab => {
 
 function clearApplicationForm() {
   const form = document.getElementById('applicationForm');
-  const currentType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+  const currentType = getSafeApplicationType(document.getElementById('applicationType')?.value);
   if (!form) return;
 
   form.reset();
@@ -1734,22 +1796,27 @@ document.querySelectorAll('input[name="participationType"]').forEach(input => {
 });
 
 function syncPreConferenceSubmissionTitle() {
-  const applicationType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+  const applicationType = getSafeApplicationType(document.getElementById('applicationType')?.value);
   const hiddenTitle = document.getElementById('applicationSubmissionTitle');
   if (!hiddenTitle) return;
 
   if (applicationType === 'research-paper') {
     const presentationType = document.querySelector('input[name="presentationType"]:checked:not(:disabled)')?.value || '';
-    const topic = document.querySelector('input[name="topicTheme"]:checked:not(:disabled)')?.value || '';
-    hiddenTitle.value = presentationType || topic || 'Research Paper Presentation Submission';
+    const topic = document.querySelector('.research-paper-fields input[name="topicTheme"]:checked:not(:disabled)')?.value || '';
+    hiddenTitle.value = presentationType || topic || 'Research Paper Submission';
+    return;
+  }
+
+  if (applicationType === 'award-nomination') {
+    const awardCategory = document.querySelector('input[name="awardCategory"]:checked:not(:disabled)')?.value || '';
+    hiddenTitle.value = awardCategory || 'ICAIH 2026 International Awards Nomination';
     return;
   }
 
   const selectedCompetition = document.querySelector('input[name="competitionCategory"]:checked:not(:disabled)')?.value || '';
-  const selectedTopic = document.querySelector('input[name="topicTheme"]:checked:not(:disabled)')?.value || '';
+  const selectedTopic = document.querySelector('.pre-competition-fields input[name="topicTheme"]:checked:not(:disabled)')?.value || '';
   hiddenTitle.value = selectedCompetition || selectedTopic || 'Pre-Conference Competition Submission';
 }
-
 
 function buildSafeFileName(value, fallback = 'Topic') {
   return String(value || '')
@@ -1759,11 +1826,14 @@ function buildSafeFileName(value, fallback = 'Topic') {
 }
 
 function getActiveApplicationTopic() {
-  const applicationType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+  const applicationType = getSafeApplicationType(document.getElementById('applicationType')?.value);
   if (applicationType === 'research-paper') {
     return document.querySelector('.research-paper-fields input[name="topicTheme"]:checked:not(:disabled)')?.value
       || document.querySelector('input[name="presentationType"]:checked:not(:disabled)')?.value
       || 'Research_Topic';
+  }
+  if (applicationType === 'award-nomination') {
+    return document.querySelector('input[name="awardCategory"]:checked:not(:disabled)')?.value || 'Award_Category';
   }
   return document.querySelector('.pre-competition-fields input[name="topicTheme"]:checked:not(:disabled)')?.value
     || document.querySelector('input[name="competitionCategory"]:checked:not(:disabled)')?.value
@@ -1771,30 +1841,30 @@ function getActiveApplicationTopic() {
 }
 
 function getTypedApplicationFileName(defaultName) {
-  const applicationType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+  const applicationType = getSafeApplicationType(document.getElementById('applicationType')?.value);
   const selector = applicationType === 'research-paper'
     ? 'input[name="emailFileNameResearch"]'
-    : 'input[name="emailFileNamePre"]';
+    : applicationType === 'award-nomination'
+      ? 'input[name="emailFileNameAward"]'
+      : 'input[name="emailFileNamePre"]';
   const typedName = document.querySelector(selector)?.value?.trim();
   return typedName || defaultName;
 }
 
 function updateApplicationFileMailLinks() {
-  const applicationType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+  const applicationType = getSafeApplicationType(document.getElementById('applicationType')?.value);
   const enteredName = document.querySelector('input[name="fullName"]:not(:disabled)')?.value || '';
   const fullName = String(enteredName).trim() || 'YourName';
   const topic = getActiveApplicationTopic();
   const suggestedBase = `${buildSafeFileName(fullName, 'YourName')}_${buildSafeFileName(topic, 'Topic')}`;
   const suggestedName = `${suggestedBase}.pdf`;
   const finalFileName = getTypedApplicationFileName(suggestedName);
-  const formName = applicationType === 'research-paper'
-    ? 'Research Paper Presentation Submission Form'
-    : 'Pre-Conference Competitions Application Form';
-  const subject = `ICAIH 2026 File Submission - ${finalFileName}`;
+  const formName = APPLICATION_LABELS[applicationType];
+  const subject = `ICAIH 2026 ${formName} - Supporting File - ${finalFileName}`;
   const body = [
     `Dear ICAIH 2026 Team,`,
     ``,
-    `I am sending my file for the ${formName}.`,
+    `I am sending my supporting file for the ${formName}.`,
     ``,
     `Applicant Name: ${fullName}`,
     `Topic / Category: ${topic}`,
@@ -1855,8 +1925,6 @@ function buildGmailComposeUrl(mailToUrl) {
 function openEmailCompose(mailToUrl) {
   if (!mailToUrl) return;
 
-  // Mobile/tablet: open the installed mail app directly.
-  // Laptop/desktop: open Gmail compose directly because many laptops do not have a default mail app configured.
   if (isMobileOrTabletDevice()) {
     window.location.href = mailToUrl;
     return;
@@ -1877,8 +1945,7 @@ document.querySelectorAll('a[href^="mailto:"], [data-file-mail-link]').forEach(l
   });
 });
 
-
-document.querySelectorAll('input[name="competitionCategory"]').forEach(input => {
+document.querySelectorAll('input[name="competitionCategory"], input[name="presentationType"], input[name="awardCategory"], input[name="topicTheme"]').forEach(input => {
   input.addEventListener('change', syncPreConferenceSubmissionTitle);
 });
 
@@ -1918,11 +1985,20 @@ document.getElementById('applicationForm')?.addEventListener('submit', async e =
   showMessage('applicationMessage', 'Submitting application…', '');
 
   try {
+    syncPreConferenceSubmissionTitle();
     const formData = new FormData(form);
+    const applicationType = getSafeApplicationType(formData.get('applicationType'));
     const participationType = formData.get('participationType');
     if (participationType === 'Individual') {
       formData.set('teamMemberNames', formData.get('individualMemberName') || '');
       formData.delete('teamMembersCount');
+    }
+
+    if (applicationType === 'award-nomination') {
+      const awardCategory = formData.get('awardCategory') || 'ICAIH 2026 International Awards Nomination';
+      formData.set('competitionCategory', awardCategory);
+      formData.set('participantCategory', 'Awards Nominee');
+      formData.set('topicTheme', awardCategory);
     }
 
     const response = await fetch(`${API_BASE}/api/applications`, {
@@ -1938,11 +2014,11 @@ document.getElementById('applicationForm')?.addEventListener('submit', async e =
 
     showMessage(
       'applicationMessage',
-      `${result.message || 'Form submitted successfully. Admin has been notified at info@mrtech.co.in.'} Reference ID: ${result.refId || '—'}`,
+      `${result.message || 'Form submitted successfully. Coordinator has been notified at divyav16.ai@gmail.com.'} Reference ID: ${result.refId || '—'}`,
       'ok'
     );
 
-    const submittedType = document.getElementById('applicationType')?.value || 'pre-conference-competition';
+    const submittedType = getSafeApplicationType(document.getElementById('applicationType')?.value);
     form.reset();
     setApplicationType(submittedType);
   } catch (error) {
