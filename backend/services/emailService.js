@@ -290,13 +290,14 @@ function createMailOptions(data) {
 
 
 function sponsorRows(data) {
+  const isStall = data.inquiryType === 'stall' || /Exhibitor|Pavilion/i.test(String(data.sponsorTier || ''));
   const rows = [
-    ['Sponsor Inquiry ID', data.refId],
+    [isStall ? 'Stall Booking ID' : 'Sponsor Inquiry ID', data.refId],
     ['Company Name', data.companyName],
     ['Contact Person', data.contactPerson],
     ['Email', data.email],
     ['Phone', data.phone],
-    ['Sponsorship Tier', data.sponsorTier],
+    [(data.inquiryType === 'stall' || /Exhibitor|Pavilion/i.test(String(data.sponsorTier || ''))) ? 'Stall / Exhibitor Tier' : 'Sponsorship Tier', data.sponsorTier],
     ['Paid Amount', formatINR(data.feeAmount)],
     ['Payment Status', data.paymentStatus || 'pending-verification'],
     ['UTR / Transaction ID', data.paymentReference || '-'],
@@ -316,10 +317,10 @@ function sponsorRows(data) {
 function buildSponsorUserHtml(data) {
   return `
     <div style="font-family:Arial,sans-serif;color:#12213f;line-height:1.6;max-width:680px;margin:auto;">
-      <h2>Thank you for your ICAIH 2026 sponsorship inquiry</h2>
+      <h2>Thank you for your ICAIH 2026 ${data.inquiryType === 'stall' ? 'stall / exhibitor booking' : 'sponsorship inquiry'}</h2>
       <p>Dear ${escapeHtml(data.contactPerson)},</p>
-      <p>Your sponsorship inquiry for <strong>${escapeHtml(EVENT_INFO.title)}</strong> has been received successfully.</p>
-      <p>Your Sponsor Inquiry ID is <strong>${escapeHtml(data.refId)}</strong>.</p>
+      <p>Your ${data.inquiryType === 'stall' ? 'stall / exhibitor booking' : 'sponsorship inquiry'} for <strong>${escapeHtml(EVENT_INFO.title)}</strong> has been received successfully.</p>
+      <p>Your ${data.inquiryType === 'stall' ? 'Stall Booking ID' : 'Sponsor Inquiry ID'} is <strong>${escapeHtml(data.refId)}</strong>.</p>
       ${sponsorRows(data)}
       ${getEventBlock()}
       <p style="margin-top:18px;">Our team will verify your payment and contact you for the next steps.</p>
@@ -330,9 +331,9 @@ function buildSponsorUserHtml(data) {
 function buildSponsorAdminHtml(data) {
   return `
     <div style="font-family:Arial,sans-serif;color:#12213f;line-height:1.6;max-width:760px;margin:auto;">
-      <h2>New ICAIH 2026 Sponsor Inquiry Received</h2>
-      <p><strong>${escapeHtml(data.companyName)}</strong> has submitted a sponsorship inquiry.</p>
-      <p>Sponsor Inquiry ID: <strong>${escapeHtml(data.refId)}</strong></p>
+      <h2>New ICAIH 2026 ${data.inquiryType === 'stall' ? 'Stall / Exhibitor Booking' : 'Sponsor Inquiry'} Received</h2>
+      <p><strong>${escapeHtml(data.companyName)}</strong> has submitted a ${data.inquiryType === 'stall' ? 'stall / exhibitor booking' : 'sponsorship inquiry'}.</p>
+      <p>${data.inquiryType === 'stall' ? 'Stall Booking ID' : 'Sponsor Inquiry ID'}: <strong>${escapeHtml(data.refId)}</strong></p>
       ${sponsorRows(data)}
       ${getEventBlock()}
     </div>`;

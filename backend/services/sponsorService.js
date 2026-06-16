@@ -26,7 +26,10 @@ const SPONSOR_FEES = {
   'Technology Partner': 200000,
   'Healthcare Partner': 200000,
   'Silver Sponsor': 100000,
-  'Associate Sponsor': 100000
+  'Associate Sponsor': 100000,
+  'Premium Exhibitor': 39999,
+  'Standard Exhibitor': 34999,
+  'Standard Pavilion': 29999
 };
 
 const SponsorService = {
@@ -37,10 +40,11 @@ const SponsorService = {
     const phone = sanitize(body.phone);
     const sponsorTier = sanitize(body.sponsorTier);
     const message = sanitize(body.message);
+    const inquiryType = sanitize(body.inquiryType) === 'stall' ? 'stall' : 'sponsor';
     const paymentReference = sanitize(body.paymentReference).replace(/\s+/g, '').toUpperCase();
 
     if (!companyName || !contactPerson || !email || !phone || !sponsorTier) {
-      throw { status: 400, message: 'Company name, contact person, email, phone, and sponsorship tier are required.' };
+      throw { status: 400, message: 'Company name, contact person, email, phone, and sponsorship or stall tier are required.' };
     }
 
     if (!isEmail(email)) {
@@ -54,7 +58,7 @@ const SponsorService = {
     const feeAmount = Number(SPONSOR_FEES[sponsorTier] || 0);
 
     if (!feeAmount) {
-      throw { status: 400, message: 'Please select a valid sponsorship tier.' };
+      throw { status: 400, message: 'Please select a valid sponsorship or stall tier.' };
     }
 
     if (!paymentReference) {
@@ -76,7 +80,8 @@ const SponsorService = {
       feeAmount,
       paymentStatus,
       paymentReference,
-      message
+      message,
+      inquiryType
     };
 
     const { refId } = await SponsorModel.create(sponsorData);
@@ -87,7 +92,7 @@ const SponsorService = {
     });
 
     return {
-      message: 'Sponsor inquiry submitted successfully. Payment is pending verification.',
+      message: inquiryType === 'stall' ? 'Stall booking submitted successfully. Payment is pending verification.' : 'Sponsor inquiry submitted successfully. Payment is pending verification.',
       id: refId,
       emailStatus: emailResult.message
     };

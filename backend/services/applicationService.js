@@ -22,6 +22,10 @@ function clean(value) {
   return String(value || '').trim();
 }
 
+function cleanDigits(value) {
+  return clean(value).replace(/\D/g, '');
+}
+
 function cleanWithOther(body, fieldName, otherFieldName) {
   const value = clean(body[fieldName]);
   if (value === 'Other') {
@@ -156,6 +160,8 @@ function validateRequired(data, fields) {
 const ApplicationService = {
   async submit(body, files) {
     const applicationType = clean(body.applicationType) || 'pre-conference-competition';
+    body.mobile = cleanDigits(body.mobile || body.phone || body.phoneNumber || body.mobileNumber);
+    body.whatsapp = cleanDigits(body.whatsapp || body.whatsappNumber);
 
     if (!['pre-conference-competition', 'research-paper', 'award-nomination'].includes(applicationType)) {
       const err = new Error('Invalid application type.');
@@ -167,13 +173,13 @@ const ApplicationService = {
     const validationData = { ...body, submissionTitle: normalizedSubmissionTitle };
     validateRequired(validationData, ['fullName', 'email', 'mobile', 'submissionTitle']);
 
-    if (!/^\d{10}$/.test(clean(body.mobile))) {
+    if (!/^\d{10}$/.test(body.mobile)) {
       const err = new Error('Please enter a valid 10 digit mobile number.');
       err.status = 400;
       throw err;
     }
 
-    if (body.whatsapp && !/^\d{10}$/.test(clean(body.whatsapp))) {
+    if (body.whatsapp && !/^\d{10}$/.test(body.whatsapp)) {
       const err = new Error('Please enter a valid 10 digit WhatsApp number.');
       err.status = 400;
       throw err;

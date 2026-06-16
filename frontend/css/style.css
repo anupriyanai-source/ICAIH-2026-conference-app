@@ -3216,6 +3216,26 @@ body {
   display: inline-block;
 }
 
+.sponsor-grid-heading p {
+  max-width: 720px;
+  margin: 0.55rem auto 1rem;
+  color: var(--muted);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: 1.55;
+  text-transform: none;
+}
+
+.sponsor-grid-heading .stall-booking-open {
+  min-width: 190px;
+  justify-content: center;
+}
+
+.stall-package-card {
+  position: relative;
+}
+
 .sponsor-package-card {
   display: flex;
   flex-direction: column;
@@ -3284,6 +3304,21 @@ body {
   .sponsor-card-head h3 {
     white-space: nowrap;
     font-size: 0.92rem;
+  }
+
+  .sponsor-grid-heading {
+    padding: 1.1rem 0.85rem;
+    font-size: 1.22rem;
+    line-height: 1.35;
+  }
+
+  .sponsor-grid-heading p {
+    font-size: 0.92rem;
+  }
+
+  .sponsor-grid-heading .stall-booking-open {
+    width: 100%;
+    max-width: 260px;
   }
 }
 
@@ -4347,8 +4382,8 @@ body.participation-team .team-field {
   color: #ffffff !important;
   font: inherit !important;
   font-family: var(--font-head) !important;
-  font-weight: 800 !important;
-  font-size: .78rem !important;
+  font-weight: 600 !important;
+  font-size: .70rem !important;
   line-height: 1.15 !important;
   padding: 8px 10px !important;
   cursor: pointer !important;
@@ -5390,5 +5425,209 @@ body.application-award-mode .pdf-form-header.award-nomination-fields {
 
   .file-name-instruction-card code {
     font-size: 0.9rem;
+  }
+}
+
+/* ICAIH 2026 User Guidelines section and responsive form guidance */
+.quick-guidelines-section {
+  background: linear-gradient(180deg, #ffffff 0%, #eef5ff 100%);
+  border-bottom: 1px solid rgba(30, 86, 255, 0.12);
+}
+
+.guideline-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.guideline-choice-card {
+  border: 1px solid rgba(30, 86, 255, 0.18);
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px 16px;
+  min-height: 146px;
+  text-align: center;
+  color: #081a44;
+  font-family: var(--font-menu, var(--font-head));
+  font-weight: 800;
+  box-shadow: 0 18px 40px rgba(8, 26, 68, 0.08);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.guideline-choice-card:hover,
+.guideline-choice-card:focus-visible {
+  transform: translateY(-4px);
+  border-color: #2f7df6;
+  box-shadow: 0 22px 52px rgba(47, 125, 246, 0.18);
+  outline: none;
+}
+
+.guideline-icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 14px;
+  border-radius: 16px;
+  background: #eef5ff;
+  font-size: 28px;
+}
+
+.guideline-home-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.guidelines-section {
+  background: #f8fbff;
+}
+
+.guidelines-card-stack {
+  display: grid;
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.guideline-detail-card {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 22px;
+  background: #ffffff;
+  border: 1px solid rgba(30, 86, 255, 0.15);
+  border-radius: 20px;
+  padding: 26px;
+  box-shadow: 0 18px 46px rgba(8, 26, 68, 0.08);
+}
+
+.guideline-detail-icon {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  background: #eef5ff;
+  color: #2f7df6;
+  font-size: 34px;
+}
+
+.guideline-detail-content h3 {
+  margin: 0 0 10px;
+  color: #081a44;
+  font-size: clamp(1.18rem, 2vw, 1.55rem);
+}
+
+.guideline-detail-content h4 {
+  margin: 18px 0 8px;
+  color: #081a44;
+  font-size: 1rem;
+}
+
+.guideline-detail-content p,
+.guideline-detail-content li {
+  color: #233557;
+  line-height: 1.75;
+}
+
+.guideline-detail-content ol,
+.guideline-detail-content ul {
+  margin: 10px 0 0 18px;
+  padding: 0;
+}
+
+.supporting-doc-box {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 16px;
+  background: #f1f6ff;
+  border: 1px solid rgba(47, 125, 246, 0.18);
+}
+
+.supporting-doc-box p {
+  margin: 6px 0;
+}
+
+.supporting-doc-box a,
+.guideline-detail-card a {
+  color: #2563eb;
+  font-weight: 800;
+  word-break: break-word;
+}
+
+.guideline-action-btn {
+  margin-top: 18px;
+}
+
+.guideline-note {
+  background: #f8fbff;
+  border-left: 4px solid #2f7df6;
+  padding: 12px 14px;
+  border-radius: 12px;
+}
+
+.guideline-important-card {
+  background: linear-gradient(135deg, #ffffff, #eef5ff);
+}
+
+@media (max-width: 1100px) {
+  .guideline-choice-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .quick-guidelines-section,
+  .guidelines-section {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .guideline-choice-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .guideline-choice-card {
+    min-height: auto;
+    padding: 18px 14px;
+  }
+
+  .guideline-detail-card {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .guideline-detail-icon {
+    width: 58px;
+    height: 58px;
+    font-size: 28px;
+  }
+
+  .guideline-detail-content ol,
+  .guideline-detail-content ul {
+    margin-left: 18px;
+  }
+
+  .supporting-doc-box {
+    padding: 14px;
+  }
+
+  .guideline-action-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .guideline-detail-card {
+    padding: 16px;
+  }
+
+  .guideline-detail-content p,
+  .guideline-detail-content li {
+    font-size: 0.95rem;
   }
 }

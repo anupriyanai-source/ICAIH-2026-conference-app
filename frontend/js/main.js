@@ -296,7 +296,7 @@ const SPONSOR_ICONS = {
     </svg>`
 };
 
-const SPONSOR_PACKAGES = [
+const ALL_SPONSOR_PACKAGES = [
   {
     title: 'Title Sponsor',
     amount: 2999999,
@@ -502,22 +502,22 @@ const SPONSOR_PACKAGES = [
   }
 ];
 
-const SPONSOR_FEES = SPONSOR_PACKAGES.reduce((fees, pkg) => {
+const STALL_TIER_NAMES = ['Premium Exhibitor', 'Standard Exhibitor', 'Standard Pavilion'];
+const SPONSOR_PACKAGES = ALL_SPONSOR_PACKAGES.filter(pkg => !STALL_TIER_NAMES.includes(pkg.title));
+const STALL_PACKAGES = ALL_SPONSOR_PACKAGES.filter(pkg => STALL_TIER_NAMES.includes(pkg.title));
+const ALL_PAYMENT_TIERS = [...SPONSOR_PACKAGES, ...STALL_PACKAGES];
+const SPONSOR_FEES = ALL_PAYMENT_TIERS.reduce((fees, pkg) => {
   fees[pkg.title] = pkg.amount;
   return fees;
 }, {});
+let sponsorFormMode = 'sponsor';
 
 function renderSponsorPackages() {
   const grid = document.getElementById('sponsorPackagesGrid');
   if (!grid) return;
 
-  grid.innerHTML = SPONSOR_PACKAGES.map((pkg, index) => `
-    ${pkg.title === 'Premium Exhibitor' ? `
-      <div class="sponsor-grid-heading reveal">
-        <span>Exhibitor Stall Opportunities</span>
-      </div>
-    ` : ''}
-    <article class="feature-panel reveal sponsor-package-card" style="border-top:4px solid ${pkg.accent};">
+  const renderCard = (pkg, extraClass = '') => `
+    <article class="feature-panel reveal sponsor-package-card ${extraClass}" style="border-top:4px solid ${pkg.accent};">
       <div class="sponsor-card-head">
         <span class="sponsor-card-icon" style="color:${pkg.accent}; border-color:${pkg.accent}; background:${pkg.accent}1A;" aria-hidden="true">${pkg.icon}</span>
         <h3 style="color:${pkg.accent};">${pkg.title}</h3>
@@ -527,18 +527,42 @@ function renderSponsorPackages() {
         ${pkg.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
       </ul>
     </article>
-  `).join('');
+  `;
+
+  grid.innerHTML = `
+    ${SPONSOR_PACKAGES.map(pkg => renderCard(pkg)).join('')}
+    <div class="sponsor-grid-heading reveal">
+      <span>Exhibitor Stall Opportunities</span>
+      <p>Book a dedicated stall, exhibitor booth, or startup pavilion space for ICAIH 2026.</p>
+      <button class="btn primary stall-booking-open" type="button">Book Stall Space</button>
+    </div>
+    ${STALL_PACKAGES.map(pkg => renderCard(pkg, 'stall-package-card')).join('')}
+  `;
 
   grid.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  grid.querySelectorAll('.stall-booking-open').forEach(btn => {
+    btn.addEventListener('click', () => openSponsorModal('stall'));
+  });
 }
 
-function populateSponsorTierOptions() {
+function getSponsorModePackages(mode = sponsorFormMode) {
+  return mode === 'stall' ? STALL_PACKAGES : SPONSOR_PACKAGES;
+}
+
+function populateSponsorTierOptions(mode = sponsorFormMode, selectedTier = '') {
   const select = document.getElementById('sponsorTier');
   if (!select) return;
 
-  select.innerHTML = '<option value="">Select Tier</option>' + SPONSOR_PACKAGES
+  const optionLabel = mode === 'stall' ? 'Select Stall / Exhibitor Tier' : 'Select Tier';
+  const packages = getSponsorModePackages(mode);
+
+  select.innerHTML = `<option value="">${optionLabel}</option>` + packages
     .map(pkg => `<option value="${pkg.title}">${pkg.title} – ${formatINR(pkg.amount)}</option>`)
     .join('');
+
+  if (selectedTier && packages.some(pkg => pkg.title === selectedTier)) {
+    select.value = selectedTier;
+  }
 }
 
 renderSponsorPackages();
@@ -994,9 +1018,38 @@ async function submitJsonForm(form, url, messageId) {
    SPONSOR MODAL
    ════════════════════════════════════════════════════════════════ */
 
-function openSponsorModal() {
+function openSponsorModal(mode = 'sponsor', selectedTier = '') {
+  sponsorFormMode = mode === 'stall' ? 'stall' : 'sponsor';
   const modal = document.getElementById('sponsorModal');
   if (!modal) return;
+
+  const modalTitle = document.getElementById('sponsorModalTitle');
+  const modalKicker = document.getElementById('sponsorModalKicker');
+  const tierLabel = document.getElementById('sponsorTierLabel');
+  const selectedFeeLabel = document.getElementById('sponsorSelectedFeeLabel');
+  const paymentHeading = document.getElementById('sponsorPaymentHeading');
+  const submitBtn = document.getElementById('sponsorSubmitBtn');
+  const formTypeInput = document.getElementById('sponsorInquiryType');
+
+  populateSponsorTierOptions(sponsorFormMode, selectedTier);
+
+  if (formTypeInput) formTypeInput.value = sponsorFormMode;
+
+  if (sponsorFormMode === 'stall') {
+    if (modalKicker) modalKicker.textContent = 'Stall / Exhibitor Booking';
+    if (modalTitle) modalTitle.textContent = 'Book Stall Space';
+    if (tierLabel) tierLabel.innerHTML = 'Stall / Exhibitor Tier <b class="required-star">*</b>';
+    if (selectedFeeLabel) selectedFeeLabel.textContent = 'Selected Stall Fee';
+    if (paymentHeading) paymentHeading.textContent = 'Secure Stall Payment';
+    if (submitBtn) submitBtn.textContent = 'Submit Stall Booking';
+  } else {
+    if (modalKicker) modalKicker.textContent = 'Sponsor Inquiry';
+    if (modalTitle) modalTitle.textContent = 'Become a Sponsor';
+    if (tierLabel) tierLabel.innerHTML = 'Sponsorship Tier <b class="required-star">*</b>';
+    if (selectedFeeLabel) selectedFeeLabel.textContent = 'Selected Sponsor Fee';
+    if (paymentHeading) paymentHeading.textContent = 'Secure Payment';
+    if (submitBtn) submitBtn.textContent = 'Submit Sponsor Inquiry';
+  }
 
   const eventInfoEl = modal.querySelector('.success-event-info');
 
@@ -1009,6 +1062,7 @@ function openSponsorModal() {
     `;
   }
 
+  updateSponsorPaymentUI();
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
@@ -1023,10 +1077,10 @@ function closeSponsorModal() {
   document.body.style.overflow = '';
 }
 
-document.getElementById('openSponsorModal')?.addEventListener('click', openSponsorModal);
+document.getElementById('openSponsorModal')?.addEventListener('click', () => openSponsorModal('sponsor'));
 
 document.querySelectorAll('.footer-sponsor-open').forEach(btn => {
-  btn.addEventListener('click', openSponsorModal);
+  btn.addEventListener('click', () => openSponsorModal('sponsor'));
 });
 
 document.getElementById('closeSponsorModal')?.addEventListener('click', closeSponsorModal);
@@ -1051,8 +1105,8 @@ function getSponsorPaymentDetails() {
     feeAmount,
     requiresPayment: feeAmount > 0,
     note: sponsorTier
-      ? `${sponsorTier} sponsorship fee`
-      : 'Select a sponsorship tier to view the fee.'
+      ? `${sponsorTier} ${sponsorFormMode === 'stall' ? 'stall booking fee' : 'sponsorship fee'}`
+      : sponsorFormMode === 'stall' ? 'Select a stall / exhibitor tier to view the fee.' : 'Select a sponsorship tier to view the fee.'
   };
 }
 
@@ -1124,8 +1178,8 @@ function buildSponsorPaymentUrl(details) {
     imageUrl: CROWDSHAKI_PAYMENT.imageUrl,
     reasonForFund: CROWDSHAKI_PAYMENT.reasonForFund,
     amount: String(details.feeAmount),
-    registrationRole: details.sponsorTier || 'Sponsor',
-    paymentFor: `ICAIH 2026 Sponsorship - ${details.sponsorTier || 'Sponsor'}`,
+    registrationRole: details.sponsorTier || (sponsorFormMode === 'stall' ? 'Stall Booking' : 'Sponsor'),
+    paymentFor: `${sponsorFormMode === 'stall' ? 'ICAIH 2026 Stall Booking' : 'ICAIH 2026 Sponsorship'} - ${details.sponsorTier || (sponsorFormMode === 'stall' ? 'Stall Booking' : 'Sponsor')}`,
     name: fields.contactPerson || fields.companyName,
     email: fields.email,
     phone: fields.phone
@@ -1149,7 +1203,7 @@ function buildSponsorDynamicQrImageUrl(details) {
 function validateSponsorPaymentFields(details, showError = false) {
   if (!details.sponsorTier) {
     if (showError) {
-      showMessage('sponsorMessage', 'Please select a sponsorship tier.', 'error');
+      showMessage('sponsorMessage', 'Please select a sponsorship or stall tier.', 'error');
       document.getElementById('sponsorTier')?.focus();
     }
     return false;
@@ -1192,13 +1246,13 @@ function updateSponsorPaymentUI({ keepPayment = false } = {}) {
   if (paymentQrText) {
     paymentQrText.textContent = details.requiresPayment
       ? `Pay ${formatINR(details.feeAmount)} through the secure Crowdshaki / Razorpay page using Google Pay, PhonePe, Paytm, BHIM, or any UPI app.`
-      : 'Select a sponsorship tier to generate the secure payment page and QR code.';
+      : 'Select a sponsorship or stall tier to generate the secure payment page and QR code.';
   }
 
   if (paymentQrImage && details.requiresPayment) {
     paymentQrImage.src = buildSponsorDynamicQrImageUrl(details);
-    paymentQrImage.alt = `ICAIH 2026 sponsor payment page QR code for ${formatINR(details.feeAmount)}`;
-    paymentQrImage.title = `Scan to open sponsor payment page for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.alt = `ICAIH 2026 payment page QR code for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.title = `Scan to open payment page for ${formatINR(details.feeAmount)}`;
   }
 
   if (details.requiresPayment) {
@@ -1206,7 +1260,7 @@ function updateSponsorPaymentUI({ keepPayment = false } = {}) {
     if (!keepPayment) {
       setSponsorPaymentStatus(
         'pending-verification',
-        'Complete the sponsor payment, then enter the UTR / Transaction ID before submitting.'
+        'Complete the payment, then enter the UTR / Transaction ID before submitting.'
       );
     } else {
       validateSponsorPaymentFields(details, false);
@@ -1221,7 +1275,7 @@ function openSponsorPaymentPage() {
   const details = getSponsorPaymentDetails();
 
   if (!details.sponsorTier) {
-    showMessage('sponsorMessage', 'Please select a sponsorship tier before opening the payment page.', 'error');
+    showMessage('sponsorMessage', `Please select a ${sponsorFormMode === 'stall' ? 'stall / exhibitor tier' : 'sponsorship tier'} before opening the payment page.`, 'error');
     document.getElementById('sponsorTier')?.focus();
     return;
   }
@@ -1259,13 +1313,13 @@ function buildSponsorPaymentPaymentPageUrl(details) {
   const fields = getNormalizedSponsorFields(formData);
 
   const message = [
-    'Hi, I have completed my ICAIH 2026 sponsorship payment.',
+    sponsorFormMode === 'stall' ? 'Hi, I have completed my ICAIH 2026 stall / exhibitor booking payment.' : 'Hi, I have completed my ICAIH 2026 sponsorship payment.',
     '',
     `Company: ${fields.companyName || '-'}`,
     `Contact Person: ${fields.contactPerson || '-'}`,
     `Phone: ${fields.phone || '-'}`,
     `Email: ${fields.email || '-'}`,
-    `Sponsorship Tier: ${details.sponsorTier || '-'}`,
+    `${sponsorFormMode === 'stall' ? 'Stall / Exhibitor Tier' : 'Sponsorship Tier'}: ${details.sponsorTier || '-'}`,
     `Amount: ${formatINR(details.feeAmount)}`,
     '',
     'Please attach your payment screenshot here.'
@@ -1288,7 +1342,7 @@ function openSponsorPaymentPaymentPage() {
   const details = getSponsorPaymentDetails();
 
   if (!details.sponsorTier) {
-    showMessage('sponsorMessage', 'Please select a sponsorship tier before opening payment page.', 'error');
+    showMessage('sponsorMessage', `Please select a ${sponsorFormMode === 'stall' ? 'stall / exhibitor tier' : 'sponsorship tier'} before opening payment page.`, 'error');
     document.getElementById('sponsorTier')?.focus();
     return;
   }
@@ -1550,7 +1604,7 @@ document.getElementById('sponsorForm')?.addEventListener('submit', async e => {
     submitButton.textContent = 'Submitting...';
   }
 
-  showMessage('sponsorMessage', 'Submitting sponsor inquiry…', '');
+  showMessage('sponsorMessage', sponsorFormMode === 'stall' ? 'Submitting stall booking…' : 'Submitting sponsor inquiry…', '');
 
   try {
     const payload = Object.fromEntries(formData.entries());
@@ -1564,12 +1618,12 @@ document.getElementById('sponsorForm')?.addEventListener('submit', async e => {
     const result = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      throw new Error(result.message || 'Sponsor inquiry failed.');
+      throw new Error(result.message || 'Inquiry failed.');
     }
 
     showMessage(
       'sponsorMessage',
-      result.message || 'Sponsor inquiry submitted successfully. Payment is pending verification.',
+      result.message || 'Inquiry submitted successfully. Payment is pending verification.',
       'ok'
     );
 
@@ -2137,6 +2191,11 @@ document.getElementById('applicationForm')?.addEventListener('submit', async e =
   try {
     syncPreConferenceSubmissionTitle();
     const formData = new FormData(form);
+    const normalizedApplicationMobile = String(
+      formData.get('mobile') || formData.get('phone') || formData.get('phoneNumber') || formData.get('mobileNumber') || ''
+    ).replace(/\D/g, '');
+    formData.set('mobile', normalizedApplicationMobile);
+    formData.set('phone', normalizedApplicationMobile);
     const applicationType = getSafeApplicationType(formData.get('applicationType'));
     const participationType = formData.get('participationType');
     if (participationType === 'Individual') {
@@ -2184,4 +2243,35 @@ document.getElementById('applicationForm')?.addEventListener('submit', async e =
 /* Add Apply Now modal to ESC close behavior */
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeApplicationModal();
+});
+
+
+/* ICAIH 2026 Guidelines navigation actions */
+function openApplicationTypeFromGuidelines(type) {
+  openApplicationModal();
+  setApplicationType(type);
+}
+
+function openSponsorFromGuidelines(tier, mode = 'sponsor') {
+  openSponsorModal(mode, tier);
+  if (tier) {
+    document.getElementById('sponsorTier')?.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+}
+
+document.querySelectorAll('[data-guideline-action]').forEach(button => {
+  button.addEventListener('click', () => {
+    const action = button.dataset.guidelineAction;
+    if (action === 'competition') {
+      openApplicationTypeFromGuidelines('pre-conference-competition');
+    } else if (action === 'research') {
+      openApplicationTypeFromGuidelines('research-paper');
+    } else if (action === 'award') {
+      openApplicationTypeFromGuidelines('award-nomination');
+    } else if (action === 'sponsor') {
+      openSponsorFromGuidelines('', 'sponsor');
+    } else if (action === 'stall') {
+      openSponsorFromGuidelines('Standard Pavilion', 'stall');
+    }
+  });
 });
