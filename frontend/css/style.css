@@ -5053,3 +5053,229 @@ body.application-award-mode .pdf-form-header.award-nomination-fields {
     font-size: .74rem;
   }
 }
+
+/* Mobile competition modal final alignment fix */
+@media (max-width: 640px) {
+  #applicationModal {
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    padding: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  #applicationModal .application-modal-card {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100dvh !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+  }
+
+  #applicationModal .application-modal-layout {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;
+  }
+
+  #applicationModal .application-logo-panel {
+    display: grid !important;
+    grid-template-columns: 78px minmax(0, 1fr) !important;
+    column-gap: 16px !important;
+    row-gap: 10px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    padding: 22px 20px 24px !important;
+    overflow: visible !important;
+    border-radius: 0 !important;
+  }
+
+  #applicationModal .application-logo-panel img {
+    grid-row: 1 / span 3 !important;
+    width: 78px !important;
+    height: 78px !important;
+    margin: 0 !important;
+    padding: 8px !important;
+    border-radius: 14px !important;
+  }
+
+  #applicationModal .application-side-kicker {
+    margin: 0 48px 2px 0 !important;
+    font-size: .72rem !important;
+    line-height: 1.1 !important;
+    letter-spacing: .14em !important;
+  }
+
+  #applicationModal .application-logo-panel h2 {
+    margin: 0 48px 4px 0 !important;
+    font-size: clamp(1.35rem, 7vw, 1.85rem) !important;
+    line-height: 1.08 !important;
+    word-break: normal !important;
+  }
+
+  #applicationModal .application-logo-panel p:not(.application-side-kicker) {
+    grid-column: 2 !important;
+    margin: 0 !important;
+    font-size: .94rem !important;
+    line-height: 1.45 !important;
+  }
+
+  #applicationModal .file-mail-card.side-mail-card {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    margin: 12px 0 0 !important;
+    padding: 14px 16px !important;
+    border-radius: 16px !important;
+  }
+
+  #applicationModal .file-mail-card.side-mail-card .file-mail-link {
+    font-size: 1rem !important;
+    line-height: 1.25 !important;
+  }
+
+  #closeApplicationModal.modal-close {
+    top: 36px !important;
+    right: 18px !important;
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    min-height: 52px !important;
+    font-size: 34px !important;
+    z-index: 100 !important;
+  }
+
+  #applicationModal .application-form-panel {
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    padding: 22px 18px 30px !important;
+    overflow: visible !important;
+    background: #f8fbff !important;
+  }
+
+  #applicationModal .application-type-tabs {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+    padding: 0 0 18px !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+  }
+
+  #applicationModal .application-tab {
+    width: 100% !important;
+    min-height: 76px !important;
+    padding: 14px 16px !important;
+    border-radius: 16px !important;
+    font-size: 1rem !important;
+    line-height: 1.18 !important;
+    white-space: normal !important;
+    text-align: center !important;
+  }
+
+  #applicationModal .application-form,
+  #applicationModal .application-form-scroll {
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  #applicationModal .pdf-form-header,
+  #applicationModal .application-section {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+    border-radius: 18px !important;
+    box-sizing: border-box !important;
+  }
+
+  #applicationModal .pdf-form-header h3 {
+    font-size: 1.32rem !important;
+    line-height: 1.28 !important;
+    margin-bottom: 12px !important;
+  }
+
+  #applicationModal .pdf-form-header p {
+    font-size: .98rem !important;
+    line-height: 1.45 !important;
+  }
+
+  #applicationModal .form-grid,
+  #applicationModal .form-grid.two,
+  #applicationModal .checkbox-grid,
+  #applicationModal .checkbox-grid.two {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    gap: 14px !important;
+  }
+
+  #applicationModal label,
+  #applicationModal .file-name-label {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  #applicationModal input,
+  #applicationModal select,
+  #applicationModal textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    font-size: 16px !important;
+  }
+
+  #applicationModal .application-submit-row {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column-reverse !important;
+    gap: 12px !important;
+    padding: 18px 0 0 !important;
+  }
+}
+
+@media (max-width: 380px) {
+  #applicationModal .application-logo-panel {
+    grid-template-columns: 64px minmax(0, 1fr) !important;
+    padding: 18px 14px 22px !important;
+    column-gap: 14px !important;
+  }
+
+  #applicationModal .application-logo-panel img {
+    width: 64px !important;
+    height: 64px !important;
+  }
+
+  #applicationModal .application-logo-panel h2 {
+    font-size: 1.24rem !important;
+  }
+
+  #applicationModal .application-logo-panel p:not(.application-side-kicker) {
+    font-size: .88rem !important;
+  }
+
+  #closeApplicationModal.modal-close {
+    top: 28px !important;
+    right: 14px !important;
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    min-height: 46px !important;
+    font-size: 30px !important;
+  }
+}
