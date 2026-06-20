@@ -20,7 +20,6 @@ const ROLE_FEES = {
   'Startup Founder': 1999,
   'Industry Expert': 2499,
   'Research Scholar': 2999,
-  'Speaker': 0,
   'Online Attendee': 325
 };
 
@@ -29,6 +28,19 @@ const BULK_OFFERS = {
   '25-50': { min: 25, max: 50, discount: 20, label: 'Student Group: 25 to 50 Students - 20% Discount' },
   '50-plus': { min: 50, max: Infinity, discount: 25, label: 'Student Group: 50+ Students - 25% Discount' }
 };
+
+const EARLY_BIRD_DISCOUNT_PERCENT = 10;
+const EARLY_BIRD_END = new Date('2026-07-05T23:59:59+05:30');
+
+function isEarlyBirdActive(now = new Date()) {
+  return now.getTime() <= EARLY_BIRD_END.getTime();
+}
+
+function applyEarlyBirdDiscount(amount) {
+  const baseAmount = Number(amount || 0);
+  if (!isEarlyBirdActive() || baseAmount <= 0) return baseAmount;
+  return baseAmount - Math.round(baseAmount * EARLY_BIRD_DISCOUNT_PERCENT / 100);
+}
 
 function calculatePayment({ role, bulkOffer, studentCount }) {
   if (role === 'Bulk Booking') {
@@ -54,9 +66,12 @@ function calculatePayment({ role, bulkOffer, studentCount }) {
     };
   }
 
+  const baseFee = Number(ROLE_FEES[role] ?? 1999);
+  const earlyBirdActive = isEarlyBirdActive();
+
   return {
-    feeAmount: Number(ROLE_FEES[role] ?? 1999),
-    discountPercent: 0,
+    feeAmount: applyEarlyBirdDiscount(baseFee),
+    discountPercent: earlyBirdActive && baseFee > 0 ? EARLY_BIRD_DISCOUNT_PERCENT : 0,
     bulkOffer: '',
     studentCount: null
   };

@@ -60,22 +60,49 @@
     </div>
   </nav>
 
+  <div class="top-announcement-bar" aria-label="Conference special offers and updates">
+    <div class="top-announcement-track">
+      <div class="top-announcement-content">
+        <span>Early Bird Offer: Register before July 5 and get 10% discount</span>
+        <span class="dot">•</span>
+        <span>Student Bulk Booking Offer: Special discounts are available only for student groups</span>
+        <span class="dot">•</span>
+        <span>ICAIH 2026 | International Conference on Artificial Intelligence in Healthcare</span>
+      </div>
+      <div class="top-announcement-content" aria-hidden="true">
+        <span>Early Bird Offer: Register before July 5 and get 10% discount</span>
+        <span class="dot">•</span>
+        <span>Student Bulk Booking Offer: Special discounts are available only for student groups</span>
+        <span class="dot">•</span>
+        <span>ICAIH 2026 | International Conference on Artificial Intelligence in Healthcare</span>
+      </div>
+    </div>
+  </div>
+
   <header class="hero" id="hero">
     <div class="hero-overlay"></div>
     <div class="container hero-inner">
       <p class="eyebrow">Aligned with India AI Impact Summit 2026 and Tamil Nadu AI Vision</p>
-      <h1>International Conference on Artificial Intelligence in Healthcare</h1>
+      <h1 class="hero-title">
+        <span class="hero-title-line hero-title-soft">International</span>
+        <span class="hero-title-line hero-title-accent">Conference on</span>
+        <span class="hero-title-line hero-title-glow">Artificial Intelligence</span>
+        <span class="hero-title-line hero-title-soft hero-title-small">in Healthcare</span>
+      </h1>
       <p class="hero-theme">AI for Health, Humanity and Inclusive Growth</p>
+
       <div class="hero-meta">
         <div><span>Date</span><strong>18 July 2026</strong></div>
         <div><span>Venue</span><strong>Anna Centenary Library, Kotturpuram, Chennai</strong></div>
         <div><span>Represented By</span><strong>Myth Reality Technologies Private Limited</strong></div>
       </div>
+
       <div class="hero-actions">
         <a href="#register" class="btn primary">Register Now</a>
         <button class="btn secondary" id="openCompetitionModalHero" type="button">Competition</button>
       </div>
-      <div class="countdown" aria-label="Countdown to event">
+
+      <div class="countdown" aria-label="Countdown to ICAIH 2026">
         <div><strong id="cd-d">000</strong><span>Days</span></div>
         <div><strong id="cd-h">00</strong><span>Hours</span></div>
         <div><strong id="cd-m">00</strong><span>Minutes</span></div>
@@ -85,41 +112,6 @@
   </header>
 
   <main>
-
-    <section class="section quick-guidelines-section" id="quick-guidelines">
-      <div class="container">
-        <div class="section-head reveal">
-          <p class="section-kicker">User Guidelines</p>
-          <h2>Need Help Choosing the Right Form?</h2>
-          <p>Find instructions and guidelines for every activity at ICAIH 2026. Choose the option you are interested in to get started.</p>
-        </div>
-        <div class="guideline-choice-grid reveal">
-          <button class="guideline-choice-card" type="button" data-guideline-action="competition">
-            <span class="guideline-icon" aria-hidden="true">🏆</span>
-            <strong>Competition Application</strong>
-          </button>
-          <button class="guideline-choice-card" type="button" data-guideline-action="research">
-            <span class="guideline-icon" aria-hidden="true">📄</span>
-            <strong>Research Paper Submission</strong>
-          </button>
-          <button class="guideline-choice-card" type="button" data-guideline-action="award">
-            <span class="guideline-icon" aria-hidden="true">🎖</span>
-            <strong>Awards Nomination</strong>
-          </button>
-          <button class="guideline-choice-card" type="button" data-guideline-action="sponsor">
-            <span class="guideline-icon" aria-hidden="true">🤝</span>
-            <strong>Sponsorship</strong>
-          </button>
-          <button class="guideline-choice-card" type="button" data-guideline-action="stall">
-            <span class="guideline-icon" aria-hidden="true">🏪</span>
-            <strong>Stall / Exhibitor Booking</strong>
-          </button>
-        </div>
-        <div class="guideline-home-actions reveal">
-          <a class="btn primary" href="#guidelines">View User Guidelines</a>
-        </div>
-      </div>
-    </section>
 
     <section class="section" id="about">
       <div class="container two-col">
@@ -844,7 +836,7 @@
         <div class="content-block reveal">
           <p class="section-kicker">Registration</p>
           <h2>Register your interest</h2>
-          <p>Submit your details to participate in ICAIH 2026 as a student, delegate, research scholar, startup founder, industry expert, speaker, or online attendee.</p>
+          <p>Submit your details to participate in ICAIH 2026 as a student, delegate, research scholar, startup founder, industry expert, or online attendee.</p>
         </div>
         <form class="form-card reveal" id="registrationForm">
           <label><span>Full Name <b class="required-star">*</b></span><input name="name" required placeholder="Enter your full name"></label>
@@ -862,8 +854,7 @@
               <option value="Industry Expert">Industry Expert</option>
               <option value="Research Scholar">Research Scholar</option>
               <option value="Online Attendee">Online Attendee</option>
-              <option value="Speaker">Speaker</option>
-              <option value="Bulk Booking">Bulk Booking</option>
+              <option value="Bulk Booking">Student Bulk Booking</option>
             </select></label>
           <label><span>Category</span><select name="category" id="registrationCategory">
               <option value="General">General</option>
@@ -874,7 +865,7 @@
             </select></label>
 
           <div class="bulk-booking-box" id="bulkBookingBox" hidden>
-            <label><span>Bulk Booking Offer</span><select name="bulkOffer" id="bulkOffer">
+            <label><span>Student Bulk Booking Offer</span><select name="bulkOffer" id="bulkOffer">
                 <option value="5-25">Student Group: 5 to 25 Students - 10% Discount</option>
                 <option value="25-50">Student Group: 25 to 50 Students - 20% Discount</option>
                 <option value="50-plus">Student Group: 50+ Students - 25% Discount</option>
@@ -885,6 +876,7 @@
           <div class="fee-summary-box">
             <div><span>Selected Fee</span><strong id="selectedFeeText">₹999</strong></div>
             <small id="selectedFeeNote">Student registration fee</small>
+            <small id="earlyBirdStatus" class="early-bird-status"></small>
           </div>
 
           <div class="payment-qr-box" id="manualPaymentBox">
@@ -940,7 +932,7 @@
         <p>Empowering innovation at the intersection of Artificial Intelligence and Healthcare. ICAIH 2026 — AI for
           Health, Humanity and Inclusive Growth.</p>
         <div class="footer-socials" aria-label="ICAIH 2026 social media links">
-          <a href="https://www.facebook.com/profile.php?id=61590572255170" target="_blank" rel="noopener" aria-label="Open ICAIH 2026 Facebook page">
+          <a href="https://www.facebook.com/profile.php?id=61590963037054" target="_blank" rel="noopener" aria-label="Open ICAIH 2026 Facebook page">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8.5h2.2V5.1c-.4-.1-1.7-.2-3.2-.2-3.1 0-5.2 1.9-5.2 5.5v3.1H4.5v3.8h3.3V24h4.1v-6.7h3.2l.5-3.8h-3.7v-2.7c0-1.1.3-2.3 2.1-2.3Z"/></svg>
           </a>
           <a href="https://www.instagram.com/icaih2026.mythreality/" target="_blank" rel="noopener" aria-label="Open ICAIH 2026 Instagram page">

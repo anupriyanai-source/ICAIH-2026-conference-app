@@ -151,8 +151,7 @@ const REGISTRATION_FEES = {
   'Startup Founder': 1999,
   'Industry Expert': 2499,
   'Research Scholar': 2999,
-  'Online Attendee': 325,
-  'Speaker': 0
+  'Online Attendee': 325
 };
 
 const BULK_OFFERS = {
@@ -160,6 +159,19 @@ const BULK_OFFERS = {
   '25-50': { min: 25, max: 50, discount: 20, label: 'Student Group: 25 to 50 Students - 20% Discount' },
   '50-plus': { min: 50, max: Infinity, discount: 25, label: 'Student Group: 50+ Students - 25% Discount' }
 };
+
+const EARLY_BIRD_DISCOUNT_PERCENT = 10;
+const EARLY_BIRD_END = new Date('2026-07-05T23:59:59+05:30');
+
+function isEarlyBirdActive(now = new Date()) {
+  return now.getTime() <= EARLY_BIRD_END.getTime();
+}
+
+function applyEarlyBirdDiscount(amount) {
+  const baseAmount = Number(amount || 0);
+  if (!isEarlyBirdActive() || baseAmount <= 0) return baseAmount;
+  return baseAmount - Math.round(baseAmount * EARLY_BIRD_DISCOUNT_PERCENT / 100);
+}
 
 const CROWDSHAKI_PAYMENT = {
   baseUrl: 'https://www.crowdshaki.in/payment',
@@ -596,16 +608,25 @@ function getRegistrationPaymentDetails() {
     };
   }
 
-  const fee = Number(REGISTRATION_FEES[role] ?? 1999);
+  const baseFee = Number(REGISTRATION_FEES[role] ?? 1999);
+  const earlyBirdActive = isEarlyBirdActive();
+  const fee = applyEarlyBirdDiscount(baseFee);
+  const discountPercent = earlyBirdActive && baseFee > 0 ? EARLY_BIRD_DISCOUNT_PERCENT : 0;
 
   return {
     role,
+    baseFee,
     feeAmount: fee,
-    discountPercent: 0,
+    discountPercent,
     bulkOffer: '',
     studentCount: '',
     requiresPayment: fee > 0,
-    note: fee > 0 ? `${role} registration fee` : `${role} registration - no fee required`
+    earlyBirdActive,
+    note: fee > 0
+      ? (earlyBirdActive
+        ? `${role} registration fee: ${formatINR(baseFee)}. Early Bird 10% discount applied until July 5. Payable amount: ${formatINR(fee)}.`
+        : `${role} registration fee: ${formatINR(baseFee)}. Early Bird offer has ended; standard fee applies.`)
+      : `${role} registration - no fee required`
   };
 }
 
@@ -829,6 +850,7 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   const discountPercent = document.getElementById('discountPercent');
   const selectedFeeText = document.getElementById('selectedFeeText');
   const selectedFeeNote = document.getElementById('selectedFeeNote');
+  const earlyBirdStatus = document.getElementById('earlyBirdStatus');
   const paymentQrText = document.getElementById('paymentQrText');
   const paymentQrImage = document.getElementById('paymentQrImage');
   const paymentQrBox = document.querySelector('.payment-qr-box');
@@ -843,6 +865,22 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
 
   if (selectedFeeNote) {
     selectedFeeNote.textContent = details.note;
+  }
+
+  if (earlyBirdStatus) {
+    if (role === 'Bulk Booking') {
+      earlyBirdStatus.textContent = 'Student bulk-booking discounts are calculated separately and are not combined with the Early Bird offer.';
+      earlyBirdStatus.classList.remove('expired');
+    } else if (details.earlyBirdActive && details.requiresPayment) {
+      earlyBirdStatus.textContent = 'Early Bird offer active: 10% discount is automatically applied through July 5, 2026.';
+      earlyBirdStatus.classList.remove('expired');
+    } else if (details.requiresPayment) {
+      earlyBirdStatus.textContent = 'Standard registration fee applies after July 5, 2026.';
+      earlyBirdStatus.classList.add('expired');
+    } else {
+      earlyBirdStatus.textContent = '';
+      earlyBirdStatus.classList.remove('expired');
+    }
   }
 
   if (paymentQrBox) paymentQrBox.hidden = !details.requiresPayment;
