@@ -81,7 +81,7 @@ function validateApplicationRequiredDetails(body, applicationType) {
       ['shortDescription', 'Short description'],
       ['expectedImpact', 'Expected impact'],
       ['competitionDeclarationRules', 'Competition rules declaration'],
-      ['competitionDeclarationPresent', 'Presentation declaration'],
+      ['competitionDeclarationPrereq.filesent', 'Presentation declaration'],
       ['competitionDeclarationTrue', 'Information declaration']
     ],
     'research-paper': [

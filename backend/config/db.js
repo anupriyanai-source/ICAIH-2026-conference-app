@@ -31,7 +31,7 @@ async function getPool() {
     password: process.env.DB_PASSWORD || '',
     database: DB_NAME,
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 20,
     queueLimit: 0,
   });
 
