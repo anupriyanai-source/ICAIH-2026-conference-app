@@ -7,6 +7,7 @@ const registrationRoutes = require('./routes/registrationRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const sponsorRoutes = require('./routes/sponsorRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -22,6 +23,7 @@ app.use('/api/register', registrationRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/sponsor-inquiry', sponsorRoutes);
 app.use('/api/applications', applicationRoutes);
+app.use('/api/payment', paymentRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, message: 'ICAIH 2026 API is running.' });

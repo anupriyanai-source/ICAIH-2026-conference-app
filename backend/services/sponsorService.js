@@ -79,6 +79,7 @@ const SponsorService = {
       sponsorTier,
       feeAmount,
       paymentStatus,
+      paymentMethod: '',
       paymentReference,
       message,
       inquiryType

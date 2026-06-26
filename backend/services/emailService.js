@@ -75,50 +75,49 @@ async function sendWithBrevoApi(mailOptions) {
   const results = [];
 
   for (const item of mailOptions) {
-    const payload = {
-      sender,
-      to: [{ email: clean(item.message.to) }],
-      replyTo: clean(item.message.replyTo) ? { email: clean(item.message.replyTo) } : { email: sender.email },
-      subject: item.message.subject,
-      htmlContent: item.message.html
-    };
+    try {
+      const payload = {
+        sender,
+        to: [{ email: clean(item.message.to) }],
+        replyTo: clean(item.message.replyTo) ? { email: clean(item.message.replyTo) } : { email: sender.email },
+        subject: item.message.subject,
+        htmlContent: item.message.html
+      };
 
-    if (Array.isArray(item.message.attachments) && item.message.attachments.length > 0) {
-      payload.attachment = item.message.attachments
-        .filter((attachment) => attachment?.path && fs.existsSync(attachment.path))
-        .map((attachment) => ({
-          name: attachment.filename || path.basename(attachment.path),
-          content: fs.readFileSync(attachment.path).toString('base64')
-        }));
+      if (Array.isArray(item.message.attachments) && item.message.attachments.length > 0) {
+        payload.attachment = item.message.attachments
+          .filter((attachment) => attachment?.path && fs.existsSync(attachment.path))
+          .map((attachment) => ({
+            name: attachment.filename || path.basename(attachment.path),
+            content: fs.readFileSync(attachment.path).toString('base64')
+          }));
+      }
+
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'api-key': apiKey,
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      const responseText = await response.text();
+      results.push({ type: item.type, ok: response.ok, response: responseText, status: response.status });
+    } catch (error) {
+      results.push({ type: item.type, ok: false, error: error.message || String(error) });
     }
-
-    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: {
-        accept: 'application/json',
-        'api-key': apiKey,
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const responseText = await response.text();
-
-    if (!response.ok) {
-      throw new Error(`Brevo API failed for ${item.type}: ${response.status} ${responseText}`);
-    }
-
-    results.push({
-      type: item.type,
-      response: responseText
-    });
   }
 
-  console.log('Brevo API emails sent:', results);
+  const successful = results.filter((item) => item.ok);
+  const failed = results.filter((item) => !item.ok);
+  console.log('Brevo API email results:', results);
   return {
-    ok: true,
+    ok: successful.length > 0,
+    complete: failed.length === 0,
     used: 'Brevo Email API',
-    results
+    results,
+    error: failed.map((item) => `${item.type}: ${item.error || item.response || item.status}`).join(' | ')
   };
 }
 
@@ -544,16 +543,30 @@ async function sendWithFallback(mailOptions) {
     try {
       const transporter = createTransporter(config);
 
-      const results = await Promise.all(
-        mailOptions.map(async (item) => {
+      const results = [];
+      for (const item of mailOptions) {
+        try {
           const info = await transporter.sendMail(item.message);
-          return { type: item.type, messageId: info.messageId };
-        })
-      );
+          results.push({ type: item.type, ok: true, messageId: info.messageId });
+        } catch (error) {
+          results.push({ type: item.type, ok: false, error: error.message || String(error) });
+        }
+      }
 
-      console.log(`SMTP email sent using ${config.label}`);
-      console.log('Email results:', results);
-      return { ok: true, used: config.label, results };
+      const successful = results.filter((item) => item.ok);
+      const failed = results.filter((item) => !item.ok);
+      if (successful.length > 0) {
+        console.log(`SMTP email sent using ${config.label}`);
+        console.log('Email results:', results);
+        return {
+          ok: true,
+          complete: failed.length === 0,
+          used: config.label,
+          results,
+          error: failed.map((item) => `${item.type}: ${item.error}`).join(' | ')
+        };
+      }
+      throw new Error(failed.map((item) => `${item.type}: ${item.error}`).join(' | '));
     } catch (error) {
       const reason = `${config.label}: ${error.code || ''} ${error.message || error}`.trim();
       console.error('SMTP attempt failed:', reason);
@@ -632,9 +645,15 @@ async function sendRegistrationEmails(data) {
       throw new Error(result.error);
     }
 
+    const adminSent = result.results?.some((item) => item.type === 'admin' && item.ok !== false);
+    const userSent = result.results?.some((item) => item.type === 'user' && item.ok !== false);
     return {
-      sent: true,
-      message: `Registration saved. Confirmation emails sent to user and admin using ${result.used}.`
+      sent: Boolean(adminSent || userSent),
+      adminSent,
+      userSent,
+      message: adminSent && userSent
+        ? `Registration saved. Confirmation emails sent to user and admin using ${result.used}.`
+        : `Registration saved. Admin notification: ${adminSent ? 'sent' : 'failed'}. User confirmation: ${userSent ? 'sent' : 'failed'}.`
     };
   } catch (error) {
     console.error('Registration email error:', error);

@@ -137,6 +137,13 @@ function validatePhoneFields(form, messageId) {
 /* ── Registration fee, QR amount, and manual UPI payment ── */
 const PAYMENT_PAGE_REFERENCE_NUMBER = '917358327761';
 
+const MYTH_UPI_PAYMENT = {
+  upiId: 'MYTHREALITYTECHNOLOGIESPRIV@iob',
+  payeeName: 'MYTH REALITY TECHNOLOGIES PRIVATE LIMITED',
+  transactionNote: 'ICAIH 2026 Registration',
+  fallbackQrImage: 'assets/qr/myth-reality-payment-qr.png'
+};
+
 const EVENT_INFO = {
   date: '18 July 2026',
   time: '9:30 AM – 5:30 PM',
@@ -674,16 +681,164 @@ function buildCrowdshakiPaymentUrl(details) {
   return `${CROWDSHAKI_PAYMENT.baseUrl}?${params.toString()}`;
 }
 
-function buildDynamicQrImageUrl(details) {
-  const paymentPageUrl = buildCrowdshakiPaymentUrl(details);
+function createUpiTransactionReference(purpose = 'Payment') {
+  const safePurpose = String(purpose || 'Payment').replace(/[^a-z0-9]/gi, '').slice(0, 10).toUpperCase();
+  return `ICAIH${safePurpose}${Date.now()}`.slice(0, 35);
+}
 
-  const qrParams = new URLSearchParams({
-    size: '260x260',
-    margin: '10',
-    data: paymentPageUrl
+function buildMythUpiUrl(details, purpose = 'Registration') {
+  const amount = Number(details.feeAmount || 0).toFixed(2);
+  const transactionReference = createUpiTransactionReference(purpose);
+  const params = new URLSearchParams({
+    pa: MYTH_UPI_PAYMENT.upiId,
+    pn: MYTH_UPI_PAYMENT.payeeName,
+    tr: transactionReference,
+    tid: transactionReference,
+    am: amount,
+    cu: 'INR',
+    tn: `${MYTH_UPI_PAYMENT.transactionNote} - ${purpose}`
   });
+  return `upi://pay?${params.toString()}`;
+}
 
-  return `https://api.qrserver.com/v1/create-qr-code/?${qrParams.toString()}`;
+const UPI_ANDROID_APPS = [
+  {
+    id: 'gpay',
+    name: 'Google Pay',
+    packageName: 'com.google.android.apps.nbu.paisa.user'
+  },
+  {
+    id: 'phonepe',
+    name: 'PhonePe',
+    packageName: 'com.phonepe.app'
+  },
+  {
+    id: 'paytm',
+    name: 'Paytm',
+    packageName: 'net.one97.paytm'
+  },
+  {
+    id: 'bhim',
+    name: 'BHIM',
+    packageName: 'in.org.npci.upiapp'
+  }
+];
+
+let pendingUpiPayment = null;
+
+function isAndroidDevice() {
+  return /Android/i.test(navigator.userAgent || '');
+}
+
+function getUpiQuery(upiUrl) {
+  return String(upiUrl || '').replace(/^upi:\/\/pay\?/, '');
+}
+
+function buildAndroidIntentUrl(upiUrl, app) {
+  const query = getUpiQuery(upiUrl);
+  const genericUpiFallback = encodeURIComponent(upiUrl);
+
+  // Paytm supports its own payment deep-link scheme. Using it avoids Chrome
+  // redirecting an installed Paytm app to the Play Store.
+  if (app.id === 'paytm') {
+    return `paytmmp://pay?${query}`;
+  }
+
+  // BHIM does not consistently resolve package-specific Chrome intents on
+  // every Android build. Use the standard UPI payment URI instead, which
+  // prevents an incorrect Play Store redirect and preserves the exact amount.
+  // Android will open BHIM directly when it is the default UPI handler;
+  // otherwise it will show the installed UPI-app chooser.
+  if (app.id === 'bhim') {
+    return upiUrl;
+  }
+
+  return `intent://pay?${query}#Intent;scheme=upi;package=${app.packageName};S.browser_fallback_url=${genericUpiFallback};end`;
+}
+
+function closeUpiAppChooser() {
+  const chooser = document.getElementById('upiAppChooser');
+  if (chooser) {
+    chooser.classList.remove('open');
+    chooser.setAttribute('aria-hidden', 'true');
+  }
+  pendingUpiPayment = null;
+}
+
+function launchUpiApp(appId) {
+  if (!pendingUpiPayment) return;
+
+  const { upiUrl, messageId } = pendingUpiPayment;
+  const app = UPI_ANDROID_APPS.find(item => item.id === appId);
+
+  if (!app) return;
+
+  if (isAndroidDevice()) {
+    // Use the standard UPI scheme with the selected app package. This opens the
+    // installed app directly and preserves the exact dynamic amount and payee details.
+    window.location.assign(buildAndroidIntentUrl(upiUrl, app));
+  } else {
+    showMessage(messageId, 'UPI app payments must be opened from an Android phone.', 'error');
+    return;
+  }
+
+  if (messageId) {
+    showMessage(
+      messageId,
+      app
+        ? (app.id === 'bhim'
+          ? 'Opening the UPI payment screen. Select BHIM if Android shows the app chooser.'
+          : `Opening ${app.name} directly with the selected amount.`)
+        : 'Opening the selected UPI application.',
+      ''
+    );
+  }
+
+  closeUpiAppChooser();
+}
+
+function openUpiAppChooser({ upiUrl, amount, purpose, messageId }) {
+  pendingUpiPayment = { upiUrl, amount, purpose, messageId };
+
+  const chooser = document.getElementById('upiAppChooser');
+  const amountText = document.getElementById('upiChooserAmount');
+  const purposeText = document.getElementById('upiChooserPurpose');
+
+  if (!chooser) {
+    window.location.href = upiUrl;
+    return;
+  }
+
+  if (amountText) amountText.textContent = formatINR(amount);
+  if (purposeText) purposeText.textContent = purpose || 'ICAIH 2026 Payment';
+
+  chooser.classList.add('open');
+  chooser.setAttribute('aria-hidden', 'false');
+}
+
+document.addEventListener('click', event => {
+  const appButton = event.target.closest('[data-upi-app]');
+  if (appButton) {
+    launchUpiApp(appButton.dataset.upiApp);
+    return;
+  }
+
+  if (event.target.matches('[data-close-upi-chooser]')) {
+    closeUpiAppChooser();
+  }
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeUpiAppChooser();
+});
+
+function buildDynamicQrImageUrl(details) {
+  const params = new URLSearchParams({
+    amount: Number(details.feeAmount || 0).toFixed(2),
+    purpose: details.role || 'ICAIH 2026 Registration',
+    reference: createUpiTransactionReference(details.role || 'Registration')
+  });
+  return `${API_BASE}/api/payment/qr?${params.toString()}`;
 }
 
 function openManualUpiPayment() {
@@ -714,16 +869,17 @@ function openManualUpiPayment() {
 
   showMessage(
     'registrationMessage',
-    'Opening the secure Crowdshaki / Razorpay payment page. Complete the payment there, then return here and enter the UTR / Transaction ID before submitting.',
+    'Opening the Myth Reality Technologies UPI payment page. Complete the payment, then return here and enter the UTR / Transaction ID before submitting.',
     ''
   );
 
-  const paymentPageUrl = buildCrowdshakiPaymentUrl(details);
-  const opened = window.open(paymentPageUrl, '_blank', 'noopener');
-
-  if (!opened) {
-    window.location.href = paymentPageUrl;
-  }
+  const paymentPageUrl = buildMythUpiUrl(details, details.role || 'Registration');
+  openUpiAppChooser({
+    upiUrl: paymentPageUrl,
+    amount: details.feeAmount,
+    purpose: `${details.role || 'Registration'} Registration`,
+    messageId: 'registrationMessage'
+  });
 }
 
 function setUtrEntryEnabled(enabled) {
@@ -736,6 +892,7 @@ function setUtrEntryEnabled(enabled) {
 
   if (utrField) utrField.hidden = !enabled;
   if (utrHelpText) utrHelpText.hidden = !enabled;
+
 
   if (paymentReference) {
     paymentReference.disabled = !enabled;
@@ -913,13 +1070,17 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   }
 
   if (paymentQrText) {
-    paymentQrText.textContent = `Pay ${formatINR(details.feeAmount)} through the secure Crowdshaki / Razorpay page using Google Pay, PhonePe, Paytm, BHIM, or any UPI app.`;
+    paymentQrText.textContent = `Pay ${formatINR(details.feeAmount)} to Myth Reality Technologies using Google Pay, PhonePe, Paytm, BHIM, or any UPI app.`;
   }
 
   if (paymentQrImage && details.requiresPayment) {
     paymentQrImage.src = buildDynamicQrImageUrl(details);
-    paymentQrImage.alt = `ICAIH 2026 secure payment page QR code for ${formatINR(details.feeAmount)}`;
-    paymentQrImage.title = `Scan to open secure payment page for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.alt = `ICAIH 2026 Myth Reality Technologies UPI QR code for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.title = `Scan to pay Myth Reality Technologies for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.onerror = () => {
+      paymentQrImage.onerror = null;
+      paymentQrImage.src = MYTH_UPI_PAYMENT.fallbackQrImage;
+    };
   }
 }
 
@@ -1174,6 +1335,7 @@ function setSponsorUtrEntryEnabled(enabled) {
   if (utrField) utrField.hidden = !enabled;
   if (utrHelpText) utrHelpText.hidden = !enabled;
 
+
   if (paymentReference) {
     paymentReference.disabled = !enabled;
     paymentReference.required = enabled;
@@ -1207,35 +1369,18 @@ function getNormalizedSponsorFields(formData) {
 }
 
 function buildSponsorPaymentUrl(details) {
-  const form = document.getElementById('sponsorForm');
-  const formData = form ? new FormData(form) : new FormData();
-  const fields = getNormalizedSponsorFields(formData);
-
-  const params = new URLSearchParams({
-    fundraiserId: CROWDSHAKI_PAYMENT.fundraiserId,
-    imageUrl: CROWDSHAKI_PAYMENT.imageUrl,
-    reasonForFund: CROWDSHAKI_PAYMENT.reasonForFund,
-    amount: String(details.feeAmount),
-    registrationRole: details.sponsorTier || (sponsorFormMode === 'stall' ? 'Stall Booking' : 'Sponsor'),
-    paymentFor: `${sponsorFormMode === 'stall' ? 'ICAIH 2026 Stall Booking' : 'ICAIH 2026 Sponsorship'} - ${details.sponsorTier || (sponsorFormMode === 'stall' ? 'Stall Booking' : 'Sponsor')}`,
-    name: fields.contactPerson || fields.companyName,
-    email: fields.email,
-    phone: fields.phone
-  });
-
-  return `${CROWDSHAKI_PAYMENT.baseUrl}?${params.toString()}`;
+  const purpose = `${sponsorFormMode === 'stall' ? 'Stall Booking' : 'Sponsorship'} - ${details.sponsorTier || 'ICAIH 2026'}`;
+  return buildMythUpiUrl(details, purpose);
 }
 
 function buildSponsorDynamicQrImageUrl(details) {
-  const paymentPageUrl = buildSponsorPaymentUrl(details);
-
-  const qrParams = new URLSearchParams({
-    size: '260x260',
-    margin: '10',
-    data: paymentPageUrl
+  const purpose = `${sponsorFormMode === 'stall' ? 'Stall Booking' : 'Sponsorship'} - ${details.sponsorTier || 'ICAIH 2026'}`;
+  const params = new URLSearchParams({
+    amount: Number(details.feeAmount || 0).toFixed(2),
+    purpose,
+    reference: createUpiTransactionReference(purpose)
   });
-
-  return `https://api.qrserver.com/v1/create-qr-code/?${qrParams.toString()}`;
+  return `${API_BASE}/api/payment/qr?${params.toString()}`;
 }
 
 function validateSponsorPaymentFields(details, showError = false) {
@@ -1283,14 +1428,18 @@ function updateSponsorPaymentUI({ keepPayment = false } = {}) {
 
   if (paymentQrText) {
     paymentQrText.textContent = details.requiresPayment
-      ? `Pay ${formatINR(details.feeAmount)} through the secure Crowdshaki / Razorpay page using Google Pay, PhonePe, Paytm, BHIM, or any UPI app.`
+      ? `Pay ${formatINR(details.feeAmount)} to Myth Reality Technologies using Google Pay, PhonePe, Paytm, BHIM, or any UPI app.`
       : 'Select a sponsorship or stall tier to generate the secure payment page and QR code.';
   }
 
   if (paymentQrImage && details.requiresPayment) {
     paymentQrImage.src = buildSponsorDynamicQrImageUrl(details);
-    paymentQrImage.alt = `ICAIH 2026 payment page QR code for ${formatINR(details.feeAmount)}`;
-    paymentQrImage.title = `Scan to open payment page for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.alt = `ICAIH 2026 Myth Reality Technologies UPI QR code for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.title = `Scan to pay Myth Reality Technologies for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.onerror = () => {
+      paymentQrImage.onerror = null;
+      paymentQrImage.src = MYTH_UPI_PAYMENT.fallbackQrImage;
+    };
   }
 
   if (details.requiresPayment) {
@@ -1333,16 +1482,17 @@ function openSponsorPaymentPage() {
 
   showMessage(
     'sponsorMessage',
-    'Opening the secure Crowdshaki / Razorpay payment page. Complete the payment there, then return here and enter the UTR / Transaction ID before submitting.',
+    'Opening the Myth Reality Technologies UPI payment page. Complete the payment, then return here and enter the UTR / Transaction ID before submitting.',
     ''
   );
 
   const paymentPageUrl = buildSponsorPaymentUrl(details);
-  const opened = window.open(paymentPageUrl, '_blank', 'noopener');
-
-  if (!opened) {
-    window.location.href = paymentPageUrl;
-  }
+  openUpiAppChooser({
+    upiUrl: paymentPageUrl,
+    amount: details.feeAmount,
+    purpose: sponsorFormMode === 'stall' ? 'Stall / Exhibitor Booking' : 'Sponsorship Payment',
+    messageId: 'sponsorMessage'
+  });
 }
 
 function buildSponsorPaymentPaymentPageUrl(details) {
@@ -1506,6 +1656,30 @@ document.getElementById('successModal')?.addEventListener('click', e => {
   if (e.target.id === 'successModal') closeSuccessModal();
 });
 
+function resetRegistrationFormState(form) {
+  form.reset();
+  form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="number"], textarea').forEach(field => {
+    if (!field.readOnly) field.value = '';
+  });
+  form.querySelectorAll('.field-error').forEach(field => field.classList.remove('field-error'));
+  resetPaymentProof();
+  updateRegistrationPaymentUI();
+}
+
+function resetApplicationFormState(form, applicationType = 'pre-conference-competition') {
+  form.reset();
+  form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="number"], textarea').forEach(field => {
+    if (!field.readOnly && field.type !== 'hidden') field.value = '';
+  });
+  form.querySelectorAll('input[type="file"]').forEach(field => { field.value = ''; });
+  form.querySelectorAll('.field-error').forEach(field => field.classList.remove('field-error'));
+  showMessage('applicationMessage', '', '');
+  setApplicationType(applicationType);
+  setParticipationType('Individual');
+  syncPreConferenceSubmissionTitle();
+  updateApplicationFileMailLinks();
+}
+
 /* ── Registration form submit ── */
 document.getElementById('registrationForm')?.addEventListener('submit', async e => {
   e.preventDefault();
@@ -1569,12 +1743,9 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
   showMessage('registrationMessage', 'Submitting registration…', '');
 
   try {
-    const payload = Object.fromEntries(formData.entries());
-
     const response = await fetch(`${API_BASE}/api/register`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: formData
     });
 
     const result = await response.json().catch(() => ({}));
@@ -1600,9 +1771,7 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
       'ok'
     );
 
-    form.reset();
-    resetPaymentProof();
-    updateRegistrationPaymentUI();
+    resetRegistrationFormState(form);
 
   } catch (error) {
     showMessage(
@@ -2266,8 +2435,7 @@ document.getElementById('applicationForm')?.addEventListener('submit', async e =
     );
 
     const submittedType = getSafeApplicationType(document.getElementById('applicationType')?.value);
-    form.reset();
-    setApplicationType(submittedType);
+    resetApplicationFormState(form, submittedType);
   } catch (error) {
     showMessage('applicationMessage', error.message || 'Unable to submit. Please start the backend with npm start and check the terminal error.', 'error');
   } finally {

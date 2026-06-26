@@ -41,7 +41,9 @@ const RegistrationModel = {
     studentCount,
     paymentConfirmed,
     paymentStatus,
-    paymentReference
+    paymentMethod,
+    paymentReference,
+    paymentScreenshot
   }) {
     const conn = await pool.getConnection();
 
@@ -51,8 +53,8 @@ const RegistrationModel = {
 
       await conn.query(
         `INSERT INTO registrations
-         (ref_id, name, email, phone, organization, role, category, fee_amount, discount_percent, bulk_offer, student_count, payment_confirmed, payment_status, payment_reference, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, DATE_ADD(UTC_TIMESTAMP(), INTERVAL 330 MINUTE))`,
+         (ref_id, name, email, phone, organization, role, category, fee_amount, discount_percent, bulk_offer, student_count, payment_confirmed, payment_status, payment_method, payment_reference, payment_screenshot, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, DATE_ADD(UTC_TIMESTAMP(), INTERVAL 330 MINUTE))`,
         [
           refId,
           name,
@@ -67,7 +69,9 @@ const RegistrationModel = {
           studentCount || null,
           paymentConfirmed ? 1 : 0,
           paymentStatus || 'pending-verification',
-          paymentReference || null
+          paymentMethod || null,
+          paymentReference || null,
+          paymentScreenshot || null
         ]
       );
 

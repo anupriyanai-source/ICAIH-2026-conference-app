@@ -1,5 +1,5 @@
 const RegistrationModel = require('../models/registrationModel');
-const { queueRegistrationEmails } = require('./emailService');
+const { sendRegistrationEmails } = require('./emailService');
 
 function isEmail(val) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(val || '').trim());
@@ -124,6 +124,7 @@ const RegistrationService = {
       throw { status: 400, message: 'Please enter a valid UTR / Transaction ID.' };
     }
 
+
     const paymentStatus = requiresPayment ? 'pending-verification' : 'not-required';
 
     const registrationData = {
@@ -139,11 +140,13 @@ const RegistrationService = {
       studentCount: payment.studentCount,
       paymentConfirmed: requiresPayment ? 'payment-reference-submitted' : 'not-required',
       paymentStatus,
-      paymentReference: requiresPayment ? paymentReference : ''
+      paymentMethod: '',
+      paymentReference: requiresPayment ? paymentReference : '',
+      paymentScreenshot: ''
     };
 
     const { refId } = await RegistrationModel.create(registrationData);
-    const emailResult = queueRegistrationEmails({ ...registrationData, refId });
+    const emailResult = await sendRegistrationEmails({ ...registrationData, refId });
 
     return {
       message: requiresPayment

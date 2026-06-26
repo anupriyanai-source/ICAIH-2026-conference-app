@@ -138,7 +138,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=20260626-nav-update" />
 </head>
 
 <body>
@@ -156,7 +156,6 @@
       <a href="#sponsors">Sponsorship</a>
       <button class="nav-link-button" id="openCompetitionModalNav" type="button">Competition</button>
       <a href="#guidelines">Guidelines</a>
-      <a href="/international-conference-artificial-intelligence-healthcare">Conference Overview</a>
       <a href="#register">Registration Form</a>
       <a href="#contact">Contact</a>
     </div>
@@ -988,8 +987,8 @@
 
           <div class="payment-qr-box" id="manualPaymentBox">
             <h3>Secure UPI Payment</h3>
-            <p id="paymentQrText">Scan this QR code or click Pay Now to open the secure Crowdshaki / Razorpay payment page for the selected fee.</p>
-            <img id="paymentQrImage" src="assets/qr/icaih-payment-qr.jpeg" alt="ICAIH 2026 payment QR code">
+            <p id="paymentQrText">Scan this QR code or click Pay Now to open the Myth Reality Technologies UPI payment page for the selected fee.</p>
+            <img id="paymentQrImage" src="assets/qr/myth-reality-payment-qr.png" alt="Myth Reality Technologies UPI payment QR code">
             <button class="btn primary payment-button" id="openUpiBtn" type="button">Pay Now</button>
             <div class="payment-reference-box" id="utrField">
               <label for="paymentReference">
@@ -1118,8 +1117,8 @@
 
         <div class="payment-qr-box" id="sponsorPaymentBox">
           <h3 id="sponsorPaymentHeading">Secure Sponsor Payment</h3>
-          <p id="sponsorPaymentQrText">Select a sponsorship tier, then click Pay Now to open the secure Crowdshaki / Razorpay payment page for the selected sponsor fee.</p>
-          <img id="sponsorPaymentQrImage" src="assets/qr/icaih-payment-qr.jpeg" alt="ICAIH 2026 sponsor payment QR code">
+          <p id="sponsorPaymentQrText">Select a sponsorship tier, then click Pay Now to open the Myth Reality Technologies UPI payment page for the selected sponsor fee.</p>
+          <img id="sponsorPaymentQrImage" src="assets/qr/myth-reality-payment-qr.png" alt="Myth Reality Technologies sponsor payment QR code">
           <button class="btn primary payment-button" id="openSponsorPaymentBtn" type="button">Pay Now</button>
           <div class="payment-reference-box" id="sponsorUtrField">
             <label for="sponsorPaymentReference">
@@ -1554,7 +1553,25 @@
     </div>
   </div>
 
-  <script src="js/main.js"></script>
+
+
+  <div class="upi-app-chooser" id="upiAppChooser" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="upiChooserTitle">
+    <div class="upi-app-chooser-backdrop" data-close-upi-chooser></div>
+    <div class="upi-app-chooser-card">
+      <button class="upi-chooser-close" type="button" aria-label="Close payment app chooser" data-close-upi-chooser>&times;</button>
+      <p class="section-kicker">Secure UPI Payment</p>
+      <h2 id="upiChooserTitle">Choose your payment app</h2>
+      <p class="upi-chooser-summary"><strong id="upiChooserAmount">₹0</strong> · <span id="upiChooserPurpose">ICAIH 2026 Payment</span></p>
+      <p class="upi-chooser-help">Tap one app below. The exact amount and Myth Reality Technologies UPI details will be filled automatically.</p>
+      <div class="upi-chooser-grid">
+        <button type="button" class="upi-choice-btn" data-upi-app="gpay"><img src="assets/payment-apps/google-pay.svg" alt=""><strong>Google Pay</strong></button>
+        <button type="button" class="upi-choice-btn" data-upi-app="phonepe"><img src="assets/payment-apps/phonepe.svg" alt=""><strong>PhonePe</strong></button>
+        <button type="button" class="upi-choice-btn" data-upi-app="paytm"><img src="assets/payment-apps/paytm.svg" alt=""><strong>Paytm</strong></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/main.js?v=20260626-three-upi-apps"></script>
 </body>
 
 </html>

@@ -1,6 +1,6 @@
 const path = require('path');
 const ApplicationModel = require('../models/applicationModel');
-const { queueApplicationEmails } = require('./emailService');
+const { sendApplicationEmails } = require('./emailService');
 
 const allowedFileTypes = new Set([
   'application/octet-stream',
@@ -248,7 +248,7 @@ const ApplicationService = {
     data.refId = refId;
     data.mainFile = mainFile;
     data.idFile = idFile;
-    const emailStatus = queueApplicationEmails(data);
+    const emailStatus = await sendApplicationEmails(data);
 
     return {
       message: applicationType === 'research-paper'
