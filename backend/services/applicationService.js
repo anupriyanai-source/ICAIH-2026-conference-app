@@ -252,10 +252,10 @@ const ApplicationService = {
 
     return {
       message: applicationType === 'research-paper'
-        ? 'Form submitted successfully. Your research paper submission has been received. Coordinator has been notified at divyav16.ai@gmail.com.'
+        ? 'Form submitted successfully. Your research paper submission has been received. Confirmation emails have been sent to the applicant and admin at info@mrtech.co.in.'
         : applicationType === 'award-nomination'
-          ? 'Form submitted successfully. Your ICAIH 2026 international awards nomination has been received. Coordinator has been notified at divyav16.ai@gmail.com.'
-          : 'Form submitted successfully. Your pre-conference competition application has been received. Coordinator has been notified at divyav16.ai@gmail.com.',
+          ? 'Form submitted successfully. Your ICAIH 2026 international awards nomination has been received. Confirmation emails have been sent to the applicant and admin at info@mrtech.co.in.'
+          : 'Form submitted successfully. Your pre-conference competition application has been received. Confirmation emails have been sent to the applicant and admin at info@mrtech.co.in.',
       refId,
       applicationType,
       emailStatus

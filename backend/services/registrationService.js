@@ -113,7 +113,7 @@ const RegistrationService = {
 
     const existing = await RegistrationModel.findByEmail(email);
     if (existing) {
-      throw { status: 409, message: 'This email is already registered. Reference ID: ' + existing.ref_id };
+      throw { status: 409, message: 'This email is already registered. Registration ID: ' + existing.ref_id };
     }
 
     if (requiresPayment && !paymentReference) {

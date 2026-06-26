@@ -1,5 +1,5 @@
 const SponsorModel = require('../models/sponsorModel');
-const { queueSponsorEmails } = require('./emailService');
+const { sendSponsorEmails } = require('./emailService');
 
 function sanitize(val) {
   return String(val || '').trim();
@@ -87,7 +87,7 @@ const SponsorService = {
 
     const { refId } = await SponsorModel.create(sponsorData);
 
-    const emailResult = queueSponsorEmails({
+    const emailResult = await sendSponsorEmails({
       ...sponsorData,
       refId
     });
@@ -95,7 +95,7 @@ const SponsorService = {
     return {
       message: inquiryType === 'stall' ? 'Stall booking submitted successfully. Payment is pending verification.' : 'Sponsor inquiry submitted successfully. Payment is pending verification.',
       id: refId,
-      emailStatus: emailResult.message
+      emailStatus: emailResult
     };
   },
 

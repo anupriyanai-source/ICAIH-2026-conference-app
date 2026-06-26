@@ -1557,6 +1557,30 @@
     </div>
   </div>
 
+  <!-- Reusable success popup for Competition, Sponsor, and Stall submissions -->
+  <div class="modal" id="submissionSuccessModal" aria-hidden="true" role="dialog" aria-labelledby="submissionSuccessTitle">
+    <div class="success-modal-card">
+      <div class="success-icon-ring">
+        <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="26" cy="26" r="25" fill="none" stroke="#22c55e" stroke-width="2" />
+          <path d="M14 27 L22 35 L38 18" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <p class="success-tag" id="submissionSuccessTag">Form Submitted</p>
+      <h2 id="submissionSuccessTitle">Submission Received Successfully!</h2>
+      <p class="success-body" id="submissionSuccessBody">Thank you. Your form has been received successfully.</p>
+      <div class="success-details" id="submissionSuccessDetails"></div>
+      <div class="success-event-info">
+        <div><span>Date</span><strong>18 July 2026</strong></div>
+        <div><span>Time</span><strong>9:30 AM – 5:30 PM</strong></div>
+        <div><span>Venue</span><strong>Anna Centenary Library, Kotturpuram, Chennai</strong></div>
+        <div><span>Email</span><strong><a href="mailto:info@mrtech.co.in">info@mrtech.co.in</a></strong></div>
+      </div>
+      <p class="success-note" id="submissionSuccessNote">Your details have been saved. The ICAIH 2026 team will contact you if further information is required.</p>
+      <button class="btn primary success-close-btn" id="closeSubmissionSuccessModal" type="button">Close</button>
+    </div>
+  </div>
+
 
 
   <div class="upi-app-chooser" id="upiAppChooser" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="upiChooserTitle">
@@ -1575,7 +1599,7 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=20260626-three-upi-apps"></script>
+  <script src="js/main.js?v=20260626-popup-alignment"></script>
 </body>
 
 </html>

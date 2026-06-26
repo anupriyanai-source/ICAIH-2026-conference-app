@@ -119,10 +119,13 @@ document.querySelectorAll('input[data-phone-only]').forEach(input => {
 
 /* ── Validate phone fields before form submit ── */
 function validatePhoneFields(form, messageId) {
-  const phoneInputs = form.querySelectorAll('input[data-phone-only]');
+  const phoneInputs = Array.from(form.querySelectorAll('input[data-phone-only]'))
+    .filter(input => !input.disabled && input.offsetParent !== null);
 
   for (const input of phoneInputs) {
-    const value = input.value.trim();
+    let value = input.value.replace(/\D/g, '');
+    if (value.length === 12 && value.startsWith('91')) value = value.slice(2);
+    input.value = value.slice(0, 10);
 
     if ((input.required || value.length > 0) && !/^\d{10}$/.test(value)) {
       showMessage(messageId, 'Please enter a valid 10 digit phone number.', 'error');
@@ -151,6 +154,9 @@ const EVENT_INFO = {
   email: 'info@mrtech.co.in',
   emailHref: 'mailto:info@mrtech.co.in?subject=ICAIH%202026%20Inquiry&body=Dear%20ICAIH%202026%20Team%2C%0D%0A%0D%0A'
 };
+
+const SUCCESS_POPUP_DELAY_MS = 3000;
+const waitForSuccessPopup = () => new Promise(resolve => setTimeout(resolve, SUCCESS_POPUP_DELAY_MS));
 
 const REGISTRATION_FEES = {
   'Student': 999,
@@ -1611,7 +1617,7 @@ function openSuccessModal(formData, refId, emailStatus) {
 
     detailsEl.innerHTML = rows.map(([label, value]) => `
       <div class="detail-row">
-        <span>${label}</span>
+        <span>${label}:</span>
         <span>${value || '—'}</span>
       </div>
     `).join('');
@@ -1654,6 +1660,56 @@ document.getElementById('closeSuccessModal')?.addEventListener('click', closeSuc
 
 document.getElementById('successModal')?.addEventListener('click', e => {
   if (e.target.id === 'successModal') closeSuccessModal();
+});
+
+function escapeSuccessText(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function openSubmissionSuccessModal(config = {}) {
+  const modal = document.getElementById('submissionSuccessModal');
+  if (!modal) return;
+
+  const tag = document.getElementById('submissionSuccessTag');
+  const title = document.getElementById('submissionSuccessTitle');
+  const body = document.getElementById('submissionSuccessBody');
+  const details = document.getElementById('submissionSuccessDetails');
+  const note = document.getElementById('submissionSuccessNote');
+
+  if (tag) tag.textContent = config.tag || 'Form Submitted';
+  if (title) title.textContent = config.title || 'Submission Received Successfully!';
+  if (body) body.innerHTML = config.body || 'Thank you. Your form has been received successfully.';
+  if (note) note.textContent = config.note || 'Your details have been saved. The ICAIH 2026 team will contact you if further information is required.';
+
+  const rows = Array.isArray(config.details) ? config.details : [];
+  if (details) {
+    details.innerHTML = rows
+      .filter(row => row && row.value !== undefined && row.value !== null && String(row.value).trim())
+      .map(row => `<div class="detail-row"><span>${escapeSuccessText(row.label)}:</span><strong>${escapeSuccessText(row.value)}</strong></div>`)
+      .join('');
+  }
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSubmissionSuccessModal() {
+  const modal = document.getElementById('submissionSuccessModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('closeSubmissionSuccessModal')?.addEventListener('click', closeSubmissionSuccessModal);
+document.getElementById('submissionSuccessModal')?.addEventListener('click', event => {
+  if (event.target.id === 'submissionSuccessModal') closeSubmissionSuccessModal();
 });
 
 function resetRegistrationFormState(form) {
@@ -1763,6 +1819,8 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
       result?.registrationId ||
       'ICAIH-' + Date.now().toString(36).toUpperCase();
 
+    showMessage('registrationMessage', 'Registration received. Opening confirmation in 3 seconds…', 'ok');
+    await waitForSuccessPopup();
     openSuccessModal(modalData, refId, result.emailStatus);
 
     showMessage(
@@ -1828,6 +1886,11 @@ document.getElementById('sponsorForm')?.addEventListener('submit', async e => {
       throw new Error(result.message || 'Inquiry failed.');
     }
 
+    const submittedMode = sponsorFormMode;
+    const submittedData = Object.fromEntries(formData.entries());
+    const submittedTier = submittedData.sponsorTier || (submittedMode === 'stall' ? 'Stall Space' : 'Sponsorship Package');
+    const submittedRefId = result.refId || result.id || `ICAIH-${Date.now().toString(36).toUpperCase()}`;
+
     showMessage(
       'sponsorMessage',
       result.message || 'Inquiry submitted successfully. Payment is pending verification.',
@@ -1837,8 +1900,29 @@ document.getElementById('sponsorForm')?.addEventListener('submit', async e => {
     form.reset();
     resetSponsorPaymentProof();
     updateSponsorPaymentUI();
+    closeSponsorModal();
+    await waitForSuccessPopup();
 
-    setTimeout(closeSponsorModal, 2200);
+    openSubmissionSuccessModal({
+      tag: submittedMode === 'stall' ? 'Stall Booking Submitted' : 'Sponsor Form Submitted',
+      title: submittedMode === 'stall' ? 'Stall Space Request Received!' : 'Sponsorship Request Received!',
+      body: submittedMode === 'stall'
+        ? 'Thank you for booking an exhibitor stall at <strong>ICAIH 2026</strong>. Your request has been received successfully.'
+        : 'Thank you for your interest in sponsoring <strong>ICAIH 2026</strong>. Your sponsorship request has been received successfully.',
+      details: [
+        { label: 'Company Name', value: submittedData.companyName },
+        { label: 'Contact Person', value: submittedData.contactPerson },
+        { label: 'Email', value: submittedData.email },
+        { label: submittedMode === 'stall' ? 'Stall Package' : 'Sponsorship Tier', value: submittedTier },
+        { label: 'Paid Amount', value: formatINR(details.feeAmount) },
+        { label: 'Registration ID', value: submittedRefId },
+        { label: 'Payment Status', value: 'Pending Verification' },
+        { label: 'UTR / Transaction ID', value: submittedData.paymentReference }
+      ],
+      note: submittedMode === 'stall'
+        ? 'Your stall booking details have been saved. The ICAIH 2026 team will contact you regarding space allocation and setup instructions.'
+        : 'Your sponsorship details have been saved. The ICAIH 2026 team will contact you regarding confirmation and branding requirements.'
+    });
   } catch (error) {
     showMessage(
       'sponsorMessage',
@@ -1858,6 +1942,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     closeSponsorModal();
     closeSuccessModal();
+    closeSubmissionSuccessModal();
   }
 });
 /* ════════════════════════════════════════════════════════════════
@@ -2428,14 +2513,62 @@ document.getElementById('applicationForm')?.addEventListener('submit', async e =
       throw new Error(result.message || 'Application submission failed. Please check the backend terminal error, MySQL connection, and file format.');
     }
 
+    const submittedType = getSafeApplicationType(formData.get('applicationType'));
+    const submittedData = Object.fromEntries(formData.entries());
+    const submittedRefId = result.refId || result.id || `ICAIH-${Date.now().toString(36).toUpperCase()}`;
+    const submittedLabel = APPLICATION_LABELS[submittedType] || 'Application';
+    const successConfigByType = {
+      'pre-conference-competition': {
+        tag: 'Competition Form Submitted',
+        title: 'Competition Application Received!',
+        body: 'Thank you for applying for the <strong>ICAIH 2026 Pre-Conference Competition</strong>. Your form has been submitted successfully.',
+        categoryLabel: 'Competition Category',
+        categoryValue: submittedData.competitionCategory || submittedData.submissionTitle,
+        note: 'Your competition application has been saved. The competition coordinator will review the submission and contact you if further information is required.'
+      },
+      'research-paper': {
+        tag: 'Research Paper Submitted',
+        title: 'Research Paper Submission Received!',
+        body: 'Thank you for submitting your research paper to <strong>ICAIH 2026</strong>. Your form and uploaded files have been received successfully.',
+        categoryLabel: 'Presentation Type',
+        categoryValue: submittedData.presentationType || submittedData.topicTheme || submittedData.submissionTitle,
+        note: 'Your research paper submission has been saved. The review committee will evaluate it and communicate the next steps by email.'
+      },
+      'award-nomination': {
+        tag: 'Award Nomination Submitted',
+        title: 'Award Nomination Received!',
+        body: 'Thank you for submitting an <strong>ICAIH 2026 International Award Nomination</strong>. The nomination has been received successfully.',
+        categoryLabel: 'Award Category',
+        categoryValue: submittedData.awardCategory || submittedData.competitionCategory || submittedData.submissionTitle,
+        note: 'The award nomination has been saved. The ICAIH 2026 awards committee will review the details and contact the nominee or applicant if required.'
+      }
+    };
+    const successConfig = successConfigByType[submittedType];
+
     showMessage(
       'applicationMessage',
-      `${result.message || 'Form submitted successfully. Coordinator has been notified at divyav16.ai@gmail.com.'} Reference ID: ${result.refId || '—'}`,
+      `${result.message || 'Form submitted successfully. Confirmation emails have been sent to the applicant and admin at info@mrtech.co.in.'} Registration ID: ${submittedRefId}`,
       'ok'
     );
 
-    const submittedType = getSafeApplicationType(document.getElementById('applicationType')?.value);
     resetApplicationFormState(form, submittedType);
+    closeApplicationModal();
+    await waitForSuccessPopup();
+
+    openSubmissionSuccessModal({
+      tag: successConfig.tag,
+      title: successConfig.title,
+      body: successConfig.body,
+      details: [
+        { label: 'Applicant Name', value: submittedData.fullName || submittedData.nomineeName },
+        { label: 'Email', value: submittedData.email },
+        { label: 'Form Type', value: submittedLabel },
+        { label: successConfig.categoryLabel, value: successConfig.categoryValue },
+        { label: 'Registration ID', value: submittedRefId },
+        { label: 'Submission Status', value: 'Received Successfully' }
+      ],
+      note: successConfig.note
+    });
   } catch (error) {
     showMessage('applicationMessage', error.message || 'Unable to submit. Please start the backend with npm start and check the terminal error.', 'error');
   } finally {
@@ -2448,7 +2581,10 @@ document.getElementById('applicationForm')?.addEventListener('submit', async e =
 
 /* Add Apply Now modal to ESC close behavior */
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeApplicationModal();
+  if (e.key === 'Escape') {
+    closeApplicationModal();
+    closeSubmissionSuccessModal();
+  }
 });
 
 
