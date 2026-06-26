@@ -1984,8 +1984,17 @@ function isMobileApplicationView() {
 function showApplicationPicker() {
   const modal = document.getElementById('applicationModal');
   if (!modal || !isMobileApplicationView()) return;
+
   modal.classList.add('mobile-application-picker');
   modal.classList.remove('mobile-application-form-page');
+
+  // On the mobile selection screen no form is selected yet.
+  // The blue active state is applied only after the user taps a form.
+  document.querySelectorAll('.application-tab').forEach(tab => {
+    tab.classList.remove('active');
+    tab.setAttribute('aria-selected', 'false');
+  });
+
   const header = document.getElementById('mobileApplicationPageHeader');
   if (header) header.setAttribute('aria-hidden', 'true');
   modal.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2059,7 +2068,9 @@ function setApplicationType(type) {
   document.body.classList.toggle('application-award-mode', safeType === 'award-nomination');
 
   document.querySelectorAll('.application-tab').forEach(tab => {
-    tab.classList.toggle('active', tab.dataset.applicationType === safeType);
+    const isActive = tab.dataset.applicationType === safeType;
+    tab.classList.toggle('active', isActive);
+    tab.setAttribute('aria-selected', String(isActive));
   });
 
   if (submitButton) {
