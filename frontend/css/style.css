@@ -6287,3 +6287,90 @@ body.application-award-mode .pdf-form-header.award-nomination-fields {
     font-size: 0.84rem;
   }
 }
+
+/* Mobile competition forms: selection screen and separate form-page view */
+.mobile-application-page-header {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  #applicationModal.mobile-application-picker .application-form {
+    display: none !important;
+  }
+
+  #applicationModal.mobile-application-picker .application-form-panel {
+    padding-bottom: 34px !important;
+  }
+
+  #applicationModal.mobile-application-picker .application-type-tabs {
+    padding-bottom: 0 !important;
+  }
+
+  #applicationModal.mobile-application-form-page .application-logo-panel,
+  #applicationModal.mobile-application-form-page .application-type-tabs {
+    display: none !important;
+  }
+
+  #applicationModal.mobile-application-form-page .application-form-panel {
+    min-height: 100dvh !important;
+    padding: 0 18px 30px !important;
+  }
+
+  #applicationModal.mobile-application-form-page #closeApplicationModal {
+    position: fixed !important;
+    top: 14px !important;
+    right: 14px !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    font-size: 28px !important;
+  }
+
+  #applicationModal.mobile-application-form-page .mobile-application-page-header {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    display: block;
+    margin: 0 -18px 18px;
+    padding: 14px 68px 14px 18px;
+    background: #0d2d68;
+    box-shadow: 0 8px 24px rgba(7, 27, 68, .18);
+  }
+
+  #applicationModal.mobile-application-form-page .mobile-application-page-header[aria-hidden="true"] {
+    display: none;
+  }
+
+  .mobile-application-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 7px 12px;
+    border: 1px solid rgba(255,255,255,.42);
+    border-radius: 999px;
+    background: rgba(255,255,255,.12);
+    color: #fff;
+    font: inherit;
+    font-size: .86rem;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .mobile-application-page-header p {
+    margin: 9px 0 0;
+    color: #fff;
+    font-size: 1rem;
+    line-height: 1.25;
+    font-weight: 800;
+  }
+
+  #applicationModal.mobile-application-form-page .application-form {
+    display: block !important;
+  }
+
+  #applicationModal.mobile-application-form-page .application-form-scroll {
+    padding-top: 0 !important;
+  }
+}

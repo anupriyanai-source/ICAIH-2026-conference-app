@@ -1977,6 +1977,35 @@ function getSafeApplicationType(type) {
   return Object.prototype.hasOwnProperty.call(APPLICATION_LABELS, type) ? type : 'pre-conference-competition';
 }
 
+function isMobileApplicationView() {
+  return window.matchMedia('(max-width: 640px)').matches;
+}
+
+function showApplicationPicker() {
+  const modal = document.getElementById('applicationModal');
+  if (!modal || !isMobileApplicationView()) return;
+  modal.classList.add('mobile-application-picker');
+  modal.classList.remove('mobile-application-form-page');
+  const header = document.getElementById('mobileApplicationPageHeader');
+  if (header) header.setAttribute('aria-hidden', 'true');
+  modal.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showApplicationFormPage(type) {
+  const modal = document.getElementById('applicationModal');
+  if (!modal || !isMobileApplicationView()) return;
+  modal.classList.remove('mobile-application-picker');
+  modal.classList.add('mobile-application-form-page');
+  const title = document.getElementById('mobileApplicationPageTitle');
+  if (title) title.textContent = APPLICATION_LABELS[getSafeApplicationType(type)];
+  const header = document.getElementById('mobileApplicationPageHeader');
+  if (header) header.setAttribute('aria-hidden', 'false');
+  modal.scrollTo({ top: 0, behavior: 'smooth' });
+  window.setTimeout(() => {
+    document.getElementById('mobileApplicationPageHeader')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }, 80);
+}
+
 function openApplicationModal() {
   const modal = document.getElementById('applicationModal');
   if (!modal) return;
@@ -1985,6 +2014,7 @@ function openApplicationModal() {
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
   setApplicationType(document.getElementById('applicationType')?.value || 'pre-conference-competition');
+  if (isMobileApplicationView()) showApplicationPicker();
 }
 
 function closeApplicationModal() {
@@ -2231,7 +2261,24 @@ document.getElementById('applicationModal')?.addEventListener('click', e => {
 });
 
 document.querySelectorAll('.application-tab').forEach(tab => {
-  tab.addEventListener('click', () => setApplicationType(tab.dataset.applicationType));
+  tab.addEventListener('click', () => {
+    const type = tab.dataset.applicationType;
+    setApplicationType(type);
+    showApplicationFormPage(type);
+  });
+});
+
+document.getElementById('mobileApplicationBackBtn')?.addEventListener('click', showApplicationPicker);
+
+window.addEventListener('resize', () => {
+  const modal = document.getElementById('applicationModal');
+  if (!modal?.classList.contains('open')) return;
+  if (isMobileApplicationView()) {
+    if (!modal.classList.contains('mobile-application-form-page')) showApplicationPicker();
+  } else {
+    modal.classList.remove('mobile-application-picker', 'mobile-application-form-page');
+    document.getElementById('mobileApplicationPageHeader')?.setAttribute('aria-hidden', 'true');
+  }
 });
 
 function clearApplicationForm() {
