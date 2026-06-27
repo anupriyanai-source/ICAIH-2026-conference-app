@@ -6458,3 +6458,16 @@ body.application-award-mode .pdf-form-header.award-nomination-fields {
 .application-file-upload input[type="file"]::file-selector-button { margin-right: 12px; border: 0; border-radius: 9px; padding: 10px 14px; background: #1677ff; color: #fff; font-weight: 700; cursor: pointer; }
 .application-file-upload input.field-error { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220,38,38,.12); }
 @media (max-width: 640px) { .application-file-upload input[type="file"] { padding: 10px; font-size: 14px; } }
+
+.bulk-count-help {
+  display: block;
+  margin-top: 8px;
+  color: #52647f;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.bulk-count-help.error {
+  color: #c62828;
+  font-weight: 700;
+}

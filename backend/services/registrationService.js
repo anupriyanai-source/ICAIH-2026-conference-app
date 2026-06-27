@@ -25,10 +25,19 @@ const ROLE_FEES = {
 };
 
 const BULK_OFFERS = {
-  '5-25': { min: 5, max: 25, discount: 10, label: 'Student Group: 5 to 25 Students - 10% Discount' },
-  '25-50': { min: 25, max: 50, discount: 20, label: 'Student Group: 25 to 50 Students - 20% Discount' },
+  '1-4': { min: 1, max: 4, discount: 10, label: 'Student Group: 1 to 4 Students - Early Bird 10% Discount' },
+  '5-24': { min: 5, max: 24, discount: 10, label: 'Student Group: 5 to 24 Students - 10% Discount' },
+  '25-49': { min: 25, max: 49, discount: 20, label: 'Student Group: 25 to 49 Students - 20% Discount' },
   '50-plus': { min: 50, max: Infinity, discount: 25, label: 'Student Group: 50+ Students - 25% Discount' }
 };
+
+function getBulkOfferForCount(count) {
+  if (!Number.isInteger(count) || count < 1) return null;
+  if (count <= 4) return BULK_OFFERS['1-4'];
+  if (count <= 24) return BULK_OFFERS['5-24'];
+  if (count <= 49) return BULK_OFFERS['25-49'];
+  return BULK_OFFERS['50-plus'];
+}
 
 const EARLY_BIRD_DISCOUNT_PERCENT = 10;
 const EARLY_BIRD_END = new Date('2026-07-05T23:59:59+05:30');
@@ -45,15 +54,16 @@ function applyEarlyBirdDiscount(amount) {
 
 function calculatePayment({ role, bulkOffer, studentCount }) {
   if (role === 'Bulk Booking') {
-    const offer = BULK_OFFERS[bulkOffer];
-    const count = Number(studentCount || 0);
-
-    if (!offer) {
-      throw { status: 400, message: 'Please select a valid bulk booking offer.' };
+    const rawCount = String(studentCount ?? '').trim();
+    if (!/^\d+$/.test(rawCount)) {
+      throw { status: 400, message: 'Please enter the number of students using whole numbers only.' };
     }
 
-    if (!count || count < offer.min || count > offer.max) {
-      throw { status: 400, message: 'Student count does not match the selected bulk booking offer.' };
+    const count = Number(rawCount);
+    const offer = getBulkOfferForCount(count);
+
+    if (!offer) {
+      throw { status: 400, message: 'Please enter at least 1 student.' };
     }
 
     const baseTotal = count * ROLE_FEES.Student;

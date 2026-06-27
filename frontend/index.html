@@ -936,11 +936,13 @@
 
           <div class="bulk-booking-box" id="bulkBookingBox" hidden>
             <label><span>Student Bulk Booking Offer</span><select name="bulkOffer" id="bulkOffer">
-                <option value="5-25">Student Group: 5 to 25 Students - 10% Discount</option>
-                <option value="25-50">Student Group: 25 to 50 Students - 20% Discount</option>
+                <option value="1-4">Student Group: 1 to 4 Students - Early Bird ₹899 Each</option>
+                <option value="5-24">Student Group: 5 to 24 Students - 10% Discount</option>
+                <option value="25-49">Student Group: 25 to 49 Students - 20% Discount</option>
                 <option value="50-plus">Student Group: 50+ Students - 25% Discount</option>
               </select></label>
-            <label><span>Number of Students</span><input name="studentCount" id="studentCount" type="number" min="5" placeholder="Enter total students"></label>
+            <label><span>Number of Students</span><input name="studentCount" id="studentCount" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="Enter total students (minimum 1)"></label>
+            <small class="bulk-count-help" id="bulkCountHelp">Enter 1–4 for Early Bird pricing at ₹899 each, 5–24 for 10%, 25–49 for 20%, or 50+ for 25%. The offer changes automatically.</small>
           </div>
 
           <div class="fee-summary-box">

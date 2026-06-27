@@ -14,18 +14,13 @@ function buildUpiUrl({ amount, purpose = 'ICAIH 2026 Payment', reference = '' })
     throw error;
   }
 
-  const transactionReference = String(reference || `ICAIH${Date.now()}`)
-    .replace(/[^A-Za-z0-9_-]/g, '')
-    .slice(0, 35);
-
   const paymentPurpose = String(purpose || 'ICAIH 2026 Payment').slice(0, 80);
   const query = [
     `pa=${encodeURIComponent(UPI_ID)}`,
     `pn=${encodeURIComponent(PAYEE_NAME)}`,
     `am=${encodeURIComponent(numericAmount.toFixed(2))}`,
     'cu=INR',
-    `tn=${encodeURIComponent(paymentPurpose)}`,
-    `tr=${encodeURIComponent(transactionReference)}`
+    `tn=${encodeURIComponent(paymentPurpose)}`
   ].join('&');
 
   return `upi://pay?${query}`;

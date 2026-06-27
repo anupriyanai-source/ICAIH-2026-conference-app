@@ -168,10 +168,59 @@ const REGISTRATION_FEES = {
 };
 
 const BULK_OFFERS = {
-  '5-25': { min: 5, max: 25, discount: 10, label: 'Student Group: 5 to 25 Students - 10% Discount' },
-  '25-50': { min: 25, max: 50, discount: 20, label: 'Student Group: 25 to 50 Students - 20% Discount' },
+  '1-4': { min: 1, max: 4, discount: 10, label: 'Student Group: 1 to 4 Students - Early Bird 10% Discount' },
+  '5-24': { min: 5, max: 24, discount: 10, label: 'Student Group: 5 to 24 Students - 10% Discount' },
+  '25-49': { min: 25, max: 49, discount: 20, label: 'Student Group: 25 to 49 Students - 20% Discount' },
   '50-plus': { min: 50, max: Infinity, discount: 25, label: 'Student Group: 50+ Students - 25% Discount' }
 };
+
+function getBulkOfferKeyForCount(count) {
+  const value = Number(count || 0);
+  if (!Number.isInteger(value) || value < 1) return '';
+  if (value <= 4) return '1-4';
+  if (value <= 24) return '5-24';
+  if (value <= 49) return '25-49';
+  return '50-plus';
+}
+
+function normalizeStudentCountInput(input) {
+  if (!input) return 0;
+  const digitsOnly = String(input.value || '').replace(/\D/g, '').slice(0, 4);
+  if (input.value !== digitsOnly) input.value = digitsOnly;
+  return digitsOnly ? Number(digitsOnly) : 0;
+}
+
+function synchronizeBulkOfferWithStudentCount({ showError = false } = {}) {
+  const bulkOffer = document.getElementById('bulkOffer');
+  const studentCountInput = document.getElementById('studentCount');
+  const bulkCountHelp = document.getElementById('bulkCountHelp');
+  const count = normalizeStudentCountInput(studentCountInput);
+  const derivedKey = getBulkOfferKeyForCount(count);
+
+  if (derivedKey && bulkOffer) bulkOffer.value = derivedKey;
+
+  if (bulkCountHelp) {
+    if (!count) {
+      bulkCountHelp.textContent = 'Enter 1–4 for Early Bird pricing at ₹899 per student, 5–24 for 10%, 25–49 for 20%, or 50+ for 25%. The offer changes automatically.';
+      bulkCountHelp.classList.remove('error');
+    } else if (!derivedKey) {
+      bulkCountHelp.textContent = 'Enter at least 1 student.';
+      bulkCountHelp.classList.add('error');
+    } else {
+      bulkCountHelp.textContent = `${BULK_OFFERS[derivedKey].label} selected automatically.`;
+      bulkCountHelp.classList.remove('error');
+    }
+  }
+
+  if (showError && !derivedKey) {
+    studentCountInput?.setCustomValidity('Please enter a whole number of at least 1 student.');
+    studentCountInput?.reportValidity();
+  } else {
+    studentCountInput?.setCustomValidity('');
+  }
+
+  return { count, offerKey: derivedKey };
+}
 
 const EARLY_BIRD_DISCOUNT_PERCENT = 10;
 const EARLY_BIRD_END = new Date('2026-07-05T23:59:59+05:30');
@@ -395,12 +444,13 @@ function formatINR(amount) {
 
 function getRegistrationPaymentDetails() {
   const role = document.getElementById('registrationRole')?.value || 'Delegate';
-  const bulkOfferKey = document.getElementById('bulkOffer')?.value || '5-25';
   const studentCountInput = document.getElementById('studentCount');
-  const studentCount = Number(studentCountInput?.value || 0);
+  const studentCount = normalizeStudentCountInput(studentCountInput);
+  const derivedBulkOfferKey = getBulkOfferKeyForCount(studentCount);
+  const bulkOfferKey = derivedBulkOfferKey || document.getElementById('bulkOffer')?.value || '1-4';
 
   if (role === 'Bulk Booking') {
-    const offer = BULK_OFFERS[bulkOfferKey];
+    const offer = BULK_OFFERS[bulkOfferKey] || BULK_OFFERS['1-4'];
     const count = studentCount > 0 ? studentCount : offer.min;
     const baseTotal = count * REGISTRATION_FEES.Student;
     const discountAmount = Math.round(baseTotal * offer.discount / 100);
@@ -410,6 +460,7 @@ function getRegistrationPaymentDetails() {
       role,
       feeAmount: payableAmount,
       discountPercent: offer.discount,
+      bulkOfferKey,
       bulkOffer: offer.label,
       studentCount: count,
       requiresPayment: payableAmount > 0,
@@ -490,7 +541,6 @@ function createUpiTransactionReference(purpose = 'Payment') {
 
 function buildMythUpiUrl(details, purpose = 'Registration') {
   const amount = Number(details.feeAmount || 0).toFixed(2);
-  const transactionReference = createUpiTransactionReference(purpose);
   const paymentNote = `${MYTH_UPI_PAYMENT.transactionNote} - ${purpose}`;
 
   // Encode each value separately. Do not encode the complete UPI URL and do not
@@ -501,8 +551,7 @@ function buildMythUpiUrl(details, purpose = 'Registration') {
     `pn=${encodeURIComponent(MYTH_UPI_PAYMENT.payeeName)}`,
     `am=${encodeURIComponent(amount)}`,
     'cu=INR',
-    `tn=${encodeURIComponent(paymentNote)}`,
-    `tr=${encodeURIComponent(transactionReference)}`
+    `tn=${encodeURIComponent(paymentNote)}`
   ].join('&');
 
   return `upi://pay?${query}`;
@@ -676,7 +725,7 @@ function openManualUpiPayment() {
 
   showMessage(
     'registrationMessage',
-    'Opening the Myth Reality Technologies UPI payment page. Complete the payment, then return here and enter the UTR / Transaction ID before submitting.',
+    'Opening your UPI app. Your bank or UPI app may show its own safety warning. Verify the payee name and UPI ID before continuing. If the app says the VPA is unavailable, use the QR code or contact your bank because that message is generated by the payment network, not the website.',
     ''
   );
 
@@ -807,6 +856,7 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
 
   if (bulkBox) bulkBox.hidden = role !== 'Bulk Booking';
   if (studentCount) studentCount.required = role === 'Bulk Booking';
+  if (role === 'Bulk Booking') synchronizeBulkOfferWithStudentCount();
 
   const details = getRegistrationPaymentDetails();
 
@@ -833,7 +883,9 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
 
   if (earlyBirdStatus) {
     if (role === 'Bulk Booking') {
-      earlyBirdStatus.textContent = 'Student bulk-booking discounts are calculated separately and are not combined with the Early Bird offer.';
+      earlyBirdStatus.textContent = details.bulkOfferKey === '1-4'
+        ? 'Early Bird student pricing applied: ₹899 per student for 1–4 students.'
+        : 'Student bulk-booking discounts are calculated separately and are not combined with the Early Bird offer.';
       earlyBirdStatus.classList.remove('expired');
     } else if (details.earlyBirdActive && details.requiresPayment) {
       earlyBirdStatus.textContent = 'Early Bird offer active: 10% discount is automatically applied through July 5, 2026.';
@@ -891,9 +943,30 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   }
 }
 
-['registrationRole', 'bulkOffer', 'studentCount'].forEach(id => {
-  document.getElementById(id)?.addEventListener('input', () => updateRegistrationPaymentUI());
-  document.getElementById(id)?.addEventListener('change', () => updateRegistrationPaymentUI());
+document.getElementById('registrationRole')?.addEventListener('change', () => updateRegistrationPaymentUI());
+
+document.getElementById('studentCount')?.addEventListener('input', event => {
+  normalizeStudentCountInput(event.currentTarget);
+  synchronizeBulkOfferWithStudentCount();
+  updateRegistrationPaymentUI();
+});
+
+document.getElementById('studentCount')?.addEventListener('blur', () => {
+  synchronizeBulkOfferWithStudentCount({ showError: true });
+});
+
+document.getElementById('bulkOffer')?.addEventListener('change', event => {
+  const studentCountInput = document.getElementById('studentCount');
+  const count = normalizeStudentCountInput(studentCountInput);
+  const expectedKey = getBulkOfferKeyForCount(count);
+  if (expectedKey) {
+    event.currentTarget.value = expectedKey;
+  } else {
+    const selected = BULK_OFFERS[event.currentTarget.value];
+    if (selected && studentCountInput) studentCountInput.value = String(selected.min);
+  }
+  synchronizeBulkOfferWithStudentCount();
+  updateRegistrationPaymentUI();
 });
 
 ['name', 'fullName', 'participantName', 'email', 'emailAddress', 'phone', 'organization'].forEach(fieldName => {
@@ -1545,12 +1618,11 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
   const details = getRegistrationPaymentDetails();
 
   if (details.role === 'Bulk Booking') {
-    const offer = BULK_OFFERS[document.getElementById('bulkOffer')?.value || '5-25'];
-
-    if (!details.studentCount || details.studentCount < offer.min || details.studentCount > offer.max) {
+    const { count, offerKey } = synchronizeBulkOfferWithStudentCount({ showError: true });
+    if (!offerKey || !count) {
       showMessage(
         'registrationMessage',
-        'Please enter a student count matching the selected bulk offer.',
+        'Please enter a whole-number student count of at least 1. Pricing is applied automatically: 1–4 = ₹899 per student, 5–24 = 10%, 25–49 = 20%, and 50+ = 25%.',
         'error'
       );
       document.getElementById('studentCount')?.focus();
