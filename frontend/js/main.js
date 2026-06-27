@@ -143,6 +143,11 @@ const PAYMENT_PAGE_REFERENCE_NUMBER = '917358327761';
 const MYTH_UPI_PAYMENT = {
   upiId: 'MYTHREALITYTECHNOLOGIESPRIV@iob',
   payeeName: 'MYTH REALITY TECHNOLOGIES PRIVATE LIMITED',
+  merchantCode: '8011',
+  organizationId: '159020',
+  mode: '00',
+  purposeCode: '00',
+  version: '01',
   transactionNote: 'ICAIH 2026 Registration',
   fallbackQrImage: 'assets/qr/myth-reality-payment-qr.png'
 };
@@ -546,12 +551,20 @@ function buildMythUpiUrl(details, purpose = 'Registration') {
   // Encode each value separately. Do not encode the complete UPI URL and do not
   // use URLSearchParams here because some UPI applications interpret `+` in
   // names or notes incorrectly. `%20` keeps spaces compatible across apps.
+  // Match the exact merchant parameters embedded in the official IOB/BHIM QR.
+  // The amount and note remain dynamic for each website registration.
   const query = [
+    `ver=${encodeURIComponent(MYTH_UPI_PAYMENT.version)}`,
     `pa=${encodeURIComponent(MYTH_UPI_PAYMENT.upiId)}`,
     `pn=${encodeURIComponent(MYTH_UPI_PAYMENT.payeeName)}`,
+    `tn=${encodeURIComponent(paymentNote)}`,
     `am=${encodeURIComponent(amount)}`,
     'cu=INR',
-    `tn=${encodeURIComponent(paymentNote)}`
+    `mode=${encodeURIComponent(MYTH_UPI_PAYMENT.mode)}`,
+    `purpose=${encodeURIComponent(MYTH_UPI_PAYMENT.purposeCode)}`,
+    `orgid=${encodeURIComponent(MYTH_UPI_PAYMENT.organizationId)}`,
+    'sign=',
+    `mc=${encodeURIComponent(MYTH_UPI_PAYMENT.merchantCode)}`
   ].join('&');
 
   return `upi://pay?${query}`;
@@ -730,12 +743,21 @@ function openManualUpiPayment() {
   );
 
   const paymentPageUrl = buildMythUpiUrl(details, details.role || 'Registration');
-  openUpiAppChooser({
-    upiUrl: paymentPageUrl,
-    amount: details.feeAmount,
-    purpose: `${details.role || 'Registration'} Registration`,
-    messageId: 'registrationMessage'
-  });
+
+  if (isAndroidDevice()) {
+    // Use the standard UPI intent directly. Android opens the user's default
+    // UPI app or its installed-app chooser without changing the official IOB
+    // merchant parameters.
+    window.location.href = paymentPageUrl;
+    return;
+  }
+
+  showMessage(
+    'registrationMessage',
+    'Pay Now must be opened on an Android phone. On a laptop or desktop, scan the official IOB QR code displayed above.',
+    'error'
+  );
+  document.getElementById('paymentQrImage')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function setUtrEntryEnabled(enabled) {
@@ -1367,12 +1389,18 @@ function openSponsorPaymentPage() {
   );
 
   const paymentPageUrl = buildSponsorPaymentUrl(details);
-  openUpiAppChooser({
-    upiUrl: paymentPageUrl,
-    amount: details.feeAmount,
-    purpose: sponsorFormMode === 'stall' ? 'Stall / Exhibitor Booking' : 'Sponsorship Payment',
-    messageId: 'sponsorMessage'
-  });
+
+  if (isAndroidDevice()) {
+    window.location.href = paymentPageUrl;
+    return;
+  }
+
+  showMessage(
+    'sponsorMessage',
+    'Pay Now must be opened on an Android phone. On a laptop or desktop, scan the official IOB QR code displayed above.',
+    'error'
+  );
+  document.getElementById('sponsorPaymentQrImage')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function buildSponsorPaymentPaymentPageUrl(details) {

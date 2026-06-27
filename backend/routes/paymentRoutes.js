@@ -5,6 +5,11 @@ const router = express.Router();
 
 const UPI_ID = process.env.UPI_ID || process.env.PAYMENT_UPI_ID || 'MYTHREALITYTECHNOLOGIESPRIV@iob';
 const PAYEE_NAME = process.env.UPI_PAYEE_NAME || process.env.PAYMENT_PAYEE_NAME || 'MYTH REALITY TECHNOLOGIES PRIVATE LIMITED';
+const UPI_MERCHANT_CODE = process.env.UPI_MERCHANT_CODE || '8011';
+const UPI_ORG_ID = process.env.UPI_ORG_ID || '159020';
+const UPI_MODE = process.env.UPI_MODE || '00';
+const UPI_PURPOSE_CODE = process.env.UPI_PURPOSE_CODE || '00';
+const UPI_VERSION = process.env.UPI_VERSION || '01';
 
 function buildUpiUrl({ amount, purpose = 'ICAIH 2026 Payment', reference = '' }) {
   const numericAmount = Number(amount);
@@ -15,12 +20,20 @@ function buildUpiUrl({ amount, purpose = 'ICAIH 2026 Payment', reference = '' })
   }
 
   const paymentPurpose = String(purpose || 'ICAIH 2026 Payment').slice(0, 80);
+  // Preserve the official IOB/BHIM merchant parameters from the supplied QR
+  // while inserting the dynamic amount and conference payment note.
   const query = [
+    `ver=${encodeURIComponent(UPI_VERSION)}`,
     `pa=${encodeURIComponent(UPI_ID)}`,
     `pn=${encodeURIComponent(PAYEE_NAME)}`,
+    `tn=${encodeURIComponent(paymentPurpose)}`,
     `am=${encodeURIComponent(numericAmount.toFixed(2))}`,
     'cu=INR',
-    `tn=${encodeURIComponent(paymentPurpose)}`
+    `mode=${encodeURIComponent(UPI_MODE)}`,
+    `purpose=${encodeURIComponent(UPI_PURPOSE_CODE)}`,
+    `orgid=${encodeURIComponent(UPI_ORG_ID)}`,
+    'sign=',
+    `mc=${encodeURIComponent(UPI_MERCHANT_CODE)}`
   ].join('&');
 
   return `upi://pay?${query}`;
@@ -58,6 +71,8 @@ router.get('/details', (req, res, next) => {
       ok: true,
       upiId: UPI_ID,
       payeeName: PAYEE_NAME,
+      merchantCode: UPI_MERCHANT_CODE,
+      organizationId: UPI_ORG_ID,
       upiUrl: buildUpiUrl({
         amount: req.query.amount,
         purpose: req.query.purpose,
