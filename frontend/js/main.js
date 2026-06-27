@@ -491,16 +491,21 @@ function createUpiTransactionReference(purpose = 'Payment') {
 function buildMythUpiUrl(details, purpose = 'Registration') {
   const amount = Number(details.feeAmount || 0).toFixed(2);
   const transactionReference = createUpiTransactionReference(purpose);
-  const params = new URLSearchParams({
-    pa: MYTH_UPI_PAYMENT.upiId,
-    pn: MYTH_UPI_PAYMENT.payeeName,
-    tr: transactionReference,
-    tid: transactionReference,
-    am: amount,
-    cu: 'INR',
-    tn: `${MYTH_UPI_PAYMENT.transactionNote} - ${purpose}`
-  });
-  return `upi://pay?${params.toString()}`;
+  const paymentNote = `${MYTH_UPI_PAYMENT.transactionNote} - ${purpose}`;
+
+  // Encode each value separately. Do not encode the complete UPI URL and do not
+  // use URLSearchParams here because some UPI applications interpret `+` in
+  // names or notes incorrectly. `%20` keeps spaces compatible across apps.
+  const query = [
+    `pa=${encodeURIComponent(MYTH_UPI_PAYMENT.upiId)}`,
+    `pn=${encodeURIComponent(MYTH_UPI_PAYMENT.payeeName)}`,
+    `am=${encodeURIComponent(amount)}`,
+    'cu=INR',
+    `tn=${encodeURIComponent(paymentNote)}`,
+    `tr=${encodeURIComponent(transactionReference)}`
+  ].join('&');
+
+  return `upi://pay?${query}`;
 }
 
 const UPI_ANDROID_APPS = [

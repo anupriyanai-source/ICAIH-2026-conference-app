@@ -3,8 +3,8 @@ const QRCode = require('qrcode');
 
 const router = express.Router();
 
-const UPI_ID = process.env.PAYMENT_UPI_ID || 'MYTHREALITYTECHNOLOGIESPRIV@iob';
-const PAYEE_NAME = process.env.PAYMENT_PAYEE_NAME || 'MYTH REALITY TECHNOLOGIES PRIVATE LIMITED';
+const UPI_ID = process.env.UPI_ID || process.env.PAYMENT_UPI_ID || 'MYTHREALITYTECHNOLOGIESPRIV@iob';
+const PAYEE_NAME = process.env.UPI_PAYEE_NAME || process.env.PAYMENT_PAYEE_NAME || 'MYTH REALITY TECHNOLOGIES PRIVATE LIMITED';
 
 function buildUpiUrl({ amount, purpose = 'ICAIH 2026 Payment', reference = '' }) {
   const numericAmount = Number(amount);
@@ -18,16 +18,17 @@ function buildUpiUrl({ amount, purpose = 'ICAIH 2026 Payment', reference = '' })
     .replace(/[^A-Za-z0-9_-]/g, '')
     .slice(0, 35);
 
-  const params = new URLSearchParams({
-    pa: UPI_ID,
-    pn: PAYEE_NAME,
-    am: numericAmount.toFixed(2),
-    cu: 'INR',
-    tn: String(purpose || 'ICAIH 2026 Payment').slice(0, 80),
-    tr: transactionReference
-  });
+  const paymentPurpose = String(purpose || 'ICAIH 2026 Payment').slice(0, 80);
+  const query = [
+    `pa=${encodeURIComponent(UPI_ID)}`,
+    `pn=${encodeURIComponent(PAYEE_NAME)}`,
+    `am=${encodeURIComponent(numericAmount.toFixed(2))}`,
+    'cu=INR',
+    `tn=${encodeURIComponent(paymentPurpose)}`,
+    `tr=${encodeURIComponent(transactionReference)}`
+  ].join('&');
 
-  return `upi://pay?${params.toString()}`;
+  return `upi://pay?${query}`;
 }
 
 router.get('/qr', async (req, res, next) => {
