@@ -92,6 +92,7 @@ SMTP_USER=info@mrtech.co.in
 SMTP_PASS=your_mail_password
 MAIL_FROM=ICAIH 2026 <info@mrtech.co.in>
 ADMIN_EMAIL=info@mrtech.co.in
+APPLICATION_ADMIN_EMAIL=divyav16.ai@gmail.com
 UPI_ID=7004245277@indianbk
 UPI_PAYEE_NAME=gcare health care services private limited
 ```
@@ -224,3 +225,6 @@ payment_status
 payment_reference
 
 ```
+
+
+For all three application forms, set `APPLICATION_ADMIN_EMAIL=divyav16.ai@gmail.com`. Uploaded competition, research paper, and award nomination files are attached automatically to this notification email.

@@ -22,6 +22,24 @@ function clean(value) {
   return String(value || '').trim();
 }
 
+
+function isAffirmative(value) {
+  if (value === true) return true;
+  if (Array.isArray(value)) return value.some(isAffirmative);
+  if (value && typeof value === 'object') return Object.values(value).some(isAffirmative);
+
+  const normalized = String(value || '').trim().toLowerCase();
+  if (!normalized) return false;
+
+  const accepted = new Set(['true', 'on', '1', 'yes', 'checked']);
+  if (accepted.has(normalized)) return true;
+
+  return normalized
+    .split(/[\s,;|]+/)
+    .filter(Boolean)
+    .some(token => accepted.has(token));
+}
+
 function cleanDigits(value) {
   return clean(value).replace(/\D/g, '');
 }
@@ -81,7 +99,7 @@ function validateApplicationRequiredDetails(body, applicationType) {
       ['shortDescription', 'Short description'],
       ['expectedImpact', 'Expected impact'],
       ['competitionDeclarationRules', 'Competition rules declaration'],
-      ['competitionDeclarationPrereq.filesent', 'Presentation declaration'],
+      ['competitionDeclarationPresent', 'Presentation declaration'],
       ['competitionDeclarationTrue', 'Information declaration']
     ],
     'research-paper': [
@@ -117,8 +135,27 @@ function validateApplicationRequiredDetails(body, applicationType) {
 
   const requiredFields = [...commonFields, ...(typeFields[applicationType] || [])];
 
+  const declarationFields = new Set([
+    'competitionDeclarationRules', 'competitionDeclarationPresent', 'competitionDeclarationTrue',
+    'researchDeclarationPresent', 'researchDeclarationRules', 'researchDeclarationTrue'
+  ]);
+
+  const competitionDeclarationsConfirmed = isAffirmative(body.competitionDeclarationsConfirmed);
+  const researchDeclarationsConfirmed = isAffirmative(body.researchDeclarationsConfirmed);
+
   for (const [field, label] of requiredFields) {
-    if (!clean(body[field])) {
+    let valid;
+    if (declarationFields.has(field)) {
+      const consolidatedValid = field.startsWith('competition')
+        ? competitionDeclarationsConfirmed
+        : field.startsWith('research')
+          ? researchDeclarationsConfirmed
+          : false;
+      valid = isAffirmative(body[field]) || consolidatedValid;
+    } else {
+      valid = Boolean(clean(body[field]));
+    }
+    if (!valid) {
       const err = new Error(`${label} is required. Please fill all required fields marked in red.`);
       err.status = 400;
       throw err;
@@ -232,7 +269,7 @@ const ApplicationService = {
       fileUploadOriginalName: mainFile?.originalName || null,
       idUploadPath: idFile?.path || null,
       idUploadOriginalName: idFile?.originalName || null,
-      declarationConfirmed: Boolean(body.declarationConfirmed) || body.declarationConfirmed === 'on' || body.declarationConfirmed === 'true' || body.declarationConfirmed === true,
+      declarationConfirmed: isAffirmative(body.declarationConfirmed),
       applicantConfirmName: clean(body.applicantConfirmName || body.applicantConfirmationName),
       applicantConfirmDate: clean(body.applicantConfirmDate || body.applicantConfirmationDate),
       applicantSignature: clean(body.applicantSignature || body.signatureName)
@@ -252,10 +289,10 @@ const ApplicationService = {
 
     return {
       message: applicationType === 'research-paper'
-        ? 'Form submitted successfully. Your research paper submission has been received. Confirmation emails have been sent to the applicant and admin at info@mrtech.co.in.'
+        ? 'Form submitted successfully. Your research paper submission has been received. Confirmation emails have been sent to the applicant and application coordinator.'
         : applicationType === 'award-nomination'
-          ? 'Form submitted successfully. Your ICAIH 2026 international awards nomination has been received. Confirmation emails have been sent to the applicant and admin at info@mrtech.co.in.'
-          : 'Form submitted successfully. Your pre-conference competition application has been received. Confirmation emails have been sent to the applicant and admin at info@mrtech.co.in.',
+          ? 'Form submitted successfully. Your ICAIH 2026 international awards nomination has been received. Confirmation emails have been sent to the applicant and application coordinator.'
+          : 'Form submitted successfully. Your pre-conference competition application has been received. Confirmation emails have been sent to the applicant and application coordinator.',
       refId,
       applicationType,
       emailStatus

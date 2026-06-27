@@ -487,7 +487,7 @@ function getApplicationAttachments(data) {
 
 function createApplicationMailOptions(data) {
   const from = clean(process.env.MAIL_FROM) || `ICAIH 2026 <${clean(process.env.SMTP_USER)}>`;
-  const adminEmail = clean(process.env.ADMIN_EMAIL) || 'info@mrtech.co.in';
+  const adminEmail = clean(process.env.APPLICATION_ADMIN_EMAIL) || EVENT_INFO.competitionEmail || clean(process.env.ADMIN_EMAIL) || 'info@mrtech.co.in';
   const label = getApplicationLabel(data.applicationType);
   const attachments = getApplicationAttachments(data);
 
