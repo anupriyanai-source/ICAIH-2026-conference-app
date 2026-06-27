@@ -1,4 +1,5 @@
 const SponsorModel = require('../models/sponsorModel');
+const SubmissionLookupModel = require('../models/submissionLookupModel');
 const { sendSponsorEmails } = require('./emailService');
 
 function sanitize(val) {
@@ -53,6 +54,14 @@ const SponsorService = {
 
     if (!/^\d{10}$/.test(phone)) {
       throw { status: 400, message: 'Please enter a valid 10 digit phone number.' };
+    }
+
+    const existing = await SubmissionLookupModel.findByEmail(email);
+    if (existing) {
+      throw {
+        status: 409,
+        message: `You have already registered or submitted a form using this email address. Reference ID: ${existing.ref_id}.`
+      };
     }
 
     const feeAmount = Number(SPONSOR_FEES[sponsorTier] || 0);

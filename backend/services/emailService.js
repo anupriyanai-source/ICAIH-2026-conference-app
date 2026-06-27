@@ -24,6 +24,19 @@ function clean(value) {
   return String(value || '').trim();
 }
 
+
+function getAdminEmail() {
+  // ADMIN_EMAIL is the single source of truth for every hosted website form.
+  // Keeping it first prevents an old form-specific environment variable from
+  // silently redirecting application notifications to another address.
+  return clean(process.env.ADMIN_EMAIL)
+    || clean(process.env.APPLICATION_ADMIN_EMAIL)
+    || clean(process.env.REGISTRATION_ADMIN_EMAIL)
+    || clean(process.env.SPONSOR_ADMIN_EMAIL)
+    || clean(process.env.STALL_ADMIN_EMAIL)
+    || 'info@mrtech.co.in';
+}
+
 function mailConfigured() {
   return Boolean(
     process.env.SMTP_USER &&
@@ -103,7 +116,16 @@ async function sendWithBrevoApi(mailOptions) {
         body: JSON.stringify(payload)
       });
       const responseText = await response.text();
-      results.push({ type: item.type, ok: response.ok, response: responseText, status: response.status });
+      let responseBody = responseText;
+      try { responseBody = responseText ? JSON.parse(responseText) : {}; } catch (_) {}
+      results.push({
+        type: item.type,
+        to: clean(item.message.to),
+        ok: response.ok,
+        messageId: responseBody?.messageId || null,
+        response: responseBody,
+        status: response.status
+      });
     } catch (error) {
       results.push({ type: item.type, ok: false, error: error.message || String(error) });
     }
@@ -261,7 +283,7 @@ function buildAdminHtml(data) {
 
 function createMailOptions(data) {
   const from = clean(process.env.MAIL_FROM) || `ICAIH 2026 <${clean(process.env.SMTP_USER)}>`;
-  const adminEmail = clean(process.env.ADMIN_EMAIL) || 'info@mrtech.co.in';
+  const adminEmail = getAdminEmail();
 
   return [
     {
@@ -340,7 +362,7 @@ function buildSponsorAdminHtml(data) {
 
 function createSponsorMailOptions(data) {
   const from = clean(process.env.MAIL_FROM) || `ICAIH 2026 <${clean(process.env.SMTP_USER)}>`;
-  const adminEmail = clean(process.env.ADMIN_EMAIL) || 'info@mrtech.co.in';
+  const adminEmail = getAdminEmail();
 
   return [
     {
@@ -487,7 +509,7 @@ function getApplicationAttachments(data) {
 
 function createApplicationMailOptions(data) {
   const from = clean(process.env.MAIL_FROM) || `ICAIH 2026 <${clean(process.env.SMTP_USER)}>`;
-  const adminEmail = clean(process.env.APPLICATION_ADMIN_EMAIL) || EVENT_INFO.competitionEmail || clean(process.env.ADMIN_EMAIL) || 'info@mrtech.co.in';
+  const adminEmail = getAdminEmail();
   const label = getApplicationLabel(data.applicationType);
   const attachments = getApplicationAttachments(data);
 

@@ -1,4 +1,5 @@
 const RegistrationModel = require('../models/registrationModel');
+const SubmissionLookupModel = require('../models/submissionLookupModel');
 const { sendRegistrationEmails } = require('./emailService');
 
 function isEmail(val) {
@@ -111,9 +112,12 @@ const RegistrationService = {
 
     const requiresPayment = payment.feeAmount > 0;
 
-    const existing = await RegistrationModel.findByEmail(email);
+    const existing = await SubmissionLookupModel.findByEmail(email);
     if (existing) {
-      throw { status: 409, message: 'This email is already registered. Registration ID: ' + existing.ref_id };
+      throw {
+        status: 409,
+        message: `You have already registered or submitted a form using this email address. Reference ID: ${existing.ref_id}.`
+      };
     }
 
     if (requiresPayment && !paymentReference) {

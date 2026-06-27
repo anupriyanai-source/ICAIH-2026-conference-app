@@ -1,5 +1,6 @@
 const path = require('path');
 const ApplicationModel = require('../models/applicationModel');
+const SubmissionLookupModel = require('../models/submissionLookupModel');
 const { sendApplicationEmails } = require('./emailService');
 
 const allowedFileTypes = new Set([
@@ -224,13 +225,21 @@ const ApplicationService = {
 
     validateApplicationRequiredDetails(body, applicationType);
 
+    const normalizedEmail = clean(body.email).toLowerCase();
+    const existing = await SubmissionLookupModel.findByEmail(normalizedEmail);
+    if (existing) {
+      const err = new Error(`You have already registered or submitted a form using this email address. Reference ID: ${existing.ref_id}.`);
+      err.status = 409;
+      throw err;
+    }
+
     const mainFile = normalizeFile(files.submissionFile?.[0]);
     const idFile = normalizeFile(files.idProofFile?.[0]);
 
     const data = {
       applicationType,
       fullName: clean(body.fullName),
-      email: clean(body.email),
+      email: clean(body.email).toLowerCase(),
       mobile: clean(body.mobile),
       whatsapp: clean(body.whatsapp),
       cityState: clean(body.cityState),
