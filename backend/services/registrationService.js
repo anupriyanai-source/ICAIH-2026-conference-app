@@ -93,8 +93,16 @@ const RegistrationService = {
     const role = sanitize(body.role) || 'Delegate';
     const category = sanitize(body.category) || 'General';
 
-    if (!name || !email || !phone || !organization) {
-      throw { status: 400, message: 'Name, email, phone, and organization are required.' };
+    const requiredFields = [
+      ['Full Name', name],
+      ['Email Address', email],
+      ['Phone Number', phone],
+      ['Organization / Institution', organization]
+    ];
+    const missingField = requiredFields.find(([, value]) => !value);
+
+    if (missingField) {
+      throw { status: 400, message: `${missingField[0]} is required.` };
     }
 
     if (!isEmail(email)) {

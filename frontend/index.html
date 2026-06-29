@@ -914,13 +914,13 @@
           <p>Submit your details to participate in ICAIH 2026 as a student, delegate, research scholar, startup founder, industry expert, or online attendee.</p>
         </div>
         <form class="form-card reveal" id="registrationForm">
-          <label><span>Full Name <b class="required-star">*</b></span><input name="name" required placeholder="Enter your full name"></label>
-          <label><span>Email Address <b class="required-star">*</b></span><input name="email" type="email" required
+          <label><span>Full Name <b class="required-star">*</b></span><input id="registrationName" name="name" type="text" autocomplete="name" required placeholder="Enter your full name"></label>
+          <label><span>Email Address <b class="required-star">*</b></span><input id="registrationEmail" name="email" type="email" autocomplete="email" required
               placeholder="name@example.com"></label>
-          <label><span>Phone Number <b class="required-star">*</b></span><input name="phone" type="tel" inputmode="numeric" maxlength="10"
+          <label><span>Phone Number <b class="required-star">*</b></span><input id="registrationPhone" name="phone" type="tel" autocomplete="tel" inputmode="numeric" maxlength="10"
   pattern="[0-9]{10}" data-phone-only required placeholder="Enter 10 digit phone number"
   title="Please enter exactly 10 digits"></label>
-          <label><span>Organization <b class="required-star">*</b></span><input name="organization" required
+          <label><span>Organization <b class="required-star">*</b></span><input id="registrationOrganization" name="organization" type="text" autocomplete="organization" required
               placeholder="Institution / Company"></label>
           <label><span>Role / Fee Category</span><select name="role" id="registrationRole">
               <option value="Student">Student</option>

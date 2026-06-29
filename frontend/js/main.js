@@ -1367,17 +1367,27 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
   const formData = new FormData(form);
   const normalizedFields = getNormalizedRegistrationFields(formData);
 
-  if (
-    !normalizedFields.name ||
-    !normalizedFields.email ||
-    !normalizedFields.phone ||
-    !normalizedFields.organization
-  ) {
+  const requiredRegistrationFields = [
+    { key: 'name', label: 'Full Name', selector: '[name="name"]' },
+    { key: 'email', label: 'Email Address', selector: '[name="email"]' },
+    { key: 'phone', label: 'Phone Number', selector: '[name="phone"]' },
+    { key: 'organization', label: 'Organization / Institution', selector: '[name="organization"]' }
+  ];
+
+  const missingRegistrationField = requiredRegistrationFields.find(
+    field => !normalizedFields[field.key]
+  );
+
+  if (missingRegistrationField) {
     showMessage(
       'registrationMessage',
-      'Name, email, phone, and organization are required.',
+      `${missingRegistrationField.label} is required.`,
       'error'
     );
+
+    const missingInput = form.querySelector(missingRegistrationField.selector);
+    missingInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    missingInput?.focus();
     return;
   }
 
@@ -1404,9 +1414,15 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
   showMessage('registrationMessage', 'Submitting registration…', '');
 
   try {
+    // The registration endpoint expects JSON. Sending FormData here creates a
+    // multipart request that Express cannot parse without Multer, leaving
+    // req.body empty and causing the required-field error.
+    const registrationPayload = Object.fromEntries(formData.entries());
+
     const response = await fetch(`${API_BASE}/api/register`, {
       method: 'POST',
-      body: formData
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(registrationPayload)
     });
 
     const result = await response.json().catch(() => ({}));
