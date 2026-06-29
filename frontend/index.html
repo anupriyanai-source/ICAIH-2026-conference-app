@@ -169,12 +169,16 @@
       <div class="top-announcement-content">
         <span>Early Bird Offer: Register before July 5 and get 10% discount</span>
         <span class="dot">•</span>
+        <span>Participation Certificate: Every registered participant will receive a certificate</span>
+        <span class="dot">•</span>
         <span>Student Bulk Booking Offer: Special discounts are available only for student groups</span>
         <span class="dot">•</span>
         <span>ICAIH 2026 | International Conference on Artificial Intelligence in Healthcare</span>
       </div>
       <div class="top-announcement-content" aria-hidden="true">
         <span>Early Bird Offer: Register before July 5 and get 10% discount</span>
+        <span class="dot">•</span>
+        <span>Participation Certificate: Every registered participant will receive a certificate</span>
         <span class="dot">•</span>
         <span>Student Bulk Booking Offer: Special discounts are available only for student groups</span>
         <span class="dot">•</span>
@@ -199,6 +203,7 @@
         <div><span>Date</span><strong>18 July 2026</strong></div>
         <div><span>Venue</span><strong>Anna Centenary Library, Kotturpuram, Chennai</strong></div>
         <div><span>Represented By</span><strong>Myth Reality Technologies Private Limited</strong></div>
+        <div><span>Participation Certificate</span><strong>Provided to Every Registered Participant</strong></div>
       </div>
 
       <div class="hero-actions">
@@ -956,16 +961,7 @@
             <p id="paymentQrText">Click Pay Now or scan the QR code to open the secure Crowdshaki / Razorpay payment page with the selected amount already filled.</p>
             <img id="paymentQrImage" src="assets/qr/myth-reality-payment-qr.png" alt="ICAIH 2026 secure payment QR code">
             <button class="btn primary payment-button" id="openUpiBtn" type="button">Pay Now in UPI App</button>
-            <div class="payment-reference-box" id="utrField">
-              <label for="paymentReference">
-                <span>UTR / Transaction ID <b class="required-star">*</b></span>
-                <input name="paymentReference" id="paymentReference" type="text" inputmode="text" maxlength="36"
-                  autocomplete="off" placeholder="Enter UTR / Transaction ID after payment"
-                  title="Enter a valid UTR or transaction ID. Use 10 to 36 letters, numbers, underscore, or hyphen.">
-              </label>
-              <small class="payment-help-text" id="utrHelpText">After completing the payment, enter the UTR / Transaction ID shown in your UPI, bank, or payment app. Example: 12-digit UPI reference number.</small>
-              <p class="payment-status manual-pending" id="paymentStatusText">Complete the payment, then enter the UTR / Transaction ID before submitting.</p>
-            </div>
+            <p class="payment-status manual-pending" id="paymentStatusText">Complete the payment on the secure payment page, then submit your registration.</p>
           </div>
 
           <input type="hidden" name="feeAmount" id="feeAmount" value="999">
@@ -1086,16 +1082,7 @@
           <p id="sponsorPaymentQrText">Click Pay Now or scan the QR code to open the secure Crowdshaki / Razorpay sponsor payment page with the selected amount already filled.</p>
           <img id="sponsorPaymentQrImage" src="assets/qr/myth-reality-payment-qr.png" alt="ICAIH 2026 secure sponsor payment QR code">
           <button class="btn primary payment-button" id="openSponsorPaymentBtn" type="button">Pay Now in UPI App</button>
-          <div class="payment-reference-box" id="sponsorUtrField">
-            <label for="sponsorPaymentReference">
-              <span>UTR / Transaction ID <b class="required-star">*</b></span>
-              <input name="paymentReference" id="sponsorPaymentReference" type="text" inputmode="text" maxlength="36"
-                autocomplete="off" placeholder="Enter UTR / Transaction ID after payment"
-                title="Enter a valid UTR or transaction ID. Use 10 to 36 letters, numbers, underscore, or hyphen.">
-            </label>
-            <small class="payment-help-text" id="sponsorUtrHelpText">After completing the sponsor payment, enter the UTR / Transaction ID shown in your payment app.</small>
-            <p class="payment-status manual-pending" id="sponsorPaymentStatusText">Select a sponsorship tier, complete the payment, then enter the UTR / Transaction ID.</p>
-          </div>
+          <p class="payment-status manual-pending" id="sponsorPaymentStatusText">Complete the payment on the secure payment page, then submit the form.</p>
           <input type="hidden" name="inquiryType" id="sponsorInquiryType" value="sponsor">
           <input type="hidden" name="feeAmount" id="sponsorFeeAmount" value="0">
           <input type="hidden" name="paymentStatus" id="sponsorPaymentStatus" value="pending-verification">

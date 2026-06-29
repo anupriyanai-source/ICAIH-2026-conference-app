@@ -231,7 +231,6 @@ function registrationRows(data) {
     ['Category', data.category],
     ['Paid Amount', formatINR(data.feeAmount)],
     ['Payment Status', data.paymentStatus || 'pending-verification'],
-    ['UTR / Transaction ID', data.paymentReference || '-'],
     ['Bulk Offer', data.bulkOffer || '-'],
     ['Student Count', data.studentCount || '-']
   ];
@@ -321,7 +320,6 @@ function sponsorRows(data) {
     [(data.inquiryType === 'stall' || /Exhibitor|Pavilion/i.test(String(data.sponsorTier || ''))) ? 'Stall / Exhibitor Tier' : 'Sponsorship Tier', data.sponsorTier],
     ['Paid Amount', formatINR(data.feeAmount)],
     ['Payment Status', data.paymentStatus || 'pending-verification'],
-    ['UTR / Transaction ID', data.paymentReference || '-'],
     ['Message', data.message || '-']
   ];
 

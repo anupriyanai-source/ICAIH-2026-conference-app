@@ -10,10 +10,6 @@ function sanitize(val) {
   return String(val || '').trim();
 }
 
-function isValidPaymentReference(val) {
-  const cleaned = sanitize(val).replace(/\s+/g, '').toUpperCase();
-  return /^[A-Z0-9][A-Z0-9_-]{9,35}$/.test(cleaned) && /\d/.test(cleaned);
-}
 
 const ROLE_FEES = {
   'Student': 999,
@@ -96,7 +92,6 @@ const RegistrationService = {
     const organization = sanitize(body.organization);
     const role = sanitize(body.role) || 'Delegate';
     const category = sanitize(body.category) || 'General';
-    const paymentReference = sanitize(body.paymentReference).replace(/\s+/g, '').toUpperCase();
 
     if (!name || !email || !phone || !organization) {
       throw { status: 400, message: 'Name, email, phone, and organization are required.' };
@@ -130,13 +125,6 @@ const RegistrationService = {
       };
     }
 
-    if (requiresPayment && !paymentReference) {
-      throw { status: 400, message: 'UTR / Transaction ID is required after completing the payment.' };
-    }
-
-    if (requiresPayment && !isValidPaymentReference(paymentReference)) {
-      throw { status: 400, message: 'Please enter a valid UTR / Transaction ID.' };
-    }
 
 
     const paymentStatus = requiresPayment ? 'pending-verification' : 'not-required';
@@ -152,11 +140,9 @@ const RegistrationService = {
       discountPercent: payment.discountPercent,
       bulkOffer: payment.bulkOffer,
       studentCount: payment.studentCount,
-      paymentConfirmed: requiresPayment ? 'payment-reference-submitted' : 'not-required',
+      paymentConfirmed: false,
       paymentStatus,
-      paymentMethod: '',
-      paymentReference: requiresPayment ? paymentReference : '',
-      paymentScreenshot: ''
+      paymentMethod: ''
     };
 
     const { refId } = await RegistrationModel.create(registrationData);

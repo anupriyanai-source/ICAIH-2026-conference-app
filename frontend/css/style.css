@@ -249,7 +249,7 @@ blockquote {
 .top-announcement-track {
   display: flex;
   width: max-content;
-  animation: announcementScroll 28s linear infinite;
+  animation: announcementScroll 36s linear infinite;
 }
 
 .top-announcement-content {
@@ -5320,83 +5320,6 @@ body.application-award-mode .pdf-form-header.award-nomination-fields {
   }
 }
 
-/* UTR / transaction ID capture after payment */
-.payment-reference-box {
-  width: min(100%, 460px);
-  margin: 16px auto 0;
-  padding: 16px;
-  background: #f8fbff;
-  border: 1px solid #cfe0ff;
-  border-radius: 16px;
-  text-align: left;
-}
-
-.payment-reference-box label {
-  display: block;
-  margin: 0;
-}
-
-.payment-reference-box label span {
-  display: block;
-  margin-bottom: 8px;
-  color: #071b4d;
-  font-size: .78rem;
-  font-weight: 800;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
-.payment-reference-box input {
-  width: 100%;
-  min-height: 46px;
-  padding: 12px 14px;
-  border: 1px solid #bcd2ff;
-  border-radius: 12px;
-  background: #ffffff;
-  color: #071b4d;
-  font-size: .95rem;
-  font-weight: 700;
-  letter-spacing: .03em;
-  outline: none;
-  text-transform: uppercase;
-}
-
-.payment-reference-box input:focus {
-  border-color: #3d7df5;
-  box-shadow: 0 0 0 4px rgba(61, 125, 245, .12);
-}
-
-.payment-reference-box .payment-help-text {
-  max-width: none;
-  margin: 8px 0 6px;
-}
-
-.payment-reference-box .payment-status {
-  margin: 8px 0 0 !important;
-}
-
-@media (max-width: 768px) {
-  .payment-reference-box {
-    padding: 14px;
-    border-radius: 14px;
-  }
-
-  .payment-reference-box input {
-    min-height: 48px;
-    font-size: .9rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .payment-reference-box {
-    width: 100%;
-    padding: 12px;
-  }
-
-  .payment-reference-box label span {
-    font-size: .74rem;
-  }
-}
 
 /* Mobile competition modal final alignment fix */
 @media (max-width: 640px) {

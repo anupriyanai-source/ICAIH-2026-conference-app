@@ -110,7 +110,6 @@ Conference details used in the registration email:
 
 - Registration IDs are generated in order as `ICAIH-2026001`, `ICAIH-2026002`, `ICAIH-2026003`, and so on.
 - The sequence is protected using a MySQL transaction and row lock, so simultaneous submissions still receive separate IDs in order.
-- `Payment Reference / UTR Number` is required for paid registrations in the registration form.
 - User confirmation email is sent to the email address entered in the registration form.
 - Admin notification email is sent to `ADMIN_EMAIL`, normally `info@mrtech.co.in`.
 
@@ -211,10 +210,7 @@ Flow:
 1. User fills the registration form.
 2. Website shows the selected fee and the static ICAIH UPI QR image.
 3. User pays through Google Pay, PhonePe, Paytm, BHIM, or another UPI app.
-4. User enters UTR / transaction ID.
-5. User enters the UTR / transaction ID.
 6. Registration is saved with `payment_status = pending-verification`.
-7. Admin team manually verifies the UTR against the bank/UPI statement.
 
 Important: Since there is no payment gateway, automatic payment verification is not possible. Manual admin verification is required.
 
@@ -222,7 +218,6 @@ For old databases, these columns are added automatically on backend start:
 
 ```sql
 payment_status
-payment_reference
 
 ```
 

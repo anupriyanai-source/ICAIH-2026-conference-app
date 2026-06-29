@@ -138,7 +138,6 @@ function validatePhoneFields(form, messageId) {
 }
 
 /* ── Registration fee, QR amount, and manual UPI payment ── */
-const PAYMENT_PAGE_REFERENCE_NUMBER = '917358327761';
 
 const MYTH_UPI_PAYMENT = {
   upiId: 'MYTHREALITYTECHNOLOGIESPRIV@iob',
@@ -247,46 +246,6 @@ const CROWDSHAKI_PAYMENT = {
   reasonForFund: 'Health for all @ Gross root Level',
   paymentForPrefix: 'ICAIH 2026 Registration'
 };
-
-const PAYMENT_REFERENCE_PATTERN = /^[A-Z0-9][A-Z0-9_-]{9,35}$/i;
-
-function cleanPaymentReference(value) {
-  return String(value || '').trim().replace(/\s+/g, '').toUpperCase();
-}
-
-function isValidPaymentReference(value) {
-  const cleaned = cleanPaymentReference(value);
-  return PAYMENT_REFERENCE_PATTERN.test(cleaned) && /\d/.test(cleaned);
-}
-
-function validatePaymentReferenceInput(inputId, messageId, statusSetter, showError = false) {
-  const input = document.getElementById(inputId);
-  if (!input) return true;
-
-  const cleaned = cleanPaymentReference(input.value);
-  input.value = cleaned;
-
-  if (!cleaned) {
-    if (showError) {
-      showMessage(messageId, 'Please enter the UTR / Transaction ID after completing the payment.', 'error');
-      statusSetter('pending-verification', 'UTR / Transaction ID is required for payment verification.');
-      input.focus();
-    }
-    return false;
-  }
-
-  if (!isValidPaymentReference(cleaned)) {
-    if (showError) {
-      showMessage(messageId, 'Please enter a valid UTR / Transaction ID. Use 10 to 36 characters: letters, numbers, underscore, or hyphen. Spaces and special symbols are not allowed.', 'error');
-      statusSetter('pending-verification', 'Invalid UTR / Transaction ID format.');
-      input.focus();
-    }
-    return false;
-  }
-
-  statusSetter('pending-verification', 'UTR / Transaction ID captured. Payment will be verified by the admin team.');
-  return true;
-}
 
 
 
@@ -508,15 +467,8 @@ function setPaymentStatus(status, message) {
   }
 }
 
-function validateManualPaymentFields(details, showError = false) {
-  if (!details.requiresPayment) return true;
-
-  return validatePaymentReferenceInput(
-    'paymentReference',
-    'registrationMessage',
-    setPaymentStatus,
-    showError
-  );
+function validateManualPaymentFields(details) {
+  return Boolean(details);
 }
 
 function buildCrowdshakiPaymentUrl(details) {
@@ -742,7 +694,7 @@ function openManualUpiPayment() {
 
   showMessage(
     'registrationMessage',
-    `Opening the secure Crowdshaki / Razorpay payment page for ${formatINR(details.feeAmount)}. Complete the payment there, then return and enter the UTR / Transaction ID.`,
+    `Opening the secure Crowdshaki / Razorpay payment page for ${formatINR(details.feeAmount)}. Complete the payment securely, then return and submit the registration form.`,
     ''
   );
 
@@ -753,121 +705,11 @@ function openManualUpiPayment() {
     window.location.href = paymentPageUrl;
   }
 }
-function setUtrEntryEnabled(enabled) {
-  const paymentReference = document.getElementById('paymentReference');
-  const utrField = document.getElementById('utrField');
-  const utrHelpText = document.getElementById('utrHelpText');
-  const paymentPageSharedInput = document.getElementById('paymentPageShared');
-
-  if (paymentPageSharedInput) paymentPageSharedInput.value = enabled ? '1' : '0';
-
-  if (utrField) utrField.hidden = !enabled;
-  if (utrHelpText) utrHelpText.hidden = !enabled;
-
-
-  if (paymentReference) {
-    paymentReference.disabled = !enabled;
-    paymentReference.required = enabled;
-    if (!enabled) paymentReference.value = '';
-  }
-}
-
-function buildPaymentPaymentPageUrl(details) {
-  const form = document.getElementById('registrationForm');
-  const formData = new FormData(form);
-  const normalizedFields = getNormalizedRegistrationFields(formData);
-  const message = [
-    'Hi, I have completed my ICAIH 2026 registration payment.',
-    '',
-    `Name: ${normalizedFields.name || '-'}`,
-    `Phone: ${normalizedFields.phone || '-'}`,
-    `Email: ${normalizedFields.email || '-'}`,
-    `Role: ${details.role}`,
-    `Amount: ${formatINR(details.feeAmount)}`,
-    '',
-    'Please attach your payment screenshot in this payment page chat for verification.',
-    'Complete the payment and return to submit the registration form.'
-  ].join('\n');
-
-  return `https://example.com/${PAYMENT_PAGE_REFERENCE_NUMBER}?text=${encodeURIComponent(message)}`;
-}
-
-function showPaymentPageSentConfirmation() {
-  const confirmPaymentPageSentBtn = document.getElementById('confirmPaymentPageSentBtn');
-
-  if (confirmPaymentPageSentBtn) {
-    confirmPaymentPageSentBtn.hidden = false;
-    confirmPaymentPageSentBtn.disabled = false;
-  }
-}
-
-function confirmPaymentPageScreenshotSent() {
-  setUtrEntryEnabled(true);
-  setPaymentStatus(
-    'pending-verification',
-    'Payment page opened. You can now submit the form.'
-  );
-  document.getElementById('paymentReference')?.focus();
-}
-
-function sharePaymentScreenshotOnPaymentPage() {
-  const form = document.getElementById('registrationForm');
-  const details = getRegistrationPaymentDetails();
-
-  if (!details.requiresPayment) {
-    setPaymentStatus(
-      'not-required',
-      'No payment is required for this category. You can submit the registration directly.'
-    );
-    return;
-  }
-
-  if (form && !validatePhoneFields(form, 'registrationMessage')) return;
-
-  const formData = new FormData(form);
-  const normalizedFields = getNormalizedRegistrationFields(formData);
-
-  if (!normalizedFields.name || !normalizedFields.email || !normalizedFields.phone || !normalizedFields.organization) {
-    showMessage(
-      'registrationMessage',
-      'Please fill Name, Email, Phone, and Organization before opening payment page.',
-      'error'
-    );
-    return;
-  }
-
-  showPaymentPageSentConfirmation();
-  setPaymentStatus(
-    'pending-verification',
-    'Payment page opened. Complete the payment there, then return here and enter the UTR / Transaction ID.'
-  );
-
-  window.open(buildPaymentPaymentPageUrl(details), '_blank');
-}
-
-function resetPaymentProof() {
-  const confirmPaymentPageSentBtn = document.getElementById('confirmPaymentPageSentBtn');
-
-  setUtrEntryEnabled(false);
-
-  if (confirmPaymentPageSentBtn) {
-    confirmPaymentPageSentBtn.hidden = true;
-    confirmPaymentPageSentBtn.disabled = true;
-  }
-
-  setPaymentStatus(
-    'pending-verification',
-    'Click Pay Now to open the secure payment page for this fee.'
-  );
-}
-
 function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   const role = document.getElementById('registrationRole')?.value || 'Delegate';
   const bulkBox = document.getElementById('bulkBookingBox');
   const studentCount = document.getElementById('studentCount');
   const openUpiBtn = document.getElementById('openUpiBtn');
-  const sharePaymentPaymentPageBtn = document.getElementById('sharePaymentPaymentPageBtn');
-  const confirmPaymentPageSentBtn = document.getElementById('confirmPaymentPageSentBtn');
 
   if (bulkBox) bulkBox.hidden = role !== 'Bulk Booking';
   if (studentCount) studentCount.required = role === 'Bulk Booking';
@@ -883,7 +725,6 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   const paymentQrText = document.getElementById('paymentQrText');
   const paymentQrImage = document.getElementById('paymentQrImage');
   const paymentQrBox = document.querySelector('.payment-qr-box');
-  const paymentReference = document.getElementById('paymentReference');
 
   if (feeAmount) feeAmount.value = details.feeAmount;
   if (discountPercent) discountPercent.value = details.discountPercent;
@@ -916,30 +757,18 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
 
   if (paymentQrBox) paymentQrBox.hidden = !details.requiresPayment;
   if (openUpiBtn) openUpiBtn.disabled = !details.requiresPayment;
-  if (sharePaymentPaymentPageBtn) sharePaymentPaymentPageBtn.disabled = !details.requiresPayment;
-
-  if (confirmPaymentPageSentBtn && !details.requiresPayment) {
-    confirmPaymentPageSentBtn.hidden = true;
-    confirmPaymentPageSentBtn.disabled = true;
-  }
-
-  if (paymentReference) paymentReference.required = false;
 
   if (!details.requiresPayment) {
-    setUtrEntryEnabled(false);
     setPaymentStatus(
       'not-required',
       'No payment is required for this category. You can submit the registration directly.'
     );
   } else {
-    setUtrEntryEnabled(true);
     if (!keepPayment) {
       setPaymentStatus(
         'pending-verification',
-        'Complete the payment, then enter the UTR / Transaction ID before submitting.'
+        'Complete the payment securely, then submit the form.'
       );
-    } else {
-      validateManualPaymentFields(details, false);
     }
   }
 
@@ -986,14 +815,8 @@ document.getElementById('bulkOffer')?.addEventListener('change', event => {
   });
 });
 
-document.getElementById('paymentReference')?.addEventListener('input', e => {
-  e.currentTarget.value = cleanPaymentReference(e.currentTarget.value);
-  validateManualPaymentFields(getRegistrationPaymentDetails(), false);
-});
 
 document.getElementById('openUpiBtn')?.addEventListener('click', openManualUpiPayment);
-document.getElementById('sharePaymentPaymentPageBtn')?.addEventListener('click', sharePaymentScreenshotOnPaymentPage);
-document.getElementById('confirmPaymentPageSentBtn')?.addEventListener('click', confirmPaymentPageScreenshotSent);
 
 updateRegistrationPaymentUI();
 
@@ -1213,40 +1036,10 @@ function setSponsorPaymentStatus(status, message) {
   }
 }
 
-function setSponsorUtrEntryEnabled(enabled) {
-  const paymentReference = document.getElementById('sponsorPaymentReference');
-  const utrField = document.getElementById('sponsorUtrField');
-  const utrHelpText = document.getElementById('sponsorUtrHelpText');
-  const paymentPageSharedInput = document.getElementById('sponsorPaymentPaymentPageShared');
-
-  sponsorPaymentPageShared = Boolean(enabled);
-
-  if (paymentPageSharedInput) paymentPageSharedInput.value = enabled ? '1' : '0';
-
-  if (utrField) utrField.hidden = !enabled;
-  if (utrHelpText) utrHelpText.hidden = !enabled;
-
-
-  if (paymentReference) {
-    paymentReference.disabled = !enabled;
-    paymentReference.required = enabled;
-    if (!enabled) paymentReference.value = '';
-  }
-}
-
-function resetSponsorPaymentProof() {
-  const confirmBtn = document.getElementById('confirmSponsorPaymentPageSentBtn');
-
-  setSponsorUtrEntryEnabled(false);
-
-  if (confirmBtn) {
-    confirmBtn.hidden = true;
-    confirmBtn.disabled = true;
-  }
-
+function resetSponsorPaymentState() {
   setSponsorPaymentStatus(
     'pending-verification',
-    'Click Pay Now to open the secure payment page for this fee.'
+    'Select a package and complete payment on the secure payment page.'
   );
 }
 
@@ -1302,12 +1095,7 @@ function validateSponsorPaymentFields(details, showError = false) {
     return false;
   }
 
-  return validatePaymentReferenceInput(
-    'sponsorPaymentReference',
-    'sponsorMessage',
-    setSponsorPaymentStatus,
-    showError
-  );
+  return true;
 }
 
 function updateSponsorPaymentUI({ keepPayment = false } = {}) {
@@ -1319,7 +1107,6 @@ function updateSponsorPaymentUI({ keepPayment = false } = {}) {
   const paymentQrText = document.getElementById('sponsorPaymentQrText');
   const paymentQrImage = document.getElementById('sponsorPaymentQrImage');
   const openPaymentBtn = document.getElementById('openSponsorPaymentBtn');
-  const sharePaymentPageBtn = document.getElementById('shareSponsorPaymentPageBtn');
 
   if (feeAmount) feeAmount.value = details.feeAmount;
 
@@ -1332,9 +1119,8 @@ function updateSponsorPaymentUI({ keepPayment = false } = {}) {
   }
 
   if (openPaymentBtn) openPaymentBtn.disabled = !details.requiresPayment;
-  if (sharePaymentPageBtn) sharePaymentPageBtn.disabled = !details.requiresPayment;
 
-  if (!keepPayment) resetSponsorPaymentProof();
+  if (!keepPayment) resetSponsorPaymentState();
 
   if (paymentQrText) {
     paymentQrText.textContent = details.requiresPayment
@@ -1349,17 +1135,14 @@ function updateSponsorPaymentUI({ keepPayment = false } = {}) {
   }
 
   if (details.requiresPayment) {
-    setSponsorUtrEntryEnabled(true);
     if (!keepPayment) {
       setSponsorPaymentStatus(
         'pending-verification',
-        'Complete the payment, then enter the UTR / Transaction ID before submitting.'
+        'Complete the payment securely, then submit the form.'
       );
     } else {
       validateSponsorPaymentFields(details, false);
     }
-  } else {
-    setSponsorUtrEntryEnabled(false);
   }
 }
 
@@ -1388,7 +1171,7 @@ function openSponsorPaymentPage() {
 
   showMessage(
     'sponsorMessage',
-    `Opening the secure Crowdshaki / Razorpay payment page for ${formatINR(details.feeAmount)}. Complete the payment, then return here and enter the UTR / Transaction ID before submitting.`,
+    `Opening the secure Crowdshaki / Razorpay payment page for ${formatINR(details.feeAmount)}. Complete the payment securely, then return and submit the form.`,
     ''
   );
 
@@ -1400,68 +1183,6 @@ function openSponsorPaymentPage() {
   }
 }
 
-function buildSponsorPaymentPaymentPageUrl(details) {
-  const form = document.getElementById('sponsorForm');
-  const formData = new FormData(form);
-  const fields = getNormalizedSponsorFields(formData);
-
-  const message = [
-    sponsorFormMode === 'stall' ? 'Hi, I have completed my ICAIH 2026 stall / exhibitor booking payment.' : 'Hi, I have completed my ICAIH 2026 sponsorship payment.',
-    '',
-    `Company: ${fields.companyName || '-'}`,
-    `Contact Person: ${fields.contactPerson || '-'}`,
-    `Phone: ${fields.phone || '-'}`,
-    `Email: ${fields.email || '-'}`,
-    `${sponsorFormMode === 'stall' ? 'Stall / Exhibitor Tier' : 'Sponsorship Tier'}: ${details.sponsorTier || '-'}`,
-    `Amount: ${formatINR(details.feeAmount)}`,
-    '',
-    'Please attach your payment screenshot here.'
-  ].join('\n');
-
-  return `https://example.com/${PAYMENT_PAGE_REFERENCE_NUMBER}?text=${encodeURIComponent(message)}`;
-}
-
-function showSponsorPaymentPageSentConfirmation() {
-  const confirmBtn = document.getElementById('confirmSponsorPaymentPageSentBtn');
-
-  if (confirmBtn) {
-    confirmBtn.hidden = false;
-    confirmBtn.disabled = false;
-  }
-}
-
-function openSponsorPaymentPaymentPage() {
-  const form = document.getElementById('sponsorForm');
-  const details = getSponsorPaymentDetails();
-
-  if (!details.sponsorTier) {
-    showMessage('sponsorMessage', `Please select a ${sponsorFormMode === 'stall' ? 'stall / exhibitor tier' : 'sponsorship tier'} before opening payment page.`, 'error');
-    document.getElementById('sponsorTier')?.focus();
-    return;
-  }
-
-  if (form && !validatePhoneFields(form, 'sponsorMessage')) return;
-
-  const fields = getNormalizedSponsorFields(new FormData(form));
-
-  if (!fields.companyName || !fields.contactPerson || !fields.email || !fields.phone) {
-    showMessage(
-      'sponsorMessage',
-      'Please fill Company Name, Contact Person, Email, and Phone before opening payment page.',
-      'error'
-    );
-    return;
-  }
-
-  showSponsorPaymentPageSentConfirmation();
-  setSponsorPaymentStatus(
-    'pending-verification',
-    'Payment page opened. Complete the payment there, then return here and enter the UTR / Transaction ID.'
-  );
-
-  window.open(buildSponsorPaymentPaymentPageUrl(details), '_blank');
-}
-
 document.getElementById('sponsorTier')?.addEventListener('input', () => updateSponsorPaymentUI());
 document.getElementById('sponsorTier')?.addEventListener('change', () => updateSponsorPaymentUI());
 
@@ -1471,22 +1192,9 @@ document.getElementById('sponsorTier')?.addEventListener('change', () => updateS
   });
 });
 
-document.getElementById('sponsorPaymentReference')?.addEventListener('input', e => {
-  e.currentTarget.value = cleanPaymentReference(e.currentTarget.value);
-  validateSponsorPaymentFields(getSponsorPaymentDetails(), false);
-});
 
 document.getElementById('openSponsorPaymentBtn')?.addEventListener('click', openSponsorPaymentPage);
-document.getElementById('shareSponsorPaymentPageBtn')?.addEventListener('click', openSponsorPaymentPaymentPage);
 
-document.getElementById('confirmSponsorPaymentPageSentBtn')?.addEventListener('click', () => {
-  setSponsorUtrEntryEnabled(true);
-  setSponsorPaymentStatus(
-    'pending-verification',
-    'Payment page opened. Complete the payment, then enter the UTR / Transaction ID before submitting.'
-  );
-  document.getElementById('sponsorPaymentReference')?.focus();
-});
 
 updateSponsorPaymentUI();
 
@@ -1510,8 +1218,7 @@ function openSuccessModal(formData, refId, emailStatus) {
       ['Category', formData.category || 'General'],
       ['Paid Amount', formatINR(formData.feeAmount)],
       ['Registration ID', refId || '—'],
-      ['Payment Status', formData.paymentStatus || '—'],
-      ['UTR / Transaction ID', formData.paymentReference || '—']
+      ['Payment Status', formData.paymentStatus || '—']
     ];
 
     detailsEl.innerHTML = rows.map(([label, value]) => `
@@ -1684,7 +1391,7 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
   formData.set('bulkOffer', details.bulkOffer || '');
   formData.set('paymentConfirmed', details.requiresPayment ? 'payment-page-opened' : 'not-required');
   formData.set('paymentStatus', details.requiresPayment ? 'pending-verification' : 'not-required');
-  formData.delete('paymentPageShared');
+  
 
   const submitButton = form.querySelector('button[type="submit"]');
   const originalSubmitText = submitButton ? submitButton.textContent : '';
@@ -1757,7 +1464,7 @@ document.getElementById('sponsorForm')?.addEventListener('submit', async e => {
   const formData = new FormData(form);
   formData.set('feeAmount', String(details.feeAmount));
   formData.set('paymentStatus', 'pending-verification');
-  formData.delete('paymentPageShared');
+  
 
   const submitButton = form.querySelector('button[type="submit"]');
   const originalSubmitText = submitButton ? submitButton.textContent : '';
@@ -1796,7 +1503,7 @@ document.getElementById('sponsorForm')?.addEventListener('submit', async e => {
     );
 
     form.reset();
-    resetSponsorPaymentProof();
+    resetSponsorPaymentState();
     updateSponsorPaymentUI();
     closeSponsorModal();
     await waitForSuccessPopup();
@@ -1814,8 +1521,7 @@ document.getElementById('sponsorForm')?.addEventListener('submit', async e => {
         { label: submittedMode === 'stall' ? 'Stall Package' : 'Sponsorship Tier', value: submittedTier },
         { label: 'Paid Amount', value: formatINR(details.feeAmount) },
         { label: 'Registration ID', value: submittedRefId },
-        { label: 'Payment Status', value: 'Pending Verification' },
-        { label: 'UTR / Transaction ID', value: submittedData.paymentReference }
+        { label: 'Payment Status', value: 'Pending Verification' }
       ],
       note: submittedMode === 'stall'
         ? 'Your stall booking details have been saved. The ICAIH 2026 team will contact you regarding space allocation and setup instructions.'

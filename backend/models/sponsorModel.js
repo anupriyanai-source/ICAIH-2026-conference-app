@@ -44,7 +44,6 @@ const SponsorModel = {
     feeAmount,
     paymentStatus,
     paymentMethod,
-    paymentReference,
     message,
     inquiryType = 'sponsor'
   }) {
@@ -59,8 +58,8 @@ const SponsorModel = {
 
       await conn.query(
         `INSERT INTO sponsor_inquiries
-         (ref_id, inquiry_type, company_name, contact_person, email, phone, sponsor_tier, fee_amount, payment_status, payment_method, payment_reference, message)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         (ref_id, inquiry_type, company_name, contact_person, email, phone, sponsor_tier, fee_amount, payment_status, payment_method, message)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           refId,
           normalizedInquiryType,
@@ -72,7 +71,6 @@ const SponsorModel = {
           feeAmount || 0,
           paymentStatus || 'pending-verification',
           paymentMethod || null,
-          paymentReference || null,
           message || null
         ]
       );

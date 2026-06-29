@@ -21,7 +21,6 @@ async function initDB() {
         payment_confirmed   TINYINT(1) DEFAULT 0,
         payment_status      VARCHAR(30) DEFAULT 'pending-verification',
         payment_method      VARCHAR(80),
-        payment_reference   VARCHAR(120),
         created_at          DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -61,7 +60,6 @@ async function initDB() {
         fee_amount      DECIMAL(10,2) DEFAULT 0,
         payment_status  VARCHAR(30) DEFAULT 'pending-verification',
         payment_method   VARCHAR(80),
-        payment_reference VARCHAR(120),
         message         TEXT,
         created_at      DATETIME     DEFAULT CURRENT_TIMESTAMP
       )
@@ -199,8 +197,6 @@ async function initDB() {
       ['payment_confirmed', 'TINYINT(1) DEFAULT 0'],
       ['payment_status', "VARCHAR(30) DEFAULT 'pending-verification'"],
       ['payment_method', 'VARCHAR(80)'],
-      ['payment_reference', 'VARCHAR(120)'],
-      ['payment_screenshot', 'VARCHAR(255)']
     ];
 
     for (const [column, definition] of registrationColumns) {
@@ -217,8 +213,6 @@ async function initDB() {
       ['fee_amount', 'DECIMAL(10,2) DEFAULT 0'],
       ['payment_status', "VARCHAR(30) DEFAULT 'pending-verification'"],
       ['payment_method', 'VARCHAR(80)'],
-      ['payment_reference', 'VARCHAR(120)'],
-      ['payment_screenshot', 'VARCHAR(255)']
     ];
 
     for (const [column, definition] of sponsorColumns) {
@@ -232,6 +226,8 @@ async function initDB() {
 
     // Remove old payment gateway / screenshot columns that are no longer used.
     const obsoleteRegistrationColumns = [
+      'payment_reference',
+      'payment_screenshot',
       'payment_submitted_at',
       'payment_verified_at',
       'razorpay_order_id',
@@ -245,6 +241,19 @@ async function initDB() {
 
       if (existing.length > 0) {
         await conn.query(`ALTER TABLE registrations DROP COLUMN ${column}`);
+      }
+    }
+
+    const obsoleteSponsorColumns = [
+      'payment_reference',
+      'payment_screenshot'
+    ];
+
+    for (const column of obsoleteSponsorColumns) {
+      const [existing] = await conn.query(`SHOW COLUMNS FROM sponsor_inquiries LIKE ?`, [column]);
+
+      if (existing.length > 0) {
+        await conn.query(`ALTER TABLE sponsor_inquiries DROP COLUMN ${column}`);
       }
     }
 
