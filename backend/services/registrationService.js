@@ -125,11 +125,11 @@ const RegistrationService = {
 
     const requiresPayment = payment.feeAmount > 0;
 
-    const existing = await SubmissionLookupModel.findByEmail(email);
+    const existing = await SubmissionLookupModel.findRegistrationByEmail(email);
     if (existing) {
       throw {
         status: 409,
-        message: `You have already registered or submitted a form using this email address. Reference ID: ${existing.ref_id}.`
+        message: `You have already registered using this email address. Registration ID: ${existing.ref_id}.`
       };
     }
 

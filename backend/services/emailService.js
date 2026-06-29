@@ -312,7 +312,7 @@ function createMailOptions(data) {
 function sponsorRows(data) {
   const isStall = data.inquiryType === 'stall' || /Exhibitor|Pavilion/i.test(String(data.sponsorTier || ''));
   const rows = [
-    [isStall ? 'Stall Booking ID' : 'Sponsor Inquiry ID', data.refId],
+    ['Registration ID', data.refId],
     ['Company Name', data.companyName],
     ['Contact Person', data.contactPerson],
     ['Email', data.email],
@@ -339,7 +339,7 @@ function buildSponsorUserHtml(data) {
       <h2>Thank you for your ICAIH 2026 ${data.inquiryType === 'stall' ? 'stall / exhibitor booking' : 'sponsorship inquiry'}</h2>
       <p>Dear ${escapeHtml(data.contactPerson)},</p>
       <p>Your ${data.inquiryType === 'stall' ? 'stall / exhibitor booking' : 'sponsorship inquiry'} for <strong>${escapeHtml(EVENT_INFO.title)}</strong> has been received successfully.</p>
-      <p>Your ${data.inquiryType === 'stall' ? 'Stall Booking ID' : 'Sponsor Inquiry ID'} is <strong>${escapeHtml(data.refId)}</strong>.</p>
+      <p>Your Registration ID is <strong>${escapeHtml(data.refId)}</strong>.</p>
       ${sponsorRows(data)}
       ${getEventBlock()}
       <p style="margin-top:18px;">Our team will verify your payment and contact you for the next steps.</p>
@@ -352,7 +352,7 @@ function buildSponsorAdminHtml(data) {
     <div style="font-family:Arial,sans-serif;color:#12213f;line-height:1.6;max-width:760px;margin:auto;">
       <h2>New ICAIH 2026 ${data.inquiryType === 'stall' ? 'Stall / Exhibitor Booking' : 'Sponsor Inquiry'} Received</h2>
       <p><strong>${escapeHtml(data.companyName)}</strong> has submitted a ${data.inquiryType === 'stall' ? 'stall / exhibitor booking' : 'sponsorship inquiry'}.</p>
-      <p>${data.inquiryType === 'stall' ? 'Stall Booking ID' : 'Sponsor Inquiry ID'}: <strong>${escapeHtml(data.refId)}</strong></p>
+      <p>Registration ID: <strong>${escapeHtml(data.refId)}</strong></p>
       ${sponsorRows(data)}
       ${getEventBlock()}
     </div>`;
@@ -397,7 +397,7 @@ function applicationRows(data) {
   const isResearch = data.applicationType === 'research-paper';
   const isAward = data.applicationType === 'award-nomination';
   const rows = [
-    ['Application ID', data.refId],
+    ['Registration ID', data.refId],
     ['Application Type', getApplicationLabel(data.applicationType)],
     ['Full Name', data.fullName],
     ['Email', data.email],
@@ -461,7 +461,7 @@ function buildApplicationUserHtml(data) {
       <h2>${escapeHtml(label)} Received</h2>
       <p>Dear ${escapeHtml(data.fullName)},</p>
       <p>Your <strong>${escapeHtml(label)}</strong> for <strong>${escapeHtml(EVENT_INFO.title)}</strong> has been received successfully.</p>
-      <p>Your Application ID is <strong>${escapeHtml(data.refId)}</strong>.</p>
+      <p>Your Registration ID is <strong>${escapeHtml(data.refId)}</strong>.</p>
       ${applicationRows(data)}
       ${getEventBlock()}
       <p style="margin-top:18px;">Our team will review your submission and contact you for the next steps.</p>
@@ -475,7 +475,7 @@ function buildApplicationAdminHtml(data) {
     <div style="font-family:Arial,sans-serif;color:#12213f;line-height:1.6;max-width:760px;margin:auto;">
       <h2>New ICAIH 2026 ${escapeHtml(label)} Received</h2>
       <p><strong>${escapeHtml(data.fullName)}</strong> has submitted an application.</p>
-      <p>Application ID: <strong>${escapeHtml(data.refId)}</strong></p>
+      <p>Registration ID: <strong>${escapeHtml(data.refId)}</strong></p>
       ${applicationRows(data)}
       <h3 style="margin-top:18px;">Description / Abstract</h3>
       <p style="white-space:pre-line;">${escapeHtml(data.shortDescription || data.abstractText || '-')}</p>

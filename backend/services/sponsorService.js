@@ -51,11 +51,11 @@ const SponsorService = {
       throw { status: 400, message: 'Please enter a valid 10 digit phone number.' };
     }
 
-    const existing = await SubmissionLookupModel.findByEmail(email);
+    const existing = await SubmissionLookupModel.findSponsorByEmailAndType(email, inquiryType);
     if (existing) {
       throw {
         status: 409,
-        message: `You have already registered or submitted a form using this email address. Reference ID: ${existing.ref_id}.`
+        message: `You have already submitted this form using this email address. Registration ID: ${existing.ref_id}.`
       };
     }
 

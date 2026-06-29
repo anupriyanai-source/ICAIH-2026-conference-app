@@ -226,9 +226,9 @@ const ApplicationService = {
     validateApplicationRequiredDetails(body, applicationType);
 
     const normalizedEmail = clean(body.email).toLowerCase();
-    const existing = await SubmissionLookupModel.findByEmail(normalizedEmail);
+    const existing = await SubmissionLookupModel.findApplicationByEmailAndType(normalizedEmail, applicationType);
     if (existing) {
-      const err = new Error(`You have already registered or submitted a form using this email address. Reference ID: ${existing.ref_id}.`);
+      const err = new Error(`You have already submitted this form using this email address. Registration ID: ${existing.ref_id}.`);
       err.status = 409;
       throw err;
     }
