@@ -964,6 +964,21 @@
             <p class="payment-status manual-pending" id="paymentStatusText">Complete the payment on the secure payment page, then submit your registration.</p>
           </div>
 
+          <div class="payment-instructions" aria-labelledby="registrationPaymentInstructionsTitle">
+            <h3 id="registrationPaymentInstructionsTitle">Registration &amp; Payment Instructions</h3>
+            <ol>
+              <li>Fill in all the required registration details.</li>
+              <li>Click <strong>Pay Now in UPI App</strong>.</li>
+              <li>You will be redirected to the secure payment gateway.</li>
+              <li>Complete the payment using your preferred UPI app, card, or net-banking option.</li>
+              <li>After the payment is successful, return to this registration page.</li>
+              <li>Click <strong>Submit Registration</strong> to complete your registration. <strong>This step is mandatory.</strong></li>
+              <li>Your registration details will not be submitted to the admin unless you click <strong>Submit Registration</strong>.</li>
+              <li>If you complete the payment but do not submit the registration form, your registration will remain incomplete. Keep your payment receipt or transaction ID for verification.</li>
+            </ol>
+            <p class="payment-instructions-alert"><strong>Important:</strong> Payment alone does not complete your registration. You must return to this page and click <strong>Submit Registration</strong>.</p>
+          </div>
+
           <input type="hidden" name="feeAmount" id="feeAmount" value="999">
           <input type="hidden" name="discountPercent" id="discountPercent" value="0">
           <input type="hidden" name="paymentStatus" id="paymentStatus" value="pending-verification">
@@ -1086,6 +1101,21 @@
           <input type="hidden" name="inquiryType" id="sponsorInquiryType" value="sponsor">
           <input type="hidden" name="feeAmount" id="sponsorFeeAmount" value="0">
           <input type="hidden" name="paymentStatus" id="sponsorPaymentStatus" value="pending-verification">
+        </div>
+
+        <div class="payment-instructions" id="sponsorPaymentInstructions" aria-labelledby="sponsorPaymentInstructionsTitle">
+          <h3 id="sponsorPaymentInstructionsTitle">Sponsorship &amp; Payment Instructions</h3>
+          <ol>
+            <li id="sponsorInstructionStep1">Fill in all the required sponsorship details.</li>
+            <li>Click <strong>Pay Now in UPI App</strong>.</li>
+            <li>You will be redirected to the secure payment gateway.</li>
+            <li>Complete the payment using your preferred UPI app, card, or net-banking option.</li>
+            <li id="sponsorInstructionStep5">After the payment is successful, return to this sponsorship form.</li>
+            <li id="sponsorInstructionStep6">Click <strong>Submit Sponsor Inquiry</strong> to complete your request. <strong>This step is mandatory.</strong></li>
+            <li id="sponsorInstructionStep7">Your sponsorship details will not be submitted to the admin unless you click <strong>Submit Sponsor Inquiry</strong>.</li>
+            <li id="sponsorInstructionStep8">If you complete the payment but do not submit the sponsorship form, your request will remain incomplete. Keep your payment receipt or transaction ID for verification.</li>
+          </ol>
+          <p class="payment-instructions-alert" id="sponsorInstructionAlert"><strong>Important:</strong> Payment alone does not complete your sponsorship request. You must return to this form and click <strong>Submit Sponsor Inquiry</strong>.</p>
         </div>
 
         <button class="btn primary" id="sponsorSubmitBtn" type="submit">Submit Sponsor Inquiry</button>

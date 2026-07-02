@@ -943,6 +943,13 @@ function openSponsorModal(mode = 'sponsor', selectedTier = '') {
   const paymentHeading = document.getElementById('sponsorPaymentHeading');
   const submitBtn = document.getElementById('sponsorSubmitBtn');
   const formTypeInput = document.getElementById('sponsorInquiryType');
+  const instructionsTitle = document.getElementById('sponsorPaymentInstructionsTitle');
+  const instructionStep1 = document.getElementById('sponsorInstructionStep1');
+  const instructionStep5 = document.getElementById('sponsorInstructionStep5');
+  const instructionStep6 = document.getElementById('sponsorInstructionStep6');
+  const instructionStep7 = document.getElementById('sponsorInstructionStep7');
+  const instructionStep8 = document.getElementById('sponsorInstructionStep8');
+  const instructionAlert = document.getElementById('sponsorInstructionAlert');
 
   populateSponsorTierOptions(sponsorFormMode, selectedTier);
 
@@ -955,13 +962,27 @@ function openSponsorModal(mode = 'sponsor', selectedTier = '') {
     if (selectedFeeLabel) selectedFeeLabel.textContent = 'Selected Stall Fee';
     if (paymentHeading) paymentHeading.textContent = 'Secure Stall Payment';
     if (submitBtn) submitBtn.textContent = 'Submit Stall Booking';
+    if (instructionsTitle) instructionsTitle.textContent = 'Stall Booking & Payment Instructions';
+    if (instructionStep1) instructionStep1.textContent = 'Fill in all the required stall or exhibitor booking details.';
+    if (instructionStep5) instructionStep5.textContent = 'After the payment is successful, return to this stall booking form.';
+    if (instructionStep6) instructionStep6.innerHTML = 'Click <strong>Submit Stall Booking</strong> to complete your booking. <strong>This step is mandatory.</strong>';
+    if (instructionStep7) instructionStep7.innerHTML = 'Your stall booking details will not be submitted to the admin unless you click <strong>Submit Stall Booking</strong>.';
+    if (instructionStep8) instructionStep8.textContent = 'If you complete the payment but do not submit the stall booking form, your booking will remain incomplete. Keep your payment receipt or transaction ID for verification.';
+    if (instructionAlert) instructionAlert.innerHTML = '<strong>Important:</strong> Payment alone does not complete your stall booking. You must return to this form and click <strong>Submit Stall Booking</strong>.';
   } else {
     if (modalKicker) modalKicker.textContent = 'Sponsor Inquiry';
     if (modalTitle) modalTitle.textContent = 'Become a Sponsor';
     if (tierLabel) tierLabel.innerHTML = 'Sponsorship Tier <b class="required-star">*</b>';
     if (selectedFeeLabel) selectedFeeLabel.textContent = 'Selected Sponsor Fee';
-    if (paymentHeading) paymentHeading.textContent = 'Secure Payment';
+    if (paymentHeading) paymentHeading.textContent = 'Secure Sponsor Payment';
     if (submitBtn) submitBtn.textContent = 'Submit Sponsor Inquiry';
+    if (instructionsTitle) instructionsTitle.textContent = 'Sponsorship & Payment Instructions';
+    if (instructionStep1) instructionStep1.textContent = 'Fill in all the required sponsorship details.';
+    if (instructionStep5) instructionStep5.textContent = 'After the payment is successful, return to this sponsorship form.';
+    if (instructionStep6) instructionStep6.innerHTML = 'Click <strong>Submit Sponsor Inquiry</strong> to complete your request. <strong>This step is mandatory.</strong>';
+    if (instructionStep7) instructionStep7.innerHTML = 'Your sponsorship details will not be submitted to the admin unless you click <strong>Submit Sponsor Inquiry</strong>.';
+    if (instructionStep8) instructionStep8.textContent = 'If you complete the payment but do not submit the sponsorship form, your request will remain incomplete. Keep your payment receipt or transaction ID for verification.';
+    if (instructionAlert) instructionAlert.innerHTML = '<strong>Important:</strong> Payment alone does not complete your sponsorship request. You must return to this form and click <strong>Submit Sponsor Inquiry</strong>.';
   }
 
   const eventInfoEl = modal.querySelector('.success-event-info');
