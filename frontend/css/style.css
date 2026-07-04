@@ -6444,3 +6444,172 @@ body.application-award-mode .pdf-form-header.award-nomination-fields {
   .payment-instructions li,
   .payment-instructions-alert { font-size: .8rem; }
 }
+
+/* Student ID verification notice */
+.student-id-notice {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: start;
+  margin: .25rem 0 .9rem;
+  padding: 1rem;
+  border: 1px solid #f2b84b;
+  border-left: 5px solid #f59e0b;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fffdf5 0%, #fff7df 100%);
+  box-shadow: 0 10px 24px rgba(146, 94, 12, .10);
+}
+.student-id-notice[hidden] { display: none !important; }
+.student-id-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #123d83;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: .06em;
+  box-shadow: 0 8px 18px rgba(18, 61, 131, .22);
+}
+.student-id-content h3 {
+  margin: .1rem 0 .35rem;
+  color: #17345f;
+  font-size: 1.02rem;
+}
+.student-id-content p {
+  margin: 0;
+  color: #5d4a22;
+  line-height: 1.55;
+  font-size: .9rem;
+}
+.student-id-eyebrow {
+  color: #b45309 !important;
+  font-size: .72rem !important;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.student-id-confirmation {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: .65rem;
+  margin-top: .8rem;
+  padding: .75rem;
+  border: 1px solid rgba(245, 158, 11, .35);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .78);
+  cursor: pointer;
+}
+.student-id-confirmation input {
+  width: 18px !important;
+  min-width: 18px;
+  height: 18px;
+  margin-top: .12rem;
+  accent-color: #123d83;
+}
+.student-id-confirmation span {
+  color: #263d60;
+  font-size: .84rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+@media (max-width: 560px) {
+  .student-id-notice { grid-template-columns: 1fr; padding: .9rem; }
+  .student-id-icon { width: 42px; height: 42px; }
+}
+
+
+/* ── Stall Opportunities Section ─────────────────────────────── */
+.stall-opportunities-section {
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.72), rgba(255, 255, 255, 0.96));
+}
+
+.stall-intro-panel {
+  max-width: 780px;
+  margin: 0 auto 2.5rem;
+  text-align: center;
+}
+
+.stall-packages-grid {
+  align-items: stretch;
+}
+
+.stall-package-card {
+  border-top: 4px solid var(--sponsor-accent);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.09);
+}
+
+.stall-package-card .sponsor-card-icon,
+.stall-package-card .sponsor-card-amount {
+  color: var(--sponsor-accent);
+}
+
+.stall-package-card .sponsor-card-action {
+  margin-top: auto;
+}
+
+.stall-suitable-panel {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.stall-suitable-panel .check-list {
+  display: inline-block;
+  text-align: left;
+}
+
+@media (max-width: 680px) {
+  .stall-intro-panel {
+    margin-bottom: 2rem;
+  }
+
+  .stall-package-card {
+    padding: 22px 20px;
+  }
+}
+
+/* Stall cards: three packages in one desktop row with price directly below each title */
+.stall-packages-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+  margin-bottom: 3rem;
+}
+
+.stall-packages-grid .stall-package-card {
+  min-width: 0;
+  height: 100%;
+}
+
+.stall-packages-grid .sponsor-card-head > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.stall-packages-grid .sponsor-card-amount {
+  display: block;
+  margin: 0.35rem 0 0;
+  color: #fff;
+  font-size: 1.08rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+@media (max-width: 1024px) {
+  .stall-packages-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .stall-packages-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

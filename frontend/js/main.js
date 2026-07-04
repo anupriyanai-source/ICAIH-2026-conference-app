@@ -387,20 +387,44 @@ function populateSponsorTierOptions(mode = sponsorFormMode, selectedTier = '') {
   const select = document.getElementById('sponsorTier');
   if (!select) return;
 
-  const optionLabel = mode === 'stall' ? 'Select Stall / Exhibitor Tier' : 'Select Tier';
   const packages = getSponsorModePackages(mode);
 
-  select.innerHTML = `<option value="">${optionLabel}</option>` + packages
+  select.innerHTML = packages
     .map(pkg => `<option value="${pkg.title}">${pkg.title} – ${formatINR(pkg.amount)}</option>`)
     .join('');
 
   if (selectedTier && packages.some(pkg => pkg.title === selectedTier)) {
     select.value = selectedTier;
+  } else if (packages.length) {
+    select.value = packages[0].title;
   }
 }
 
+function renderStallPackages() {
+  const grid = document.getElementById('stallPackagesGrid');
+  if (!grid) return;
+
+  grid.innerHTML = STALL_PACKAGES.map(pkg => `
+    <article class="feature-panel reveal sponsor-package-card stall-package-card" style="--sponsor-accent:${pkg.accent};">
+      <div class="sponsor-card-head">
+        <span class="sponsor-card-icon" aria-hidden="true" title="${pkg.title}">${pkg.icon}</span>
+        <div><h3>${pkg.title}</h3><p class="sponsor-card-amount">${formatINR(pkg.amount)}</p></div>
+      </div>
+      <ul class="sponsor-benefit-list">${pkg.benefits.map(benefit => `<li>${benefit}</li>`).join('')}</ul>
+      <button class="btn secondary sponsor-card-action" type="button" data-stall-tier="${pkg.title}">Book This Stall</button>
+    </article>`).join('');
+
+  grid.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  grid.querySelectorAll('[data-stall-tier]').forEach(btn =>
+    btn.addEventListener('click', () => openSponsorModal('stall', btn.dataset.stallTier))
+  );
+}
+
 renderSponsorPackages();
+renderStallPackages();
 populateSponsorTierOptions();
+
+document.getElementById('openStallModal')?.addEventListener('click', () => openSponsorModal('stall'));
 
 function formatINR(amount) {
   return '₹' + Number(amount || 0).toLocaleString('en-IN');
@@ -710,9 +734,17 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   const bulkBox = document.getElementById('bulkBookingBox');
   const studentCount = document.getElementById('studentCount');
   const openUpiBtn = document.getElementById('openUpiBtn');
+  const studentIdNotice = document.getElementById('studentIdNotice');
+  const studentIdConfirmed = document.getElementById('studentIdConfirmed');
+  const isStudentRegistration = role === 'Student' || role === 'Bulk Booking';
 
   if (bulkBox) bulkBox.hidden = role !== 'Bulk Booking';
   if (studentCount) studentCount.required = role === 'Bulk Booking';
+  if (studentIdNotice) studentIdNotice.hidden = !isStudentRegistration;
+  if (studentIdConfirmed) {
+    studentIdConfirmed.required = isStudentRegistration;
+    if (!isStudentRegistration) studentIdConfirmed.checked = false;
+  }
   if (role === 'Bulk Booking') synchronizeBulkOfferWithStudentCount();
 
   const details = getRegistrationPaymentDetails();
@@ -1381,6 +1413,18 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
       document.getElementById('studentCount')?.focus();
       return;
     }
+  }
+
+  const studentIdConfirmed = document.getElementById('studentIdConfirmed');
+  if ((details.role === 'Student' || details.role === 'Bulk Booking') && !studentIdConfirmed?.checked) {
+    showMessage(
+      'registrationMessage',
+      'Please confirm that you will bring your original and currently valid student ID card for verification.',
+      'error'
+    );
+    studentIdConfirmed?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    studentIdConfirmed?.focus();
+    return;
   }
 
   if (!validatePhoneFields(form, 'registrationMessage')) return;

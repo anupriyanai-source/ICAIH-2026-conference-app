@@ -752,6 +752,34 @@
       </div>
     </section>
 
+    <section class="section stall-opportunities-section" id="stalls">
+      <div class="container">
+        <div class="content-block reveal stall-intro-panel">
+          <p class="section-kicker">Exhibitor Stall Opportunities</p>
+          <h2>Showcase Your Brand at ICAIH 2026</h2>
+          <p>Present your products, services, healthcare technologies, AI solutions, and startup innovations directly to healthcare professionals, researchers, institutions, investors, and industry leaders.</p>
+          <button class="btn primary" id="openStallModal" type="button">Book Stall Space</button>
+        </div>
+
+        <h3 class="sponsor-section-title">Stall &amp; Exhibitor Packages</h3>
+        <p class="sponsor-section-subtitle">Choose the stall package that best matches your exhibition space and visibility requirements.</p>
+        <div id="stallPackagesGrid" class="sponsor-packages-grid stall-packages-grid" aria-live="polite">
+          <!-- Stall cards are rendered dynamically from js/main.js -->
+        </div>
+
+        <div class="feature-panel reveal stall-suitable-panel">
+          <h3>Suitable For</h3>
+          <ul class="check-list">
+            <li>Hospitals and healthcare service providers</li>
+            <li>Medical device and diagnostics companies</li>
+            <li>AI, digital health, and health-tech companies</li>
+            <li>Startups, incubators, and innovation teams</li>
+            <li>Research institutions and academic innovators</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
 
     <section class="section guidelines-section" id="guidelines">
       <div class="container">
@@ -939,6 +967,19 @@
               <option value="Sponsor / Exhibitor">Sponsor / Exhibitor</option>
             </select></label>
 
+          <section class="student-id-notice" id="studentIdNotice" aria-labelledby="studentIdNoticeTitle">
+            <div class="student-id-icon" aria-hidden="true">ID</div>
+            <div class="student-id-content">
+              <p class="student-id-eyebrow">Mandatory for student registration</p>
+              <h3 id="studentIdNoticeTitle">Bring a valid student ID card</h3>
+              <p>Students must bring their original, currently valid institution ID card to the venue for verification. Expired ID cards, photocopies, screenshots, or edited digital copies may not be accepted.</p>
+              <label class="student-id-confirmation">
+                <input type="checkbox" name="studentIdConfirmed" id="studentIdConfirmed" value="yes">
+                <span>I confirm that I will bring my original and currently valid student ID card for verification.</span>
+              </label>
+            </div>
+          </section>
+
           <div class="bulk-booking-box" id="bulkBookingBox" hidden>
             <label><span>Student Bulk Booking Offer</span><select name="bulkOffer" id="bulkOffer">
                 <option value="1-4">Student Group: 1 to 4 Students - Early Bird ₹899 Each</option>
@@ -1083,7 +1124,7 @@
         <label><span>Phone <b class="required-star">*</b></span><input name="phone" type="tel" inputmode="numeric" maxlength="10" pattern="[0-9]{10}"
             data-phone-only required placeholder="Enter 10 digit phone number" title="Please enter exactly 10 digits"></label>
         <label><span id="sponsorTierLabel">Sponsorship Tier <b class="required-star">*</b></span><select name="sponsorTier" id="sponsorTier" required>
-            <option value="">Select Tier</option>
+            <option value="" aria-label="Choose a tier"></option>
           </select></label>
         <label><span>Message</span><textarea name="message" placeholder="Specific requirements"></textarea></label>
 
