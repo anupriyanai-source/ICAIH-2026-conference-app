@@ -1876,10 +1876,8 @@ function applyApplicationRequiredFields() {
       return;
     }
 
-    if (!field.matches('[data-file-name-input]')) {
-      field.required = true;
-      addRequiredStar(field.closest('label')?.querySelector('span'));
-    }
+    field.required = true;
+    addRequiredStar(field.closest('label')?.querySelector('span'));
   });
 }
 
