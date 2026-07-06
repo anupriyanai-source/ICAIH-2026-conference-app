@@ -950,7 +950,7 @@
   title="Please enter exactly 10 digits"></label>
           <label><span>Organization <b class="required-star">*</b></span><input id="registrationOrganization" name="organization" type="text" autocomplete="organization" required
               placeholder="Institution / Company"></label>
-          <label><span>Role / Fee Category</span><select name="role" id="registrationRole">
+          <label><span>Role / Fee Category <b class="required-star">*</b></span><select name="role" id="registrationRole" required>
               <option value="Student">Student</option>
               <option value="Delegate">Delegate</option>
               <option value="Startup Founder">Startup Founder</option>
@@ -959,7 +959,7 @@
               <option value="Online Attendee">Online Attendee</option>
               <option value="Bulk Booking">Student Bulk Booking</option>
             </select></label>
-          <label><span>Category</span><select name="category" id="registrationCategory">
+          <label><span>Category <b class="required-star">*</b></span><select name="category" id="registrationCategory" required>
               <option value="General">General</option>
               <option value="Medical College / Academic Institution">Medical College / Academic Institution</option>
               <option value="Startup / Innovator">Startup / Innovator</option>
@@ -998,7 +998,7 @@
           </div>
 
           <div class="payment-qr-box" id="manualPaymentBox">
-            <h3>Secure UPI Payment</h3>
+            <h3>Secure UPI Payment <b class="required-star">*</b></h3>
             <p id="paymentQrText">Click Pay Now or scan the QR code to open the secure Crowdshaki / Razorpay payment page with the selected amount already filled.</p>
             <img id="paymentQrImage" src="assets/qr/myth-reality-payment-qr.png" alt="ICAIH 2026 secure payment QR code">
             <button class="btn primary payment-button" id="openUpiBtn" type="button">Pay Now in UPI App</button>
@@ -1279,7 +1279,7 @@
                   <span class="choice-title">Select the competition:</span>
                   <div class="checkbox-grid one">
                     <label><input type="radio" name="competitionCategory" value="AI in Healthcare Innovation Challenge"> AI in Healthcare Innovation Challenge</label>
-                    <label><input type="radio" name="competitionCategory" value="Research Paper / Poster Presentation Competition"> Research Paper / Poster Presentation Competition</label>
+                    <label><input type="radio" name="competitionCategory" value="Poster Presentation Competition"> Poster Presentation Competition</label>
                     <label><input type="radio" name="competitionCategory" value="Healthcare Case Study Challenge"> Healthcare Case Study Challenge</label>
                     <label><input type="radio" name="competitionCategory" value="Ideathon – Healthcare 2035"> Ideathon – Healthcare 2035</label>
                   </div>
@@ -1332,12 +1332,26 @@
                   <div class="checkbox-grid one">
                     <label><input type="radio" name="presentationType" value="Research Paper Presentation"> Research Paper Presentation</label>
                     <label><input type="radio" name="presentationType" value="Student Paper Presentation"> Student Paper Presentation</label>
-                    <label><input type="radio" name="presentationType" value="Poster Presentation"> Poster Presentation</label>
                     <label><input type="radio" name="presentationType" value="Case Study Presentation"> Case Study Presentation</label>
                     <label><input type="radio" name="presentationType" value="Innovation / Project Presentation"> Innovation / Project Presentation</label>
                     <label><input type="radio" name="presentationType" value="Startup Solution Presentation"> Startup Solution Presentation</label>
                     <label><input type="radio" name="presentationType" value="Review Paper Presentation"> Review Paper Presentation</label>
                   </div>
+                </div>
+              </div>
+
+              <div class="application-section research-paper-fields">
+                <h4>4. Individual / Team Details</h4>
+                <div class="choice-block inline-choice-row">
+                  <span class="choice-title">Participation Type:</span>
+                  <label><input type="radio" name="participationType" value="Individual"> Individual</label>
+                  <label><input type="radio" name="participationType" value="Team"> Team</label>
+                </div>
+                <div class="form-grid two compact-form-grid participation-fields">
+                  <label class="participation-field individual-field team-field"><span>Team Name</span><input name="teamName" placeholder="Team Name"></label>
+                  <label class="participation-field team-field"><span>Number of Team Members</span><input name="teamMembersCount" type="number" min="1" max="10" placeholder="Number of Team Members"></label>
+                  <label class="participation-field individual-field full-row"><span>Team Member Name</span><input name="individualMemberName" placeholder="Team Member Name"></label>
+                  <label class="participation-field team-field full-row"><span>Team Member Names</span><textarea name="teamMemberNames" placeholder="1.&#10;2.&#10;3.&#10;4."></textarea></label>
                 </div>
               </div>
 
@@ -1360,7 +1374,7 @@
               </div>
 
               <div class="application-section research-paper-fields">
-                <h4>4. Paper / Presentation Details</h4>
+                <h4>5. Paper / Presentation Details</h4>
                 <div class="choice-block">
                   <span class="choice-title">Conference Theme / Topic Area:</span>
                   <div class="checkbox-grid two">
@@ -1398,7 +1412,7 @@
               </div>
 
               <div class="application-section research-paper-fields">
-                <h4>5. Author Details</h4>
+                <h4>6. Author Details</h4>
                 <div class="form-grid two compact-form-grid">
                   <label><span>Primary Author Name</span><input name="correspondingAuthor" placeholder="Primary Author Name"></label>
                   <label><span>Co-author Name(s), if any</span><input name="coAuthorNames" placeholder="Co-author Name(s), if any"></label>
@@ -1429,7 +1443,7 @@
               </div>
 
               <div class="application-section research-paper-fields file-instruction-section">
-                <h4>6. Supporting Document Instructions</h4>
+                <h4>7. Supporting Document Instructions</h4>
                 <p class="file-instruction-text">After submitting the form, send your research paper or presentation file directly to the coordinator email below.</p>
                 <div class="file-name-instruction-card">
                   <strong>Email file naming instruction</strong>
@@ -1475,7 +1489,7 @@
               </div>
 
               <div class="application-section research-paper-fields">
-                <h4>7. Participation Details</h4>
+                <h4>8. Participation Details</h4>
                 <div class="choice-block">
                   <span class="choice-title">Preferred Presentation Mode:</span>
                   <div class="checkbox-grid two">
@@ -1501,7 +1515,7 @@
               </div>
 
               <div class="application-section declaration-section research-paper-fields">
-                <h4>8. Declaration</h4>
+                <h4>9. Declaration</h4>
                 <label class="checkbox-line"><input name="declarationConfirmed" type="checkbox" value="true" required> <span>I confirm that the submitted work is original.</span></label>
                 <label class="checkbox-line"><input name="researchDeclarationPresent" type="checkbox" value="true"> <span>I agree to present the selected paper during ICAIH 2026.</span></label>
                 <label class="checkbox-line"><input name="researchDeclarationRules" type="checkbox" value="true"> <span>I agree to follow the conference rules and presentation guidelines.</span></label>
@@ -1524,7 +1538,7 @@
               </div>
 
               <div class="application-section research-paper-fields">
-                <h4>9. Applicant Confirmation</h4>
+                <h4>10. Applicant Confirmation</h4>
                 <div class="form-grid two compact-form-grid">
                   <label><span>Applicant Name</span><input name="applicantConfirmationName" placeholder="Applicant Name"></label>
                   <label><span>Date</span><input name="applicantConfirmationDate" type="date"></label>

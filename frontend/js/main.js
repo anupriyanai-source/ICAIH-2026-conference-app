@@ -1770,8 +1770,9 @@ function setApplicationType(type) {
   setConditionalOtherFields();
   applyApplicationRequiredFields();
   updateApplicationFileMailLinks();
-  if (safeType === 'pre-conference-competition') {
-    setParticipationType(document.querySelector('input[name="participationType"]:checked')?.value || 'Individual');
+  if (safeType === 'pre-conference-competition' || safeType === 'research-paper') {
+    const activeParticipation = document.querySelector('input[name="participationType"]:checked:not(:disabled)');
+    setParticipationType(activeParticipation?.value || 'Individual');
   }
   syncPreConferenceSubmissionTitle();
   applyApplicationRequiredFields();
@@ -2002,12 +2003,12 @@ function setParticipationType(type) {
   document.body.classList.toggle('participation-team', safeType === 'Team');
   document.body.classList.toggle('participation-individual', safeType !== 'Team');
 
-  const selected = document.querySelector(`input[name="participationType"][value="${safeType}"]`);
+  const selected = document.querySelector(`input[name="participationType"][value="${safeType}"]:not(:disabled)`);
   if (selected) selected.checked = true;
 
-  const teamCount = document.querySelector('input[name="teamMembersCount"]');
-  const teamMembers = document.querySelector('textarea[name="teamMemberNames"]');
-  const individualMember = document.querySelector('input[name="individualMemberName"]');
+  const teamCount = document.querySelector('input[name="teamMembersCount"]:not(:disabled)');
+  const teamMembers = document.querySelector('textarea[name="teamMemberNames"]:not(:disabled)');
+  const individualMember = document.querySelector('input[name="individualMemberName"]:not(:disabled)');
 
   if (safeType === 'Team') {
     if (teamCount) teamCount.disabled = false;
