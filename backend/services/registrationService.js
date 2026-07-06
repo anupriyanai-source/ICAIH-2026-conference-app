@@ -21,7 +21,7 @@ const ROLE_FEES = {
 };
 
 const BULK_OFFERS = {
-  '1-4': { min: 1, max: 4, discount: 10, label: 'Student Group: 1 to 4 Students - Early Bird 10% Discount' },
+  '1-4': { min: 1, max: 4, discount: 0, label: 'Student Group: 1 to 4 Students - Standard Fee ₹999 Each' },
   '5-24': { min: 5, max: 24, discount: 10, label: 'Student Group: 5 to 24 Students - 10% Discount' },
   '25-49': { min: 25, max: 49, discount: 20, label: 'Student Group: 25 to 49 Students - 20% Discount' },
   '50-plus': { min: 50, max: Infinity, discount: 25, label: 'Student Group: 50+ Students - 25% Discount' }
@@ -36,16 +36,13 @@ function getBulkOfferForCount(count) {
 }
 
 const EARLY_BIRD_DISCOUNT_PERCENT = 10;
-const EARLY_BIRD_END = new Date('2026-07-05T23:59:59+05:30');
 
-function isEarlyBirdActive(now = new Date()) {
-  return now.getTime() <= EARLY_BIRD_END.getTime();
+function isEarlyBirdActive() {
+  return false;
 }
 
 function applyEarlyBirdDiscount(amount) {
-  const baseAmount = Number(amount || 0);
-  if (!isEarlyBirdActive() || baseAmount <= 0) return baseAmount;
-  return baseAmount - Math.round(baseAmount * EARLY_BIRD_DISCOUNT_PERCENT / 100);
+  return Number(amount || 0);
 }
 
 function calculatePayment({ role, bulkOffer, studentCount }) {

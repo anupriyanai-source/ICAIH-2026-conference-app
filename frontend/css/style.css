@@ -270,6 +270,13 @@ blockquote {
   white-space: nowrap;
 }
 
+.top-announcement-content .expired-offer {
+  text-decoration-line: line-through;
+  text-decoration-thickness: 2px;
+  text-decoration-color: currentColor;
+  opacity: 0.68;
+}
+
 .top-announcement-content .dot {
   color: #39dff1;
   font-size: 1.05rem;

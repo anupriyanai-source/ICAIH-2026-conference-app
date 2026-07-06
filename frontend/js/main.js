@@ -172,7 +172,7 @@ const REGISTRATION_FEES = {
 };
 
 const BULK_OFFERS = {
-  '1-4': { min: 1, max: 4, discount: 10, label: 'Student Group: 1 to 4 Students - Early Bird 10% Discount' },
+  '1-4': { min: 1, max: 4, discount: 0, label: 'Student Group: 1 to 4 Students - Standard Fee ₹999 Each' },
   '5-24': { min: 5, max: 24, discount: 10, label: 'Student Group: 5 to 24 Students - 10% Discount' },
   '25-49': { min: 25, max: 49, discount: 20, label: 'Student Group: 25 to 49 Students - 20% Discount' },
   '50-plus': { min: 50, max: Infinity, discount: 25, label: 'Student Group: 50+ Students - 25% Discount' }
@@ -205,7 +205,7 @@ function synchronizeBulkOfferWithStudentCount({ showError = false } = {}) {
 
   if (bulkCountHelp) {
     if (!count) {
-      bulkCountHelp.textContent = 'Enter 1–4 for Early Bird pricing at ₹899 per student, 5–24 for 10%, 25–49 for 20%, or 50+ for 25%. The offer changes automatically.';
+      bulkCountHelp.textContent = 'Enter 1–4 for the standard fee of ₹999 per student, 5–24 for 10%, 25–49 for 20%, or 50+ for 25%. The offer changes automatically.';
       bulkCountHelp.classList.remove('error');
     } else if (!derivedKey) {
       bulkCountHelp.textContent = 'Enter at least 1 student.';
@@ -227,16 +227,13 @@ function synchronizeBulkOfferWithStudentCount({ showError = false } = {}) {
 }
 
 const EARLY_BIRD_DISCOUNT_PERCENT = 10;
-const EARLY_BIRD_END = new Date('2026-07-05T23:59:59+05:30');
 
-function isEarlyBirdActive(now = new Date()) {
-  return now.getTime() <= EARLY_BIRD_END.getTime();
+function isEarlyBirdActive() {
+  return false;
 }
 
 function applyEarlyBirdDiscount(amount) {
-  const baseAmount = Number(amount || 0);
-  if (!isEarlyBirdActive() || baseAmount <= 0) return baseAmount;
-  return baseAmount - Math.round(baseAmount * EARLY_BIRD_DISCOUNT_PERCENT / 100);
+  return Number(amount || 0);
 }
 
 const CROWDSHAKI_PAYMENT = {
@@ -772,8 +769,8 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   if (earlyBirdStatus) {
     if (role === 'Bulk Booking') {
       earlyBirdStatus.textContent = details.bulkOfferKey === '1-4'
-        ? 'Early Bird student pricing applied: ₹899 per student for 1–4 students.'
-        : 'Student bulk-booking discounts are calculated separately and are not combined with the Early Bird offer.';
+        ? 'Standard student fee applied: ₹999 per student for 1–4 students. No Early Bird discount is applied.'
+        : 'Student bulk-booking discounts are calculated separately. The Early Bird offer has ended.';
       earlyBirdStatus.classList.remove('expired');
     } else if (details.earlyBirdActive && details.requiresPayment) {
       earlyBirdStatus.textContent = 'Early Bird offer active: 10% discount is automatically applied through July 5, 2026.';
@@ -1407,7 +1404,7 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
     if (!offerKey || !count) {
       showMessage(
         'registrationMessage',
-        'Please enter a whole-number student count of at least 1. Pricing is applied automatically: 1–4 = ₹899 per student, 5–24 = 10%, 25–49 = 20%, and 50+ = 25%.',
+        'Please enter a whole-number student count of at least 1. Pricing is applied automatically: 1–4 = ₹999 per student, 5–24 = 10%, 25–49 = 20%, and 50+ = 25%.',
         'error'
       );
       document.getElementById('studentCount')?.focus();
