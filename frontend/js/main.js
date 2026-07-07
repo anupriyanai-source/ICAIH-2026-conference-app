@@ -443,22 +443,33 @@ function getRegistrationPaymentDetails() {
     const discountAmount = Math.round(baseTotal * offer.discount / 100);
     const payableAmount = baseTotal - discountAmount;
 
+    const bulkEarlyBirdActive = isEarlyBirdActive();
+    const bulkDiscountPercent = bulkEarlyBirdActive ? Math.max(offer.discount, EARLY_BIRD_DISCOUNT_PERCENT) : offer.discount;
+    const finalDiscountAmount = Math.round(baseTotal * bulkDiscountPercent / 100);
+    const finalPayableAmount = baseTotal - finalDiscountAmount;
+
     return {
       role,
-      feeAmount: payableAmount,
-      discountPercent: offer.discount,
+      feeAmount: finalPayableAmount,
+      discountPercent: bulkDiscountPercent,
       bulkOfferKey,
       bulkOffer: offer.label,
       studentCount: count,
-      requiresPayment: payableAmount > 0,
-      note: `${offer.label}. ${count} students × ₹999. Payable amount after discount: ${formatINR(payableAmount)}.`
+      requiresPayment: finalPayableAmount > 0,
+      earlyBirdActive: bulkEarlyBirdActive,
+      note: `${offer.label}. ${count} students × ₹999. Early Bird 10% discount applies until July 12, 2026. Payable amount after discount: ${formatINR(finalPayableAmount)}.`
     };
   }
 
   const baseFee = Number(REGISTRATION_FEES[role] ?? 1999);
-  const earlyBirdActive = isEarlyBirdActive();
-  const fee = applyEarlyBirdDiscount(baseFee);
-  const discountPercent = earlyBirdActive && baseFee > 0 ? EARLY_BIRD_DISCOUNT_PERCENT : 0;
+
+  // Online Attendee has a fixed fee and is not eligible for Early Bird discount.
+  const isOnlineAttendee = role === 'Online Attendee';
+  const earlyBirdActive = isOnlineAttendee ? false : isEarlyBirdActive();
+  const fee = isOnlineAttendee ? baseFee : applyEarlyBirdDiscount(baseFee);
+  const discountPercent = (!isOnlineAttendee && earlyBirdActive && baseFee > 0)
+    ? EARLY_BIRD_DISCOUNT_PERCENT
+    : 0;
 
   return {
     role,
@@ -470,9 +481,11 @@ function getRegistrationPaymentDetails() {
     requiresPayment: fee > 0,
     earlyBirdActive,
     note: fee > 0
-      ? (earlyBirdActive
-        ? `${role} registration fee: ${formatINR(baseFee)}. Early Bird 10% discount applied until July 12. Payable amount: ${formatINR(fee)}.`
-        : `${role} registration fee: ${formatINR(baseFee)}. Early Bird offer ended after July 12, 2026; standard fee applies.`)
+      ? (isOnlineAttendee
+        ? `${role} registration fee: ${formatINR(baseFee)}. Early Bird offer is not applicable. Payable amount: ${formatINR(fee)}.`
+        : (earlyBirdActive
+          ? `${role} registration fee: ${formatINR(baseFee)}. Early Bird 10% discount applied until July 12. Payable amount: ${formatINR(fee)}.`
+          : `${role} registration fee: ${formatINR(baseFee)}. Early Bird offer ended after July 12, 2026; standard fee applies.`))
       : `${role} registration - no fee required`
   };
 }
@@ -772,7 +785,7 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
     if (role === 'Bulk Booking') {
       earlyBirdStatus.textContent = details.bulkOfferKey === '1-4'
         ? 'Standard student fee applied: ₹999 per student for 1–4 students. No Early Bird discount is applied.'
-        : 'Student bulk-booking discounts are calculated separately. The Early Bird offer has ended.';
+        : 'Student bulk-booking discount is available. Early Bird 10% discount applies until July 12, 2026.';
       earlyBirdStatus.classList.remove('expired');
     } else if (details.earlyBirdActive && details.requiresPayment) {
       earlyBirdStatus.textContent = 'Early Bird offer active: 10% discount is automatically applied through July 12, 2026.';
