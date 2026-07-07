@@ -262,7 +262,7 @@ blockquote {
 }
 
 .top-announcement-content span {
-  color: #eafcff;
+  color: #ffffff;
   font-family: var(--font-head);
   font-weight: 700;
   font-size: .88rem;
@@ -271,10 +271,10 @@ blockquote {
 }
 
 .top-announcement-content .expired-offer {
-  text-decoration-line: line-through;
+  /* text-decoration-line: line-through; */
   text-decoration-thickness: 2px;
   text-decoration-color: currentColor;
-  opacity: 0.68;
+  /* opacity: 0.68; */
 }
 
 .top-announcement-content .dot {

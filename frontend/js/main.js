@@ -229,11 +229,13 @@ function synchronizeBulkOfferWithStudentCount({ showError = false } = {}) {
 const EARLY_BIRD_DISCOUNT_PERCENT = 10;
 
 function isEarlyBirdActive() {
-  return false;
+  const earlyBirdEndDate = new Date('2026-07-12T23:59:59+05:30');
+  return new Date() <= earlyBirdEndDate;
 }
 
 function applyEarlyBirdDiscount(amount) {
-  return Number(amount || 0);
+  if (!isEarlyBirdActive()) return Number(amount || 0);
+  return Math.round(Number(amount || 0) * (100 - EARLY_BIRD_DISCOUNT_PERCENT) / 100);
 }
 
 const CROWDSHAKI_PAYMENT = {
@@ -469,8 +471,8 @@ function getRegistrationPaymentDetails() {
     earlyBirdActive,
     note: fee > 0
       ? (earlyBirdActive
-        ? `${role} registration fee: ${formatINR(baseFee)}. Early Bird 10% discount applied until July 5. Payable amount: ${formatINR(fee)}.`
-        : `${role} registration fee: ${formatINR(baseFee)}. Early Bird offer has ended; standard fee applies.`)
+        ? `${role} registration fee: ${formatINR(baseFee)}. Early Bird 10% discount applied until July 12. Payable amount: ${formatINR(fee)}.`
+        : `${role} registration fee: ${formatINR(baseFee)}. Early Bird offer ended after July 12, 2026; standard fee applies.`)
       : `${role} registration - no fee required`
   };
 }
@@ -773,10 +775,10 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
         : 'Student bulk-booking discounts are calculated separately. The Early Bird offer has ended.';
       earlyBirdStatus.classList.remove('expired');
     } else if (details.earlyBirdActive && details.requiresPayment) {
-      earlyBirdStatus.textContent = 'Early Bird offer active: 10% discount is automatically applied through July 5, 2026.';
+      earlyBirdStatus.textContent = 'Early Bird offer active: 10% discount is automatically applied through July 12, 2026.';
       earlyBirdStatus.classList.remove('expired');
     } else if (details.requiresPayment) {
-      earlyBirdStatus.textContent = 'Standard registration fee applies after July 5, 2026.';
+      earlyBirdStatus.textContent = 'Standard registration fee applies after July 12, 2026.';
       earlyBirdStatus.classList.add('expired');
     } else {
       earlyBirdStatus.textContent = '';
@@ -1644,8 +1646,8 @@ const APPLICATION_CATEGORY_OPTIONS = {
 };
 
 const APPLICATION_LABELS = {
-  'pre-conference-competition': 'Pre-Conference Competitions Application Form',
-  'research-paper': 'Research Paper Submission Form',
+  'pre-conference-competition': 'Pre-Conference Competitions Application Form (Submission Deadline: July 8, 2026)',
+  'research-paper': 'Research Paper Submission Form (Submission Deadline: July 8, 2026)',
   'award-nomination': 'ICAIH 2026 International Awards Nomination Form'
 };
 
