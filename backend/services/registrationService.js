@@ -38,11 +38,13 @@ function getBulkOfferForCount(count) {
 const EARLY_BIRD_DISCOUNT_PERCENT = 10;
 
 function isEarlyBirdActive() {
-  return false;
+  const earlyBirdEndDate = new Date('2026-07-12T23:59:59+05:30');
+  return new Date() <= earlyBirdEndDate;
 }
 
 function applyEarlyBirdDiscount(amount) {
-  return Number(amount || 0);
+  if (!isEarlyBirdActive()) return Number(amount || 0);
+  return Math.round(Number(amount || 0) * (100 - EARLY_BIRD_DISCOUNT_PERCENT) / 100);
 }
 
 function calculatePayment({ role, bulkOffer, studentCount }) {
@@ -71,11 +73,12 @@ function calculatePayment({ role, bulkOffer, studentCount }) {
   }
 
   const baseFee = Number(ROLE_FEES[role] ?? 1999);
-  const earlyBirdActive = isEarlyBirdActive();
+  const isOnlineAttendee = role === 'Online Attendee';
+  const earlyBirdActive = isOnlineAttendee ? false : isEarlyBirdActive();
 
   return {
-    feeAmount: applyEarlyBirdDiscount(baseFee),
-    discountPercent: earlyBirdActive && baseFee > 0 ? EARLY_BIRD_DISCOUNT_PERCENT : 0,
+    feeAmount: isOnlineAttendee ? baseFee : applyEarlyBirdDiscount(baseFee),
+    discountPercent: !isOnlineAttendee && earlyBirdActive && baseFee > 0 ? EARLY_BIRD_DISCOUNT_PERCENT : 0,
     bulkOffer: '',
     studentCount: null
   };
