@@ -95,7 +95,6 @@ function validateApplicationRequiredDetails(body, applicationType) {
       ['cityState', 'City / state'],
       ['participantCategory', 'Participant category'],
       ['competitionCategory', 'Competition category'],
-      ['participationType', 'Participation type'],
       ['topicTheme', 'Topic / theme area'],
       ['shortDescription', 'Short description'],
       ['expectedImpact', 'Expected impact'],
@@ -175,14 +174,8 @@ function validateApplicationRequiredDetails(body, applicationType) {
     throw err;
   }
 
-  if (applicationType === 'pre-conference-competition') {
-    const participationType = clean(body.participationType);
-    if (participationType === 'Team') {
-      validateRequired(body, ['teamName', 'teamMembersCount', 'teamMemberNames']);
-    } else {
-      validateRequired(body, ['teamName', 'individualMemberName']);
-    }
-  }
+  // Individual / Team details removed from the application form.
+  // Do not validate participationType, teamName, or team member fields.
 }
 
 function validateRequired(data, fields) {

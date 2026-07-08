@@ -6620,3 +6620,18 @@ body.application-award-mode .pdf-form-header.award-nomination-fields {
   }
 }
 
+
+/* Competition and research form cleanup: remove header box styling and keep clean section flow */
+#applicationModal .pdf-form-header {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 8px 0 14px !important;
+  margin-bottom: 10px !important;
+}
+
+#applicationModal .application-section h4 {
+  margin-top: 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(30, 58, 138, 0.12);
+}

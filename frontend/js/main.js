@@ -1402,8 +1402,7 @@ function resetApplicationFormState(form, applicationType = 'pre-conference-compe
   form.querySelectorAll('.field-error').forEach(field => field.classList.remove('field-error'));
   showMessage('applicationMessage', '', '');
   setApplicationType(applicationType);
-  setParticipationType('Individual');
-  syncPreConferenceSubmissionTitle();
+    syncPreConferenceSubmissionTitle();
   updateApplicationFileMailLinks();
 }
 
@@ -1751,6 +1750,11 @@ function setInactiveApplicationFields() {
   document.querySelectorAll('.office-use-section input, .office-use-section textarea').forEach(field => {
     field.disabled = true;
   });
+
+  document.querySelectorAll('input[name="participationType"], input[name="teamMembersCount"], input[name="teamMemberNames"], input[name="individualMemberName"]').forEach(field => {
+    field.disabled = true;
+    field.required = false;
+  });
 }
 
 function setApplicationType(type) {
@@ -1785,10 +1789,6 @@ function setApplicationType(type) {
   setConditionalOtherFields();
   applyApplicationRequiredFields();
   updateApplicationFileMailLinks();
-  if (safeType === 'pre-conference-competition' || safeType === 'research-paper') {
-    const activeParticipation = document.querySelector('input[name="participationType"]:checked:not(:disabled)');
-    setParticipationType(activeParticipation?.value || 'Individual');
-  }
   syncPreConferenceSubmissionTitle();
   applyApplicationRequiredFields();
 }
@@ -1855,7 +1855,8 @@ function applyApplicationRequiredFields() {
   removeAutoRequiredStars(form);
   setConditionalOtherFields();
 
-  const fields = Array.from(form.querySelectorAll('input, select, textarea'));
+  const fields = Array.from(form.querySelectorAll('input, select, textarea'))
+    .filter(field => field.name !== 'participationType' && field.name !== 'individualMemberName' && field.name !== 'teamMembersCount' && field.name !== 'teamMemberNames');
 
   fields.forEach(field => {
     if (field.type === 'hidden' || field.disabled) return;
@@ -1923,7 +1924,7 @@ function validateActiveApplicationRequiredFields(form) {
     return false;
   }
 
-  const radioNames = [...new Set(controls.filter(field => field.type === 'radio' && field.required).map(field => field.name))];
+  const radioNames = [...new Set(controls.filter(field => field.type === 'radio' && field.required && field.name !== 'participationType').map(field => field.name))];
   for (const name of radioNames) {
     const group = controls.filter(field => field.type === 'radio' && field.name === name);
     if (!group.some(field => field.checked)) {
@@ -2041,10 +2042,6 @@ function setParticipationType(type) {
 
   if (typeof applyApplicationRequiredFields === 'function') applyApplicationRequiredFields();
 }
-
-document.querySelectorAll('input[name="participationType"]').forEach(input => {
-  input.addEventListener('change', () => setParticipationType(input.value));
-});
 
 function syncPreConferenceSubmissionTitle() {
   const applicationType = getSafeApplicationType(document.getElementById('applicationType')?.value);
@@ -2218,7 +2215,6 @@ document.querySelectorAll('#applicationForm input, #applicationForm select, #app
 });
 
 setApplicationType('pre-conference-competition');
-setParticipationType('Individual');
 syncPreConferenceSubmissionTitle();
 updateApplicationFileMailLinks();
 
@@ -2274,12 +2270,6 @@ document.getElementById('applicationForm')?.addEventListener('submit', async e =
       formData.set('competitionDeclarationsConfirmed', allActiveDeclarationsChecked ? 'true' : 'false');
     } else if (applicationType === 'research-paper') {
       formData.set('researchDeclarationsConfirmed', allActiveDeclarationsChecked ? 'true' : 'false');
-    }
-
-    const participationType = formData.get('participationType');
-    if (participationType === 'Individual') {
-      formData.set('teamMemberNames', formData.get('individualMemberName') || '');
-      formData.delete('teamMembersCount');
     }
 
     if (applicationType === 'award-nomination') {
