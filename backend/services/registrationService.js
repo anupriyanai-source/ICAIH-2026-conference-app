@@ -17,7 +17,8 @@ const ROLE_FEES = {
   'Startup Founder': 1999,
   'Industry Expert': 2499,
   'Research Scholar': 2999,
-  'Online Attendee': 325
+  'Online Attendee': 325,
+  'TSI Member': 500
 };
 
 const BULK_OFFERS = {
@@ -42,7 +43,8 @@ function isEarlyBirdActive() {
   return new Date() <= earlyBirdEndDate;
 }
 
-function applyEarlyBirdDiscount(amount) {
+function applyEarlyBirdDiscount(amount, role = '') {
+  if (role === 'TSI Member') return Number(amount || 0);
   if (!isEarlyBirdActive()) return Number(amount || 0);
   return Math.round(Number(amount || 0) * (100 - EARLY_BIRD_DISCOUNT_PERCENT) / 100);
 }
@@ -74,11 +76,12 @@ function calculatePayment({ role, bulkOffer, studentCount }) {
 
   const baseFee = Number(ROLE_FEES[role] ?? 1999);
   const isOnlineAttendee = role === 'Online Attendee';
-  const earlyBirdActive = isOnlineAttendee ? false : isEarlyBirdActive();
+  const isTSIMember = role === 'TSI Member';
+  const earlyBirdActive = (isOnlineAttendee || isTSIMember) ? false : isEarlyBirdActive();
 
   return {
-    feeAmount: isOnlineAttendee ? baseFee : applyEarlyBirdDiscount(baseFee),
-    discountPercent: !isOnlineAttendee && earlyBirdActive && baseFee > 0 ? EARLY_BIRD_DISCOUNT_PERCENT : 0,
+    feeAmount: (isOnlineAttendee || isTSIMember) ? baseFee : applyEarlyBirdDiscount(baseFee),
+    discountPercent: !isOnlineAttendee && !isTSIMember && earlyBirdActive && baseFee > 0 ? EARLY_BIRD_DISCOUNT_PERCENT : 0,
     bulkOffer: '',
     studentCount: null
   };
@@ -90,8 +93,30 @@ const RegistrationService = {
     const email = sanitize(body.email).toLowerCase();
     const phone = sanitize(body.phone);
     const organization = sanitize(body.organization);
-    const role = sanitize(body.role) || 'Delegate';
+    let role = sanitize(
+      body.role ||
+      body.registrationRole ||
+      body.feeCategory ||
+      body.roleCategory ||
+      (body.tsiMembershipNumber ? 'TSI Member' : '')
+    ) || 'Delegate';
+
+    const normalizedRole = role.toLowerCase().replace(/\s+/g, ' ').trim();
+    const roleMap = {
+      'tsi member': 'TSI Member',
+      'student': 'Student',
+      'delegate': 'Delegate',
+      'startup founder': 'Startup Founder',
+      'industry expert': 'Industry Expert',
+      'research scholar': 'Research Scholar',
+      'online attendee': 'Online Attendee',
+      'bulk booking': 'Bulk Booking',
+      'student bulk booking': 'Bulk Booking',
+      'student bulk': 'Bulk Booking'
+    };
+    role = roleMap[normalizedRole] || role;
     const category = sanitize(body.category) || 'General';
+    const tsiMembershipNumber = sanitize(body.tsiMembershipNumber);
 
     const requiredFields = [
       ['Full Name', name],
@@ -111,6 +136,15 @@ const RegistrationService = {
 
     if (!/^\d{10}$/.test(phone)) {
       throw { status: 400, message: 'Please enter a valid 10 digit phone number.' };
+    }
+
+    if (role === 'TSI Member' && !tsiMembershipNumber) {
+
+      throw { status: 400, message: 'TSI Membership Registration Number is required.' };
+    }
+
+    if (role === 'TSI Member') {
+      ROLE_FEES['TSI Member'] = 500;
     }
 
     if (role !== 'Bulk Booking' && !Object.prototype.hasOwnProperty.call(ROLE_FEES, role)) {
@@ -144,6 +178,7 @@ const RegistrationService = {
       organization,
       role,
       category,
+      tsiMembershipNumber,
       feeAmount: payment.feeAmount,
       discountPercent: payment.discountPercent,
       bulkOffer: payment.bulkOffer,

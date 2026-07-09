@@ -168,7 +168,8 @@ const REGISTRATION_FEES = {
   'Startup Founder': 1999,
   'Industry Expert': 2499,
   'Research Scholar': 2999,
-  'Online Attendee': 325
+  'Online Attendee': 325,
+  'TSI Member': 500
 };
 
 const BULK_OFFERS = {
@@ -233,7 +234,8 @@ function isEarlyBirdActive() {
   return new Date() <= earlyBirdEndDate;
 }
 
-function applyEarlyBirdDiscount(amount) {
+function applyEarlyBirdDiscount(amount, role = '') {
+  if (role === 'TSI Member') return Number(amount || 0);
   if (!isEarlyBirdActive()) return Number(amount || 0);
   return Math.round(Number(amount || 0) * (100 - EARLY_BIRD_DISCOUNT_PERCENT) / 100);
 }
@@ -465,9 +467,10 @@ function getRegistrationPaymentDetails() {
 
   // Online Attendee has a fixed fee and is not eligible for Early Bird discount.
   const isOnlineAttendee = role === 'Online Attendee';
-  const earlyBirdActive = isOnlineAttendee ? false : isEarlyBirdActive();
-  const fee = isOnlineAttendee ? baseFee : applyEarlyBirdDiscount(baseFee);
-  const discountPercent = (!isOnlineAttendee && earlyBirdActive && baseFee > 0)
+  const isTSIMember = role === 'TSI Member';
+  const earlyBirdActive = (isOnlineAttendee || isTSIMember) ? false : isEarlyBirdActive();
+  const fee = (isOnlineAttendee || isTSIMember) ? baseFee : applyEarlyBirdDiscount(baseFee);
+  const discountPercent = (!isOnlineAttendee && !isTSIMember && earlyBirdActive && baseFee > 0)
     ? EARLY_BIRD_DISCOUNT_PERCENT
     : 0;
 
@@ -1471,6 +1474,8 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
 
   if (!validateManualPaymentFields(details, true)) return;
 
+  formData.set('role', details.role);
+  formData.set('registrationRole', details.role);
   formData.set('feeAmount', String(details.feeAmount));
   formData.set('discountPercent', String(details.discountPercent));
   formData.set('studentCount', String(details.studentCount || ''));
@@ -2393,4 +2398,18 @@ document.querySelectorAll('[data-guideline-action]').forEach(button => {
       openSponsorFromGuidelines('Standard Pavilion', 'stall');
     }
   });
+});
+
+// TSI Member registration number handling
+document.addEventListener('change', function(e) {
+  if (e.target && e.target.id === 'registrationRole') {
+    const box = document.getElementById('tsiMembershipWrapper');
+    const input = document.getElementById('tsiMembershipNumber');
+    if (box && input) {
+      const isTSI = e.target.value === 'TSI Member';
+      box.style.display = isTSI ? 'block' : 'none';
+      input.required = isTSI;
+      if (!isTSI) input.value = '';
+    }
+  }
 });
