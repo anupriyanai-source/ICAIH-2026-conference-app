@@ -220,6 +220,10 @@ function formatINR(amount) {
   return '₹' + Number(amount || 0).toLocaleString('en-IN');
 }
 
+function getTsiMembershipNumber(data) {
+  return String(data.tsiMembershipNumber || data.tsi_membership_number || '').trim();
+}
+
 function registrationRows(data) {
   const rows = [
     ['Registration ID', data.refId],
@@ -228,12 +232,20 @@ function registrationRows(data) {
     ['Phone', data.phone],
     ['Organization', data.organization],
     ['Role', data.role],
+  ];
+
+  const tsiMembershipNumber = getTsiMembershipNumber(data);
+  if (String(data.role || '').trim() === 'TSI Member' && tsiMembershipNumber) {
+    rows.push(['TSI Membership Registration Number', tsiMembershipNumber]);
+  }
+
+  rows.push(
     ['Category', data.category],
     ['Paid Amount', formatINR(data.feeAmount)],
     ['Payment Status', data.paymentStatus || 'pending-verification'],
     ['Bulk Offer', data.bulkOffer || '-'],
     ['Student Count', data.studentCount || '-']
-  ];
+  );
 
   return `
     <table style="width:100%;border-collapse:collapse;margin-top:16px;">

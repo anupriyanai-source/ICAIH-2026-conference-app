@@ -191,6 +191,7 @@ async function initDB() {
     }
 
     const registrationColumns = [
+      ['tsi_membership_number', 'VARCHAR(100)'],
       ['fee_amount', 'DECIMAL(10,2) DEFAULT 0'],
       ['discount_percent', 'INT DEFAULT 0'],
       ['bulk_offer', 'VARCHAR(120)'],

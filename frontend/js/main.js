@@ -1283,11 +1283,18 @@ function openSuccessModal(formData, refId, emailStatus) {
       ['Phone', formData.phone],
       ['Organization', formData.organization],
       ['Role', formData.role || 'Delegate'],
-      ['Category', formData.category || 'General'],
+      ['Category', formData.category || 'General']
+    ];
+
+    if (String(formData.role || '').trim() === 'TSI Member' && String(formData.tsiMembershipNumber || '').trim()) {
+      rows.push(['TSI Membership Registration Number', formData.tsiMembershipNumber]);
+    }
+
+    rows.push(
       ['Paid Amount', formatINR(formData.feeAmount)],
       ['Registration ID', refId || '—'],
       ['Payment Status', formData.paymentStatus || '—']
-    ];
+    );
 
     detailsEl.innerHTML = rows.map(([label, value]) => `
       <div class="detail-row">
