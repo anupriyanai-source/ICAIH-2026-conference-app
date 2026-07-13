@@ -6635,3 +6635,413 @@ body.application-award-mode .pdf-form-header.award-nomination-fields {
   padding-bottom: 8px;
   border-bottom: 1px solid rgba(30, 58, 138, 0.12);
 }
+
+
+/* Invitation-inspired Chief Guests & Speakers section */
+.official-speakers-section{position:relative;overflow:hidden;background:
+  radial-gradient(circle at 12% 15%,rgba(14,107,231,.22),transparent 22rem),
+  radial-gradient(circle at 85% 20%,rgba(244,195,72,.12),transparent 20rem),
+  radial-gradient(circle at 50% 100%,rgba(125,66,255,.12),transparent 24rem),
+  linear-gradient(145deg,#020d22 0%,#041a3b 45%,#071224 100%);color:#fff}
+.official-speakers-section:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(rgba(58,157,255,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(58,157,255,.18) 1px,transparent 1px);background-size:48px 48px}
+.official-speakers-section:after{content:"";position:absolute;inset:auto -10% -20% auto;width:34rem;height:34rem;border-radius:50%;background:radial-gradient(circle,rgba(255,203,96,.16),transparent 58%);filter:blur(18px);pointer-events:none}
+.official-speakers-section .container{position:relative;z-index:1}
+.official-speakers-heading{max-width:860px;margin:0 auto 2rem;padding:2.1rem 2rem;border:1px solid rgba(225,184,72,.3);border-radius:32px;text-align:center;background:linear-gradient(145deg,rgba(6,23,52,.9),rgba(5,18,40,.76));box-shadow:0 24px 60px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(8px)}
+.official-speakers-heading h2{margin-bottom:.55rem;color:#fff;text-shadow:0 8px 30px rgba(0,0,0,.24)}
+.official-speakers-heading p{color:rgba(244,247,253,.88)}
+.official-speakers-heading .section-kicker{color:#74c6ff;letter-spacing:.16em}
+.official-speakers-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1rem;margin-bottom:2.25rem}
+.official-summary-card{padding:1.15rem 1rem;border:1px solid rgba(228,187,81,.28);border-radius:22px;background:linear-gradient(155deg,rgba(255,255,255,.08),rgba(9,28,58,.58));text-align:center;box-shadow:0 16px 32px rgba(0,0,0,.18);backdrop-filter:blur(6px)}
+.official-summary-card strong{display:block;font-size:clamp(1.65rem,2.6vw,2.2rem);line-height:1;color:#ffd97a}
+.official-summary-label{display:block;margin:.45rem 0 .2rem;color:#fff;font-weight:700}
+.official-summary-card small{display:block;color:rgba(236,242,250,.72);font-size:.84rem;letter-spacing:.04em;text-transform:uppercase}
+.official-speaker-group{margin-top:2rem;padding:1.5rem;border:1px solid rgba(222,177,63,.38);border-radius:30px;background:linear-gradient(145deg,rgba(4,23,52,.88),rgba(2,14,34,.78));box-shadow:0 22px 50px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.06)}
+.official-speaker-group.group-featured{background:linear-gradient(145deg,rgba(7,28,61,.92),rgba(4,15,36,.84))}
+.official-group-header{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.35rem;padding-bottom:1rem;border-bottom:1px solid rgba(232,189,85,.22)}
+.official-group-title{margin:0;color:#f0c86d;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.45rem,2.7vw,2.2rem);letter-spacing:.08em;text-transform:uppercase}
+.official-count-badge{display:inline-flex;align-items:center;justify-content:center;padding:.55rem .95rem;border-radius:999px;border:1px solid rgba(229,191,85,.36);background:rgba(255,255,255,.05);color:#eef6ff;font-size:.83rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.official-people-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.3rem;align-items:stretch}
+.official-people-grid.featured-grid{grid-template-columns:minmax(320px,720px);justify-content:center}
+.official-person-card{position:relative;display:flex;flex-direction:column;align-items:center;height:100%;min-width:0;text-align:center;padding:1.15rem .95rem 1.3rem;border-radius:24px;border:1px solid rgba(232,189,85,.14);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));box-shadow:0 16px 34px rgba(0,0,0,.16);transition:transform .25s ease,background .25s ease,box-shadow .25s ease,border-color .25s ease}
+.official-person-card:hover{transform:translateY(-7px);background:linear-gradient(180deg,rgba(20,89,164,.22),rgba(255,255,255,.04));border-color:rgba(232,189,85,.34);box-shadow:0 20px 42px rgba(0,0,0,.24)}
+.official-person-photo{flex:0 0 auto;width:clamp(142px,13vw,190px);aspect-ratio:1;margin:0 auto 1rem;padding:7px;border-radius:50%;background:linear-gradient(135deg,#fff8cb 0%,#c99215 22%,#fff0a0 48%,#a66300 73%,#ffd97a 100%);box-shadow:0 0 0 4px rgba(255,224,134,.14),0 12px 28px rgba(232,189,85,.22)}
+.official-person-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top;border-radius:50%;background:#fff}
+.official-person-content{display:flex;flex-direction:column;align-items:center;gap:.35rem;width:100%}
+.official-role-badge{display:inline-flex;align-items:center;justify-content:center;padding:.38rem .75rem;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(229,191,85,.3);color:#d8ecff;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.official-person-card h4{margin:0;color:#f9cb62;font-size:clamp(1rem,1.65vw,1.26rem);line-height:1.22}
+.official-person-card p{margin:0 auto;max-width:30ch;color:#f3f6fb;font-size:.93rem;line-height:1.48}
+.official-person-card.featured-person-card{flex-direction:row;align-items:center;gap:1.5rem;padding:1.35rem 1.5rem;text-align:left;background:linear-gradient(135deg,rgba(9,34,72,.96),rgba(19,57,116,.72));border-color:rgba(232,189,85,.28)}
+.official-person-card.featured-person-card .official-person-photo{width:clamp(165px,18vw,230px);margin:0}
+.official-person-card.featured-person-card .official-person-content{align-items:flex-start}
+.official-person-card.featured-person-card p{max-width:48ch}
+.official-logo-grid{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:1.15rem}
+.official-person-card.logo-card{padding:1rem .8rem;justify-content:center}
+.official-person-card.logo-card .official-person-photo{width:min(142px,100%);padding:6px;margin-bottom:.85rem;background:linear-gradient(135deg,#fffdf2 0%,#e0b543 18%,#fff8d0 50%,#cd8b0d 74%,#ffe388 100%)}
+.official-person-card.logo-card .official-person-content{gap:.15rem}
+.official-person-card.logo-card h4{color:#fff;font-size:.95rem}
+.official-person-card.logo-card p{display:none}
+@media(max-width:1200px){.official-speakers-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.official-people-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.official-logo-grid{grid-template-columns:repeat(3,minmax(120px,1fr))}}
+@media(max-width:900px){.official-person-card.featured-person-card{flex-direction:column;text-align:center}.official-person-card.featured-person-card .official-person-content{align-items:center}.official-person-card.featured-person-card p{max-width:30ch}.official-group-header{flex-direction:column;align-items:flex-start}.official-count-badge{align-self:flex-start}}
+@media(max-width:720px){.official-speakers-heading{padding:1.5rem 1rem;border-radius:24px}.official-speakers-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem}.official-summary-card{padding:1rem .8rem;border-radius:18px}.official-speaker-group{padding:1.15rem .9rem;border-radius:24px}.official-people-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem .7rem}.official-person-card{padding:1rem .65rem 1.15rem}.official-person-photo{width:min(138px,92%);padding:5px}.official-person-card p{font-size:.84rem}.official-logo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.official-speakers-summary,.official-people-grid,.official-people-grid.featured-grid{grid-template-columns:1fr}.official-role-badge{font-size:.68rem}.official-person-card.featured-person-card{padding:1rem .8rem}}
+
+
+
+/* PDF invitation-matched speaker presentation */
+.official-speakers-section{padding:72px 0;background:linear-gradient(180deg,#eef5ff 0%,#f8fbff 100%)}
+.official-speakers-section:before,.official-speakers-section:after{display:none}
+.invitation-speakers-board{position:relative;overflow:hidden;max-width:1160px;margin:0 auto;padding:44px 42px 34px;border:2px solid #d4a72f;border-radius:6px;background:
+radial-gradient(circle at 90% 8%,rgba(24,117,221,.22),transparent 240px),
+radial-gradient(circle at 5% 45%,rgba(17,102,190,.12),transparent 260px),
+linear-gradient(180deg,#031a3a 0%,#02152f 55%,#020f23 100%);box-shadow:0 30px 70px rgba(7,25,58,.28),inset 0 0 0 6px rgba(255,210,96,.08);color:#fff}
+.invitation-speakers-board:before{content:"";position:absolute;inset:14px;border:1px solid rgba(234,191,77,.65);pointer-events:none}
+.invitation-speakers-board:after{content:"";position:absolute;inset:0;opacity:.15;background-image:linear-gradient(30deg,rgba(59,164,255,.24) 1px,transparent 1px),linear-gradient(150deg,rgba(59,164,255,.18) 1px,transparent 1px);background-size:46px 46px;pointer-events:none}
+.invitation-speakers-board>*{position:relative;z-index:1}
+.invitation-board-topline{width:100%;height:3px;margin-bottom:26px;background:linear-gradient(90deg,transparent,#dfb74f 18%,#fff1a7 50%,#dfb74f 82%,transparent)}
+.invitation-board-intro{text-align:center;margin-bottom:28px}
+.invitation-board-intro span{display:block;color:#4ea8ff;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+.invitation-board-intro h2{margin:.35rem 0;color:#f1c55a;font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.2rem,4.5vw,4.2rem);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.invitation-board-intro p{margin:0;color:#fff;font-size:1.05rem;letter-spacing:.08em}
+.invitation-gold-divider{width:48%;height:1px;margin:12px auto 24px;background:linear-gradient(90deg,transparent,#e4bb54 20%,#fff0a0 50%,#e4bb54 80%,transparent)}
+.invitation-speakers-board .official-speaker-group{margin:0;padding:26px 12px 34px;border:0;border-radius:0;background:transparent;box-shadow:none}
+.invitation-speakers-board .official-group-title{margin:0 0 24px;text-align:center;color:#edc157;font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.8rem,3vw,2.7rem);letter-spacing:.06em;text-transform:uppercase}
+.presidential-group .official-group-title{color:#47a7ff}
+.presidential-group .official-people-grid{display:block}
+.presidential-group .official-person-card{display:grid;grid-template-columns:190px 1fr;align-items:center;gap:28px;max-width:760px;margin:0 auto;padding:0;background:transparent;border:0;box-shadow:none;text-align:left}
+.presidential-group .official-person-photo{width:190px;margin:0;padding:5px}
+.presidential-group .official-person-content{align-items:flex-start}
+.presidential-group .official-person-card h4{font-size:2rem;color:#efc35f}
+.presidential-group .official-person-card p{max-width:none;font-size:1.2rem;color:#fff}
+.chief-guests-group .official-people-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:34px 20px}
+.chief-guests-group .official-person-card{grid-column:span 2;padding:0;background:transparent;border:0;box-shadow:none}
+.chief-guests-group .official-person-card:nth-child(1),.chief-guests-group .official-person-card:nth-child(2){grid-column:span 3}
+.chief-guests-group .official-person-card:nth-child(-n+2) .official-person-photo{width:230px}
+.chief-guests-group .official-person-card:nth-child(n+3) .official-person-photo{width:170px}
+.speakers-group .official-people-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:42px 28px}
+.speakers-group .official-person-card,.chief-guests-group .official-person-card,.experts-group .official-person-card{background:transparent;border:0;box-shadow:none;padding:0}
+.speakers-group .official-person-card:hover,.chief-guests-group .official-person-card:hover,.experts-group .official-person-card:hover{transform:none;background:transparent;box-shadow:none}
+.speakers-group .official-person-photo{width:175px}
+.invitation-speakers-board .official-person-photo{background:linear-gradient(135deg,#fff9c8 0%,#bb7b05 22%,#fff2a0 50%,#a66300 72%,#ffd872 100%);box-shadow:0 0 0 2px rgba(255,255,255,.2),0 0 22px rgba(229,181,61,.23)}
+.invitation-speakers-board .official-person-card h4{color:#edc157;font-size:1.22rem}
+.invitation-speakers-board .official-person-card p{color:#fff;font-size:.93rem;line-height:1.4}
+.experts-group{padding-top:10px!important}
+.experts-group .official-group-title{color:#47a7ff;font-size:2rem}
+.experts-group .official-logo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:18px}
+.experts-group .official-person-photo{width:132px;background:#fff;padding:5px}
+.experts-group .official-person-card h4{display:none}
+.vote-thanks-group{margin-top:10px!important;padding-top:30px!important;border-top:1px solid rgba(234,191,77,.28)!important}
+.vote-thanks-group .official-group-title{color:#47a7ff}
+.vote-thanks-group .official-people-grid{display:block}
+.vote-thanks-group .official-person-card{display:grid;grid-template-columns:1fr 165px;align-items:center;gap:28px;max-width:700px;margin:0 auto;padding:0;background:transparent;border:0;box-shadow:none;text-align:center}
+.vote-thanks-group .official-person-photo{grid-column:2;width:165px;margin:0}
+.vote-thanks-group .official-person-content{grid-column:1;grid-row:1;align-items:center}
+.vote-thanks-group .official-person-card h4{font-size:1.5rem}
+.vote-thanks-group .official-person-card p{font-size:1.1rem}
+.invitation-board-footer{margin-top:12px;text-align:center;color:#fff;font-family:Georgia,"Times New Roman",serif;font-size:.9rem;letter-spacing:.26em}
+@media(max-width:900px){
+.invitation-speakers-board{padding:34px 22px 28px}
+.chief-guests-group .official-people-grid{grid-template-columns:repeat(2,1fr)}
+.chief-guests-group .official-person-card,.chief-guests-group .official-person-card:nth-child(-n+2){grid-column:auto}
+.chief-guests-group .official-person-card:nth-child(-n+2) .official-person-photo,.chief-guests-group .official-person-card:nth-child(n+3) .official-person-photo{width:165px}
+.speakers-group .official-people-grid{grid-template-columns:repeat(2,1fr)}
+.experts-group .official-logo-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:620px){
+.official-speakers-section{padding:36px 0}
+.invitation-speakers-board{padding:26px 14px 24px}
+.invitation-speakers-board:before{inset:8px}
+.presidential-group .official-person-card,.vote-thanks-group .official-person-card{display:flex;flex-direction:column;text-align:center;gap:14px}
+.presidential-group .official-person-content,.vote-thanks-group .official-person-content{align-items:center}
+.presidential-group .official-person-photo{width:155px}
+.vote-thanks-group .official-person-photo{width:145px;order:-1}
+.chief-guests-group .official-people-grid,.speakers-group .official-people-grid{grid-template-columns:1fr 1fr;gap:26px 10px}
+.chief-guests-group .official-person-photo,.chief-guests-group .official-person-card:nth-child(-n+2) .official-person-photo,.chief-guests-group .official-person-card:nth-child(n+3) .official-person-photo,.speakers-group .official-person-photo{width:130px}
+.invitation-speakers-board .official-person-card h4{font-size:1rem}
+.invitation-speakers-board .official-person-card p{font-size:.78rem}
+.experts-group .official-logo-grid{grid-template-columns:repeat(2,1fr)}
+.experts-group .official-person-photo{width:110px}
+.invitation-board-footer{font-size:.7rem;letter-spacing:.12em}
+}
+
+/* Exact PDF-style alignment refinements */
+.invitation-speakers-board{max-width:1120px;padding:42px 48px 38px}
+.invitation-speakers-board .official-person-photo{aspect-ratio:1/1!important;height:auto!important;min-width:0;overflow:hidden;flex:none}
+.invitation-speakers-board .official-person-photo img{width:100%!important;height:100%!important;aspect-ratio:1/1!important;object-fit:cover!important;object-position:center top!important}
+.invitation-speakers-board .official-person-content{width:100%;min-width:0}
+.invitation-speakers-board .official-person-card h4{min-height:2.8em;display:flex;align-items:flex-start;justify-content:center;text-align:center;margin:.7rem 0 .35rem;line-height:1.18}
+.invitation-speakers-board .official-person-card p{min-height:4.2em;display:flex;align-items:flex-start;justify-content:center;text-align:center;margin:0 auto;line-height:1.35}
+
+.presidential-group{padding-top:16px!important}
+.presidential-group .official-group-title{max-width:760px;margin:0 auto 18px;padding-left:235px;text-align:left}
+.presidential-group .official-person-card{grid-template-columns:210px minmax(0,1fr);gap:34px;max-width:800px;align-items:center}
+.presidential-group .official-person-photo{width:210px!important;height:210px!important}
+.presidential-group .official-person-card h4{min-height:0;justify-content:flex-start;text-align:left;margin:0 0 .45rem;font-size:1.75rem}
+.presidential-group .official-person-card p{min-height:0;justify-content:flex-start;text-align:left;margin:0;font-size:1.08rem}
+
+.chief-guests-group .official-people-grid{grid-template-columns:repeat(6,minmax(0,1fr));column-gap:24px;row-gap:36px;align-items:start}
+.chief-guests-group .official-person-card{display:flex;flex-direction:column;align-items:center;height:100%;min-width:0}
+.chief-guests-group .official-person-card:nth-child(1),
+.chief-guests-group .official-person-card:nth-child(2){grid-column:span 3}
+.chief-guests-group .official-person-card:nth-child(n+3){grid-column:span 2}
+.chief-guests-group .official-person-card:nth-child(-n+2) .official-person-photo{width:225px!important;height:225px!important}
+.chief-guests-group .official-person-card:nth-child(n+3) .official-person-photo{width:168px!important;height:168px!important}
+.chief-guests-group .official-person-card:nth-child(-n+2) h4{font-size:1.28rem}
+.chief-guests-group .official-person-card:nth-child(-n+2) p{max-width:30ch}
+.chief-guests-group .official-person-card:nth-child(n+3) h4{font-size:1.15rem}
+.chief-guests-group .official-person-card:nth-child(n+3) p{max-width:27ch}
+
+.speakers-group .official-people-grid{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:30px;row-gap:42px;align-items:start}
+.speakers-group .official-person-card{display:flex;flex-direction:column;align-items:center;height:100%;min-width:0}
+.speakers-group .official-person-photo{width:174px!important;height:174px!important}
+.speakers-group .official-person-card h4{font-size:1.18rem}
+.speakers-group .official-person-card p{max-width:28ch}
+
+.experts-group .official-logo-grid{grid-template-columns:repeat(5,minmax(0,1fr));align-items:start;justify-items:center}
+.experts-group .official-person-card{width:100%;display:flex;align-items:center;justify-content:center}
+.experts-group .official-person-photo{width:126px!important;height:126px!important}
+.experts-group .official-person-photo img{object-fit:contain!important;object-position:center!important;background:#fff}
+
+.vote-thanks-group .official-person-card{grid-template-columns:minmax(0,1fr) 170px;max-width:720px}
+.vote-thanks-group .official-person-photo{width:170px!important;height:170px!important}
+.vote-thanks-group .official-person-card h4,.vote-thanks-group .official-person-card p{min-height:0}
+
+@media(max-width:900px){
+  .invitation-speakers-board{padding:34px 24px 30px}
+  .presidential-group .official-group-title{padding-left:0;text-align:center}
+  .chief-guests-group .official-people-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 18px}
+  .chief-guests-group .official-person-card:nth-child(n){grid-column:auto}
+  .chief-guests-group .official-person-card:nth-child(-n+2) .official-person-photo,
+  .chief-guests-group .official-person-card:nth-child(n+3) .official-person-photo{width:165px!important;height:165px!important}
+  .speakers-group .official-people-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 18px}
+  .experts-group .official-logo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+@media(max-width:620px){
+  .invitation-speakers-board{padding:26px 12px 24px}
+  .presidential-group .official-person-card{display:flex;flex-direction:column;gap:14px}
+  .presidential-group .official-person-photo{width:155px!important;height:155px!important}
+  .presidential-group .official-person-card h4,.presidential-group .official-person-card p{justify-content:center;text-align:center}
+  .chief-guests-group .official-people-grid,.speakers-group .official-people-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 10px}
+  .chief-guests-group .official-person-card:nth-child(-n+2) .official-person-photo,
+  .chief-guests-group .official-person-card:nth-child(n+3) .official-person-photo,
+  .speakers-group .official-person-photo{width:124px!important;height:124px!important}
+  .invitation-speakers-board .official-person-card h4{min-height:2.5em;font-size:.96rem}
+  .invitation-speakers-board .official-person-card p{min-height:4.8em;font-size:.76rem}
+  .experts-group .official-logo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .experts-group .official-person-photo{width:105px!important;height:105px!important}
+  .vote-thanks-group .official-person-card{display:flex;flex-direction:column;gap:14px}
+  .vote-thanks-group .official-person-photo{width:145px!important;height:145px!important;order:-1}
+}
+
+/* FINAL SPEAKER ALIGNMENT FIX — PDF invitation layout */
+#speakers .invitation-speakers-board{
+  width:min(1120px,calc(100% - 24px));
+  box-sizing:border-box;
+  margin-inline:auto;
+}
+#speakers .official-speaker-group,
+#speakers .official-people-grid,
+#speakers .official-logo-grid,
+#speakers .official-person-card,
+#speakers .official-person-photo,
+#speakers .official-person-content{box-sizing:border-box}
+
+#speakers .official-person-card{
+  width:100%;
+  min-width:0;
+  margin:0;
+}
+#speakers .official-person-photo{
+  display:block;
+  flex:0 0 auto;
+  border-radius:50%!important;
+  overflow:hidden!important;
+}
+#speakers .official-person-photo img{
+  display:block;
+  width:100%!important;
+  height:100%!important;
+  min-width:100%;
+  min-height:100%;
+  border-radius:50%!important;
+  object-fit:cover!important;
+  object-position:center top!important;
+}
+#speakers .official-person-content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  width:100%;
+  min-width:0;
+  text-align:center;
+}
+#speakers .official-person-card h4,
+#speakers .official-person-card p{
+  width:100%;
+  max-width:100%;
+  min-height:0!important;
+  margin-left:auto;
+  margin-right:auto;
+  display:block!important;
+  text-align:center!important;
+}
+#speakers .official-person-card h4{margin-top:14px!important;margin-bottom:7px!important}
+#speakers .official-person-card p{margin-top:0!important;margin-bottom:0!important}
+
+/* Presidential address: image left, text right, exactly centred */
+#speakers .presidential-group{padding:22px 36px 36px!important}
+#speakers .presidential-group .official-group-title{
+  width:100%;
+  margin:0 0 26px!important;
+  padding:0!important;
+  text-align:center!important;
+}
+#speakers .presidential-group .official-people-grid{
+  display:block!important;
+}
+#speakers .presidential-group .official-person-card{
+  display:grid!important;
+  grid-template-columns:220px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:38px!important;
+  max-width:760px!important;
+  margin:0 auto!important;
+  padding:0!important;
+}
+#speakers .presidential-group .official-person-photo{
+  width:220px!important;
+  height:220px!important;
+  margin:0!important;
+}
+#speakers .presidential-group .official-person-content{align-items:flex-start!important;text-align:left!important}
+#speakers .presidential-group .official-person-card h4,
+#speakers .presidential-group .official-person-card p{
+  text-align:left!important;
+  margin-left:0!important;
+  margin-right:0!important;
+}
+#speakers .presidential-group .official-person-card h4{font-size:1.7rem!important;margin-top:0!important}
+#speakers .presidential-group .official-person-card p{font-size:1.08rem!important}
+
+/* Chief guests: 2 large + 3 + 3, perfectly aligned */
+#speakers .chief-guests-group .official-people-grid{
+  display:grid!important;
+  grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  column-gap:34px!important;
+  row-gap:42px!important;
+  align-items:start!important;
+}
+#speakers .chief-guests-group .official-person-card{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  height:100%!important;
+  padding:0 6px!important;
+}
+#speakers .chief-guests-group .official-person-card:nth-child(1),
+#speakers .chief-guests-group .official-person-card:nth-child(2){grid-column:span 3!important}
+#speakers .chief-guests-group .official-person-card:nth-child(n+3){grid-column:span 2!important}
+#speakers .chief-guests-group .official-person-card:nth-child(-n+2) .official-person-photo{
+  width:224px!important;height:224px!important;
+}
+#speakers .chief-guests-group .official-person-card:nth-child(n+3) .official-person-photo{
+  width:168px!important;height:168px!important;
+}
+#speakers .chief-guests-group .official-person-card:nth-child(-n+2) .official-person-content{max-width:390px}
+#speakers .chief-guests-group .official-person-card:nth-child(n+3) .official-person-content{max-width:285px}
+#speakers .chief-guests-group .official-person-card h4{line-height:1.2!important}
+#speakers .chief-guests-group .official-person-card p{line-height:1.38!important}
+
+/* Speakers: strict three-column rows with equal widths */
+#speakers .speakers-group .official-people-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  column-gap:42px!important;
+  row-gap:48px!important;
+  align-items:start!important;
+}
+#speakers .speakers-group .official-person-card{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  height:100%!important;
+  padding:0 8px!important;
+}
+#speakers .speakers-group .official-person-photo{width:176px!important;height:176px!important}
+#speakers .speakers-group .official-person-content{max-width:300px;margin:0 auto}
+#speakers .speakers-group .official-person-card h4{font-size:1.18rem!important;line-height:1.2!important}
+#speakers .speakers-group .official-person-card p{line-height:1.38!important}
+
+/* Expert logos: equal circles on one aligned row */
+#speakers .experts-group .official-logo-grid{
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:22px!important;
+  align-items:start!important;
+  justify-items:center!important;
+}
+#speakers .experts-group .official-person-card{display:flex!important;justify-content:center!important;align-items:center!important;padding:0!important}
+#speakers .experts-group .official-person-photo{width:128px!important;height:128px!important;margin:0 auto!important}
+#speakers .experts-group .official-person-photo img{object-fit:contain!important;object-position:center!important;background:#fff!important}
+
+/* Vote of thanks: text left, photo right */
+#speakers .vote-thanks-group .official-people-grid{display:block!important}
+#speakers .vote-thanks-group .official-person-card{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 176px!important;
+  align-items:center!important;
+  gap:38px!important;
+  max-width:720px!important;
+  margin:0 auto!important;
+  padding:0!important;
+}
+#speakers .vote-thanks-group .official-person-photo{grid-column:2!important;grid-row:1!important;width:176px!important;height:176px!important;margin:0!important}
+#speakers .vote-thanks-group .official-person-content{grid-column:1!important;grid-row:1!important}
+#speakers .vote-thanks-group .official-person-card h4{font-size:1.45rem!important}
+#speakers .vote-thanks-group .official-person-card p{font-size:1.05rem!important}
+
+@media(max-width:900px){
+  #speakers .presidential-group .official-person-card{grid-template-columns:180px minmax(0,1fr)!important;gap:26px!important}
+  #speakers .presidential-group .official-person-photo{width:180px!important;height:180px!important}
+  #speakers .chief-guests-group .official-people-grid,
+  #speakers .speakers-group .official-people-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:34px 18px!important}
+  #speakers .chief-guests-group .official-person-card:nth-child(n){grid-column:auto!important}
+  #speakers .chief-guests-group .official-person-card:nth-child(n) .official-person-photo,
+  #speakers .speakers-group .official-person-photo{width:158px!important;height:158px!important}
+  #speakers .experts-group .official-logo-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+
+@media(max-width:620px){
+  #speakers .invitation-speakers-board{width:calc(100% - 12px);padding:24px 10px 22px!important}
+  #speakers .invitation-board-intro h2{font-size:clamp(1.85rem,10vw,2.75rem)!important;line-height:1.05}
+  #speakers .presidential-group{padding:18px 8px 28px!important}
+  #speakers .presidential-group .official-person-card,
+  #speakers .vote-thanks-group .official-person-card{display:flex!important;flex-direction:column!important;gap:14px!important;text-align:center!important}
+  #speakers .presidential-group .official-person-photo{width:150px!important;height:150px!important}
+  #speakers .presidential-group .official-person-content{align-items:center!important}
+  #speakers .presidential-group .official-person-card h4,
+  #speakers .presidential-group .official-person-card p{text-align:center!important}
+  #speakers .chief-guests-group .official-people-grid,
+  #speakers .speakers-group .official-people-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:28px 8px!important}
+  #speakers .chief-guests-group .official-person-card:nth-child(n) .official-person-photo,
+  #speakers .speakers-group .official-person-photo{width:122px!important;height:122px!important}
+  #speakers .chief-guests-group .official-person-card,
+  #speakers .speakers-group .official-person-card{padding:0 2px!important}
+  #speakers .chief-guests-group .official-person-card h4,
+  #speakers .speakers-group .official-person-card h4{font-size:.96rem!important}
+  #speakers .chief-guests-group .official-person-card p,
+  #speakers .speakers-group .official-person-card p{font-size:.76rem!important}
+  #speakers .experts-group .official-logo-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #speakers .experts-group .official-person-photo{width:104px!important;height:104px!important}
+  #speakers .vote-thanks-group .official-person-photo{width:142px!important;height:142px!important;order:-1}
+}
+
+@media(max-width:380px){
+  #speakers .chief-guests-group .official-people-grid,
+  #speakers .speakers-group .official-people-grid{grid-template-columns:1fr!important}
+  #speakers .chief-guests-group .official-person-card:nth-child(n) .official-person-photo,
+  #speakers .speakers-group .official-person-photo{width:146px!important;height:146px!important}
+}

@@ -232,6 +232,7 @@ function registrationRows(data) {
     ['Phone', data.phone],
     ['Organization', data.organization],
     ['Role', data.role],
+    // ['TSI Membership Registration Number', data.tsiMembershipNumber],
   ];
 
   const tsiMembershipNumber = getTsiMembershipNumber(data);

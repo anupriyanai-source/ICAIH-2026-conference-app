@@ -29,6 +29,66 @@ function updateCountdown() {
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
+
+/* ── ICAIH 2026 Dynamic Conference Agenda ──
+   The programme is maintained as structured data so agenda changes can be
+   made in one place without manually editing table markup in index.html. */
+const ICAIH_AGENDA = Object.freeze([
+  { time: '09:00 – 09:30 AM', session: 'Registration, Welcome & Networking', speakers: 'Delegate Registration, Speaker Reception, Exhibition Visit & Welcome Tea' },
+  { time: '09:30 – 09:35 AM', session: 'Arrival of Chief Guests & Dignitaries', speakers: 'Reception by Organizing Committee' },
+  { time: '09:35 – 09:40 AM', session: 'Invocation & Lighting of the Ceremonial Lamp', speakers: 'Chief Guests, Presidential Address Dignitary & Special Invitees' },
+  { time: '09:40 – 09:45 AM', session: 'Welcome Address & Conference Overview', speakers: 'Organizing Committee, ICAIH 2026' },
+  { time: '09:45 – 09:55 AM', session: 'Presidential Address', speakers: 'Dr. S. Elumalai, Former Registrar, University of Madras' },
+  { time: '09:55 – 10:05 AM', session: 'Special Address – Tamil Nadu’s Vision for AI, Digital Transformation & Innovation', speakers: 'Hon’ble Dr. R. Kumar, Minister for Information Technology, Government of Tamil Nadu' },
+  { time: '10:05 – 10:15 AM', session: 'Chief Guest Address – Transforming Healthcare through AI and Digital Health', speakers: 'Hon’ble Dr. K.G. Arunraj, Minister for Health and Family Welfare, Government of Tamil Nadu' },
+  { time: '10:15 – 10:25 AM', session: 'Special Government Address – AI Adoption in Tamil Nadu’s Public Health System', speakers: 'Dr. Darez Ahamed, IAS, Secretary to Government, Health and Family Welfare Department' },
+  { time: '10:25 – 10:35 AM', session: 'Special Government Address – Building Tamil Nadu’s AI & Digital Ecosystem', speakers: 'Mr. Pradeep Yadav, IAS, Additional Chief Secretary, IT & Digital Services Department' },
+  { time: '10:35 – 10:50 AM', session: 'Keynote Address: AI for Health, Humanity & Inclusive Growth – Vision 2030', speakers: 'Dr. Soumya Swaminathan, Former Chief Scientist, World Health Organization' },
+  { time: '10:50 – 11:00 AM', session: 'Release Ceremony', speakers: 'Conference Souvenir, White Paper, Research Proceedings & Announcement of AI Healthcare Initiatives' },
+  { time: '11:00 – 11:15 AM', session: 'Tea Break, Networking & AI Product Expo Visit', speakers: 'Chief Guests, Speakers, Delegates, Exhibitors & Startups' },
+  { time: '11:15 AM – 12:00 PM', session: 'SESSION I – Government Policy & AI Healthcare Transformation Forum', speakers: 'Dr. S. Uma, IAS; Dr. S. Pushkala; Dr. Sudha Seshayyan; Dr. Renuka Vidyashankar; Vanitha Venugopal; K. Krishna Chaitanya' },
+  { time: '12:00 – 12:45 PM', session: 'SESSION II – Clinical AI, Digital Health, Medical Innovation & Patient Care', speakers: 'Dr. Sunil Shroff; Dr. Kumudha Lingaraj; Dr. E. Theranirajan (Rtd); Dr. Arunkumar Krishnasamy; Dr. Vasanth Ramasamy' },
+  { time: '12:45 – 01:00 PM', session: 'Special Legislative Perspectives on AI, Public Health & Inclusive Development', speakers: 'Dr. T. Arunkumar, MLA; Dr. M.S. Ravi, MLA; M. Arul Prakasam, MLA' },
+  { time: '01:00 – 02:00 PM', session: 'Networking Lunch, AI Healthcare Expo & B2B/B2G Meetings', speakers: 'Product Demonstrations, Health Technologies, Startup Networking, Government–Industry Meetings' },
+  { time: '02:00 – 02:40 PM', session: 'SESSION III – Generative AI, Cybersecurity, Data Governance & Responsible AI in Healthcare', speakers: 'Mr. Vikram Elango; Mr. Praveen Kumar; Technology and Cybersecurity Experts' },
+  { time: '02:40 – 03:15 PM', session: 'SESSION IV – AI for Rural Healthcare, Agriculture–Health Convergence & Inclusive Innovation', speakers: 'Dr. Parasuraman Raman and invited experts from State Planning Commission, ELCOT, EDII-TN, ICT Academy and TNRiSE' },
+  { time: '03:15 – 03:45 PM', session: 'Global Investors, Venture Capital, CSR & Philanthropic Partnership Forum', speakers: 'Investors, CSR Foundations, Philanthropic Organizations, Funding Agencies, Startups & Healthcare Innovators' },
+  { time: '03:45 – 04:05 PM', session: 'Startup Grand Challenge & Innovation Showcase', speakers: 'Selected Healthcare AI Startups, Student Innovators & Researchers' },
+  { time: '04:05 – 04:20 PM', session: 'Research & Academic Excellence Forum', speakers: 'Best Research Papers, Young Researchers, Medical Student Innovations & Poster Presentations' },
+  { time: '04:20 – 04:35 PM', session: 'AI Healthcare Product Expo – Live Demonstrations', speakers: 'AI Diagnostics, Health ATMs, Medical Devices, Robotics, Telemedicine & Digital Health Platforms' },
+  { time: '04:35 – 04:50 PM', session: 'Strategic Partnerships, MoU Exchange & Pilot Project Announcements', speakers: 'Government–Industry–Academia–Hospital–Startup Partnerships' },
+  { time: '04:50 – 05:10 PM', session: 'ICAIH 2026 Awards & Recognition Ceremony', speakers: 'AI Healthcare Leadership, Best Startup, Best Research Paper, Young Researcher, Rural Healthcare Innovation, CSR Excellence and Special Recognition Awards' },
+  { time: '05:10 – 05:20 PM', session: 'Adoption of the Chennai Declaration on AI in Healthcare 2026', speakers: 'Presentation of Conference Recommendations, Policy Roadmap & Future Initiatives' },
+  { time: '05:20 – 05:25 PM', session: 'Vote of Thanks', speakers: 'T. L. Nandagopal, MCA., MSW., Chairman, G Care Council' },
+  { time: '05:25 – 05:30 PM', session: 'National Anthem & Group Photograph', speakers: 'Chief Guests, Dignitaries, Speakers, Partners & Organizing Committee' }
+]);
+
+function renderConferenceAgenda(agenda = ICAIH_AGENDA) {
+  const tableBody = document.getElementById('agendaTableBody');
+  if (!tableBody) return;
+
+  const fragment = document.createDocumentFragment();
+  agenda.forEach(item => {
+    const row = document.createElement('tr');
+    const timeCell = document.createElement('td');
+    const sessionCell = document.createElement('td');
+    const speakerCell = document.createElement('td');
+    const sessionTitle = document.createElement('strong');
+
+    timeCell.textContent = item.time;
+    sessionTitle.textContent = item.session;
+    sessionCell.appendChild(sessionTitle);
+    speakerCell.textContent = item.speakers;
+
+    row.append(timeCell, sessionCell, speakerCell);
+    fragment.appendChild(row);
+  });
+
+  tableBody.replaceChildren(fragment);
+}
+
+renderConferenceAgenda();
+
 /* ── Scroll reveal ── */
 const revealElements = document.querySelectorAll('.reveal');
 
@@ -2420,3 +2480,122 @@ document.addEventListener('change', function(e) {
     }
   }
 });
+
+
+/* ICAIH 2026 official Chief Guests and Speakers.
+   Edit this data object to update names, designations, or images dynamically. */
+const ICAIH_OFFICIAL_PEOPLE = {
+  presidential: [
+    { name: 'Dr. S. Elumalai', designation: 'Former Registrar, University of Madras', image: 'assets/speakers-official/s-elumalai.jpg' }
+  ],
+  chiefGuests: [
+    { name: 'Dr. K.G. Arunraj', designation: 'Minister for Health and Family Welfare Department, Government of Tamil Nadu', image: 'assets/speakers-official/kg-arunraj.jpg' },
+    { name: 'Dr. R. Kumar', designation: 'Information Technology Minister, Government of Tamil Nadu', image: 'assets/speakers-official/r-kumar.jpg' },
+    { name: 'Dr. Darez Ahamed, IAS', designation: 'Secretary to Government, Health and Family Welfare Department, Government of Tamil Nadu', image: 'assets/speakers-official/darez-ahamed.jpg' },
+    { name: 'Mr. Pradeep Yadav, IAS', designation: 'Additional Chief Secretary, IT & Digital Services Department, Government of Tamil Nadu', image: 'assets/speakers-official/pradeep-yadav.jpg' },
+    { name: 'Dr. Soumya Swaminathan', designation: 'Former Chief Scientist, World Health Organization', image: 'assets/speakers-official/soumya-swaminathan.jpg' },
+    { name: 'Dr. T. Arunkumar', designation: 'Member of the Tamil Nadu Legislative Assembly – Tiruvallur', image: 'assets/speakers-official/t-arunkumar.jpg' },
+    { name: 'Dr. M. S. Ravi', designation: 'Member of the Tamil Nadu Legislative Assembly – Ponneri', image: 'assets/speakers-official/ms-ravi.jpg' },
+    { name: 'M. Arul Prakasam', designation: 'Member of the Tamil Nadu Legislative Assembly – Saidapet', image: 'assets/speakers-official/arul-prakasam.jpg' }
+  ],
+  speakers: [
+    { name: 'Dr. S. Uma, IAS', designation: 'Project Director, Tamil Nadu Health System Project', image: 'assets/speakers-official/s-uma-ias.jpg' },
+    { name: 'Dr. S. Pushkala', designation: 'In-charge Vice-Chancellor, Dr. M.G.R. Medical University', image: 'assets/speakers-official/s-pushkala.jpg' },
+    { name: 'Dr. Sudha Seshayyan', designation: 'Former Vice-Chancellor, Tamil Nadu Dr. M.G.R. Medical University, Chennai', image: 'assets/speakers-official/sudha-seshayyan.jpg' },
+    { name: 'Dr. Sunil Shroff', designation: 'President, TSI | Urologist & Transplant Surgeon', image: 'assets/speakers-official/sunil-shroff.jpg' },
+    { name: 'Vanitha Venugopal', designation: 'CEO, Tamil Nadu Technology Hub, Government of Tamil Nadu', image: 'assets/speakers-official/vanitha-venugopal.jpg' },
+    { name: 'K. Krishna Chaitanya', designation: 'CEO, TN Infrastructure Fund Management Corporation Ltd, Government of Tamil Nadu', image: 'assets/speakers-official/krishna-chaitanya.jpg' },
+    { name: 'Dr. Renuka Vidyashankar', designation: 'Managing Director, TNAPDC – Government of Tamil Nadu', image: 'assets/speakers-official/renuka-vidyashankar.jpg' },
+    { name: 'Dr. Kumudha Lingaraj', designation: 'Dean, VELS Medical College & Hospital', image: 'assets/speakers-official/kumudha-lingaraj.jpg' },
+    { name: 'Dr. E. Theranirajan (Rtd)', designation: 'M.D. | Additional Director of Medical Education & Research (DME)', image: 'assets/speakers-official/e-theranirajan.jpg' },
+    { name: 'Dr. Arunkumar Krishnasamy', designation: 'Senior Consultant Cardiothoracic Surgeon, Kauvery Hospital', image: 'assets/speakers-official/arunkumar-krishnasamy.jpg' },
+    { name: 'Dr. Vasanth Ramasamy', designation: 'Senior Consultant – GI & Robotic Surgery, MGM Healthcare', image: 'assets/speakers-official/vasanth-ramasamy.jpg' },
+    { name: 'Mr. Praveen Kumar', designation: 'Practice Leader – Risk, Cyber & Analytics', image: 'assets/speakers-official/praveen-kumar.jpg' },
+    { name: 'Mr. Vikram Elango', designation: 'Generative AI Specialist – AWS, Dubai', image: 'assets/speakers-official/vikram-elango.jpg' },
+    { name: 'Dr. Parasuraman Raman', designation: 'Principal Scientist, M. S. Swaminathan Research Foundation', image: 'assets/speakers-official/parasuraman-raman.jpg' }
+  ],
+  experts: [
+    { name: 'State Planning Commission', image: 'assets/speakers-official/state-planning-commission.jpg' },
+    { name: 'ELCOT', image: 'assets/speakers-official/elcot.jpg' },
+    { name: 'EDII-TN', image: 'assets/speakers-official/edii-tn.jpg' },
+    { name: 'ICT Academy', image: 'assets/speakers-official/ict-academy.jpg' },
+    { name: 'TNRiSE', image: 'assets/speakers-official/tnrise.jpg' }
+  ],
+  voteThanks: [
+    { name: 'T. L. Nandagopal, MCA., MSW.', designation: 'Chairman, G Care Council', image: 'assets/speakers-official/tl-nandagopal.jpg' }
+  ]
+};
+
+function buildOfficialPersonCard(person, config = {}) {
+  const { roleLabel = '', featured = false, logoCard = false } = config;
+  const card = document.createElement('article');
+  card.className = 'official-person-card';
+  if (featured) card.classList.add('featured-person-card');
+  if (logoCard) card.classList.add('logo-card');
+
+  const photo = document.createElement('div');
+  photo.className = 'official-person-photo';
+  const img = document.createElement('img');
+  img.src = person.image;
+  img.alt = person.name;
+  img.loading = 'lazy';
+  img.decoding = 'async';
+  photo.appendChild(img);
+
+  const content = document.createElement('div');
+  content.className = 'official-person-content';
+
+  if (roleLabel && !logoCard) {
+    const badge = document.createElement('span');
+    badge.className = 'official-role-badge';
+    badge.textContent = roleLabel;
+    content.appendChild(badge);
+  }
+
+  const name = document.createElement('h4');
+  name.textContent = person.name;
+  content.appendChild(name);
+
+  if (person.designation) {
+    const designation = document.createElement('p');
+    designation.textContent = person.designation;
+    content.appendChild(designation);
+  }
+
+  card.append(photo, content);
+  return card;
+}
+
+function renderOfficialPeopleGroup(containerId, title, people, options = {}) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  container.classList.toggle('group-featured', !!options.featured);
+  container.classList.toggle('group-logos', !!options.logoGrid);
+
+  const heading = document.createElement('h3');
+  heading.className = 'official-group-title';
+  heading.textContent = title;
+
+  const grid = document.createElement('div');
+  grid.className = options.logoGrid ? 'official-logo-grid' : 'official-people-grid';
+  if (options.featured) grid.classList.add('featured-grid');
+
+  people.forEach(person => {
+    grid.appendChild(buildOfficialPersonCard(person, {
+      roleLabel: '',
+      featured: !!options.featured,
+      logoCard: !!options.logoGrid
+    }));
+  });
+  container.append(heading, grid);
+}
+
+function renderOfficialSpeakers() {
+  renderOfficialPeopleGroup('presidentialAddressContainer', 'Presidential Address', ICAIH_OFFICIAL_PEOPLE.presidential, { featured: true });
+  renderOfficialPeopleGroup('chiefGuestsContainer', 'Chief Guest', ICAIH_OFFICIAL_PEOPLE.chiefGuests);
+  renderOfficialPeopleGroup('speakersContainer', 'Speakers', ICAIH_OFFICIAL_PEOPLE.speakers);
+  renderOfficialPeopleGroup('expertsContainer', 'Experts From', ICAIH_OFFICIAL_PEOPLE.experts, { logoGrid: true });
+  renderOfficialPeopleGroup('voteThanksContainer', 'Vote of Thanks', ICAIH_OFFICIAL_PEOPLE.voteThanks, { featured: true });
+}
+renderOfficialSpeakers();
