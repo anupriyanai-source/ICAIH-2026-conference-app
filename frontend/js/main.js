@@ -2473,11 +2473,7 @@ document.addEventListener('change', function(e) {
     const box = document.getElementById('tsiMembershipWrapper');
     const input = document.getElementById('tsiMembershipNumber');
     if (box && input) {
-      const isTSI = e.target.value === 'TSI Member';
-      box.style.display = isTSI ? 'block' : 'none';
-      input.required = isTSI;
-      if (!isTSI) input.value = '';
-    }
+          }
   }
 });
 
