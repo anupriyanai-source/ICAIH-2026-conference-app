@@ -1452,6 +1452,20 @@ document.getElementById('submissionSuccessModal')?.addEventListener('click', eve
   if (event.target.id === 'submissionSuccessModal') closeSubmissionSuccessModal();
 });
 
+function openCompetitionClosedModal() {
+  openSubmissionSuccessModal({
+    tag: 'Competition submissions are closed.',
+    title: 'Competition submissions are closed.',
+    body: `
+      <p>Competition submissions are closed.</p>
+      <p>The deadline for Pre-Conference Competitions, Research Paper Submission, and International Awards Nomination has been completed on 16 July 2026.</p>
+      <p>Thank you for your interest and support.</p>
+    `,
+    details: [],
+    note: 'Thank you for your interest and support.'
+  });
+}
+
 function resetRegistrationFormState(form) {
   form.reset();
   form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="number"], textarea').forEach(field => {
@@ -2293,138 +2307,19 @@ updateApplicationFileMailLinks();
 document.getElementById('applicationForm')?.addEventListener('submit', async e => {
   e.preventDefault();
 
-  const form = e.currentTarget;
-
-  if (!validateActiveApplicationRequiredFields(form)) return;
-  if (!validatePhoneFields(form, 'applicationMessage')) return;
-  if (!validateApplicationFiles(form)) return;
-
   const submitButton = document.getElementById('applicationSubmitBtn');
   const originalSubmitText = submitButton ? submitButton.textContent : '';
 
   if (submitButton) {
     submitButton.disabled = true;
-    submitButton.textContent = 'Submitting...';
+    submitButton.textContent = 'Submission Closed';
   }
 
-  updateApplicationFileMailLinks();
-  showMessage('applicationMessage', 'Submitting application…', '');
+  openCompetitionClosedModal();
 
-  try {
-    syncPreConferenceSubmissionTitle();
-    const formData = new FormData(form);
-    const normalizedApplicationMobile = String(
-      formData.get('mobile') || formData.get('phone') || formData.get('phoneNumber') || formData.get('mobileNumber') || ''
-    ).replace(/\D/g, '');
-    formData.set('mobile', normalizedApplicationMobile);
-    formData.set('phone', normalizedApplicationMobile);
-    const applicationType = getSafeApplicationType(formData.get('applicationType'));
-
-    const declarationNamesByType = {
-      'pre-conference-competition': ['declarationConfirmed', 'competitionDeclarationRules', 'competitionDeclarationPresent', 'competitionDeclarationTrue'],
-      'research-paper': ['declarationConfirmed', 'researchDeclarationPresent', 'researchDeclarationRules', 'researchDeclarationTrue'],
-      'award-nomination': ['declarationConfirmed']
-    };
-    const activeDeclarationNames = declarationNamesByType[applicationType] || [];
-    const allActiveDeclarationsChecked = activeDeclarationNames.length > 0 && activeDeclarationNames.every(name =>
-      Array.from(form.querySelectorAll(`input[name="${name}"]`))
-        .some(field => !field.disabled && field.checked)
-    );
-
-    activeDeclarationNames.forEach(name => {
-      formData.delete(name);
-      const checkedField = Array.from(form.querySelectorAll(`input[name="${name}"]`))
-        .find(field => !field.disabled && field.checked);
-      formData.set(name, checkedField ? 'true' : 'false');
-    });
-
-    if (applicationType === 'pre-conference-competition') {
-      formData.set('competitionDeclarationsConfirmed', allActiveDeclarationsChecked ? 'true' : 'false');
-    } else if (applicationType === 'research-paper') {
-      formData.set('researchDeclarationsConfirmed', allActiveDeclarationsChecked ? 'true' : 'false');
-    }
-
-    if (applicationType === 'award-nomination') {
-      const awardCategory = formData.get('awardCategory') || 'ICAIH 2026 International Awards Nomination';
-      formData.set('competitionCategory', awardCategory);
-      formData.set('participantCategory', 'Awards Nominee');
-      formData.set('topicTheme', awardCategory);
-    }
-
-    const response = await fetch(`${API_BASE}/api/applications`, {
-      method: 'POST',
-      body: formData
-    });
-
-    const result = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-      throw new Error(result.message || 'Application submission failed. Please check the backend terminal error, MySQL connection, and file format.');
-    }
-
-    const submittedType = getSafeApplicationType(formData.get('applicationType'));
-    const submittedData = Object.fromEntries(formData.entries());
-    const submittedRefId = result.refId || result.id || `ICAIH-${Date.now().toString(36).toUpperCase()}`;
-    const submittedLabel = APPLICATION_LABELS[submittedType] || 'Application';
-    const successConfigByType = {
-      'pre-conference-competition': {
-        tag: 'Competition Form Submitted',
-        title: 'Competition Application Received!',
-        body: 'Thank you for applying for the <strong>ICAIH 2026 Pre-Conference Competition</strong>. Your form has been submitted successfully.',
-        categoryLabel: 'Competition Category',
-        categoryValue: submittedData.competitionCategory || submittedData.submissionTitle,
-        note: 'Your competition application has been saved. The competition coordinator will review the submission and contact you if further information is required.'
-      },
-      'research-paper': {
-        tag: 'Research Paper Submitted',
-        title: 'Research Paper Submission Received!',
-        body: 'Thank you for submitting your research paper to <strong>ICAIH 2026</strong>. Your form and uploaded files have been received successfully.',
-        categoryLabel: 'Presentation Type',
-        categoryValue: submittedData.presentationType || submittedData.topicTheme || submittedData.submissionTitle,
-        note: 'Your research paper submission has been saved. The review committee will evaluate it and communicate the next steps by email.'
-      },
-      'award-nomination': {
-        tag: 'Award Nomination Submitted',
-        title: 'Award Nomination Received!',
-        body: 'Thank you for submitting an <strong>ICAIH 2026 International Award Nomination</strong>. The nomination has been received successfully.',
-        categoryLabel: 'Award Category',
-        categoryValue: submittedData.awardCategory || submittedData.competitionCategory || submittedData.submissionTitle,
-        note: 'The award nomination has been saved. The ICAIH 2026 awards committee will review the details and contact the nominee or applicant if required.'
-      }
-    };
-    const successConfig = successConfigByType[submittedType];
-
-    showMessage(
-      'applicationMessage',
-      `${result.message || 'Form submitted successfully. Confirmation emails have been sent to the applicant and admin at info@mrtech.co.in.'} Registration ID: ${submittedRefId}`,
-      'ok'
-    );
-
-    resetApplicationFormState(form, submittedType);
-    closeApplicationModal();
-    await waitForSuccessPopup();
-
-    openSubmissionSuccessModal({
-      tag: successConfig.tag,
-      title: successConfig.title,
-      body: successConfig.body,
-      details: [
-        { label: 'Applicant Name', value: submittedData.fullName || submittedData.nomineeName },
-        { label: 'Email', value: submittedData.email },
-        { label: 'Form Type', value: submittedLabel },
-        { label: successConfig.categoryLabel, value: successConfig.categoryValue },
-        { label: 'Registration ID', value: submittedRefId },
-        { label: 'Submission Status', value: 'Received Successfully' }
-      ],
-      note: successConfig.note
-    });
-  } catch (error) {
-    showMessage('applicationMessage', error.message || 'Unable to submit. Please start the backend with npm start and check the terminal error.', 'error');
-  } finally {
-    if (submitButton) {
-      submitButton.disabled = false;
-      submitButton.textContent = originalSubmitText || 'Submit Application';
-    }
+  if (submitButton) {
+    submitButton.disabled = false;
+    submitButton.textContent = originalSubmitText || 'Submit Application';
   }
 });
 
@@ -2479,6 +2374,9 @@ const ICAIH_OFFICIAL_PEOPLE = {
   presidential: [
     { name: 'Dr. S. Elumalai', designation: 'Former Registrar, University of Madras', image: 'assets/speakers-official/s-elumalai.jpg' }
   ],
+  welcome: [
+    { name: 'Dr. D. Sathish Dev', designation: 'Deputy Medical Superintendent, Vels Medical College & Hospital, Tiruvallur District', image: 'assets/speakers-official/d-sathish-dev.png' }
+  ],
   chiefGuests: [
     { name: 'Dr. K.G. Arunraj', designation: 'Minister for Health and Family Welfare Department, Government of Tamil Nadu', image: 'assets/speakers-official/kg-arunraj.jpg' },
     { name: 'Dr. R. Kumar', designation: 'Information Technology Minister, Government of Tamil Nadu', image: 'assets/speakers-official/r-kumar.jpg' },
@@ -2491,16 +2389,11 @@ const ICAIH_OFFICIAL_PEOPLE = {
   ],
   speakers: [
     { name: 'Dr. S. Uma, IAS', designation: 'Project Director, Tamil Nadu Health System Project', image: 'assets/speakers-official/s-uma-ias.jpg' },
-    { name: 'Dr. S. Pushkala', designation: 'In-charge Vice-Chancellor, Dr. M.G.R. Medical University', image: 'assets/speakers-official/s-pushkala.jpg' },
-    { name: 'Dr. Sudha Seshayyan', designation: 'Former Vice-Chancellor, Tamil Nadu Dr. M.G.R. Medical University, Chennai', image: 'assets/speakers-official/sudha-seshayyan.jpg' },
     { name: 'Dr. Sunil Shroff', designation: 'President, TSI | Urologist & Transplant Surgeon', image: 'assets/speakers-official/sunil-shroff.jpg' },
     { name: 'Vanitha Venugopal', designation: 'CEO, Tamil Nadu Technology Hub, Government of Tamil Nadu', image: 'assets/speakers-official/vanitha-venugopal.jpg' },
     { name: 'K. Krishna Chaitanya', designation: 'CEO, TN Infrastructure Fund Management Corporation Ltd, Government of Tamil Nadu', image: 'assets/speakers-official/krishna-chaitanya.jpg' },
-    { name: 'Dr. Renuka Vidyashankar', designation: 'Managing Director, TNAPDC – Government of Tamil Nadu', image: 'assets/speakers-official/renuka-vidyashankar.jpg' },
-    { name: 'Dr. Kumudha Lingaraj', designation: 'Dean, VELS Medical College & Hospital', image: 'assets/speakers-official/kumudha-lingaraj.jpg' },
-    { name: 'Dr. E. Theranirajan (Rtd)', designation: 'M.D. | Additional Director of Medical Education & Research (DME)', image: 'assets/speakers-official/e-theranirajan.jpg' },
-    { name: 'Dr. Arunkumar Krishnasamy', designation: 'Senior Consultant Cardiothoracic Surgeon, Kauvery Hospital', image: 'assets/speakers-official/arunkumar-krishnasamy.jpg' },
-    { name: 'Dr. Vasanth Ramasamy', designation: 'Senior Consultant – GI & Robotic Surgery, MGM Healthcare', image: 'assets/speakers-official/vasanth-ramasamy.jpg' },
+    { name: 'Dr. Renuka Vidyashankar', designation: 'Managing Director, Tamil Nadu Apex Skill Development Centre for Healthcare (TNASDCH)', image: 'assets/speakers-official/renuka-vidyashankar.jpg' },
+    { name: 'Dr. Sudha Seshayyan', designation: 'Former Vice-Chancellor, Tamil Nadu Dr. M.G.R. Medical University, Chennai', image: 'assets/speakers-official/sudha-seshayyan.jpg' },
     { name: 'Mr. Praveen Kumar', designation: 'Practice Leader – Risk, Cyber & Analytics', image: 'assets/speakers-official/praveen-kumar.jpg' },
     { name: 'Mr. Vikram Elango', designation: 'Generative AI Specialist – AWS, Dubai', image: 'assets/speakers-official/vikram-elango.jpg' },
     { name: 'Dr. Parasuraman Raman', designation: 'Principal Scientist, M. S. Swaminathan Research Foundation', image: 'assets/speakers-official/parasuraman-raman.jpg' }
@@ -2584,6 +2477,7 @@ function renderOfficialPeopleGroup(containerId, title, people, options = {}) {
 
 function renderOfficialSpeakers() {
   renderOfficialPeopleGroup('presidentialAddressContainer', 'Presidential Address', ICAIH_OFFICIAL_PEOPLE.presidential, { featured: true });
+  renderOfficialPeopleGroup('welcomeAddressContainer', 'Welcome Address', ICAIH_OFFICIAL_PEOPLE.welcome, { featured: true });
   renderOfficialPeopleGroup('chiefGuestsContainer', 'Chief Guest', ICAIH_OFFICIAL_PEOPLE.chiefGuests);
   renderOfficialPeopleGroup('speakersContainer', 'Speakers', ICAIH_OFFICIAL_PEOPLE.speakers);
   renderOfficialPeopleGroup('expertsContainer', 'Experts From', ICAIH_OFFICIAL_PEOPLE.experts, { logoGrid: true });

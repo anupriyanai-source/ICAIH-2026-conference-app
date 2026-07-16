@@ -7045,3 +7045,167 @@ linear-gradient(180deg,#031a3a 0%,#02152f 55%,#020f23 100%);box-shadow:0 30px 70
   #speakers .chief-guests-group .official-person-card:nth-child(n) .official-person-photo,
   #speakers .speakers-group .official-person-photo{width:146px!important;height:146px!important}
 }
+/* ICAIH 2026 PDF Chief Guest & Speakers Layout Override */
+.speakers-section,.chief-guests-section,.guests-section,.lifetime-achievement-section{
+ background:#03152f !important;
+ color:#fff;
+ padding:60px 20px;
+ position:relative;
+}
+.speakers-grid,.speaker-grid,.guests-grid,.chief-guests-grid{
+ display:grid!important;
+ grid-template-columns:repeat(3,1fr)!important;
+ gap:45px 35px!important;
+ align-items:start;
+ justify-items:center;
+}
+.speaker-card,.guest-card,.chief-guest-card{
+ text-align:center!important;
+ background:transparent!important;
+ border:none!important;
+}
+.speaker-card img,.guest-card img,.chief-guest-card img{
+ width:110px!important;
+ height:110px!important;
+ object-fit:cover;
+ border-radius:50%;
+ border:4px solid #e7b64a!important;
+ box-shadow:0 0 15px rgba(231,182,74,.6);
+}
+.speaker-card h3,.guest-card h3,.chief-guest-card h3{
+ color:#f5c64b!important;
+ font-size:18px!important;
+ margin-top:15px;
+}
+.speaker-card p,.guest-card p,.chief-guest-card p{
+ color:#fff!important;
+ font-size:13px!important;
+ line-height:1.4;
+ max-width:250px;
+}
+.welcome-address,.presidential-address{
+ display:flex!important;
+ align-items:center;
+ justify-content:center;
+ gap:30px;
+ margin-bottom:40px;
+}
+.experts-from img{
+ max-width:90px;
+ margin:15px;
+}
+@media(max-width:768px){
+ .speakers-grid,.speaker-grid,.guests-grid,.chief-guests-grid{grid-template-columns:1fr!important;}
+}
+
+
+/* ==========================================================
+   ICAIH 2026 PDF STYLE - CHIEF GUEST & SPEAKERS OVERRIDE
+   ========================================================== */
+
+#speakers,
+.chief-guests-section,
+.people-section,
+.experts-section,
+.lifetime-section {
+  background:
+    radial-gradient(circle at top, rgba(0,128,255,.18), transparent 35%),
+    linear-gradient(180deg,#03142f 0%,#061b3d 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  border-top:1px solid rgba(245,158,11,.55);
+  border-bottom:1px solid rgba(245,158,11,.55);
+}
+
+.people-card,
+.speaker-card,
+.guest-card,
+.person-card {
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  text-align:center;
+}
+
+.people-card img,
+.speaker-card img,
+.guest-card img,
+.person-card img {
+  width:120px !important;
+  height:120px !important;
+  object-fit:cover;
+  border-radius:50%;
+  border:4px solid #f5b72b;
+  padding:4px;
+  background:#071936;
+  box-shadow:0 0 18px rgba(245,183,43,.45);
+}
+
+.people-card h3,
+.speaker-card h3,
+.guest-card h3,
+.person-card h3 {
+  color:#f5c542 !important;
+  font-family:Georgia,serif;
+  font-weight:700;
+  margin-top:14px;
+}
+
+.people-card p,
+.speaker-card p,
+.guest-card p,
+.person-card p {
+  color:#fff !important;
+  line-height:1.35;
+  max-width:240px;
+  margin:0 auto;
+  font-size:13px;
+}
+
+.chief-guests-grid,
+.speakers-grid,
+.people-grid {
+  display:grid !important;
+  grid-template-columns:repeat(3,1fr);
+  gap:35px 45px;
+  align-items:start;
+  justify-items:center;
+}
+
+.section-title,
+.people-section h2,
+#speakers h2 {
+  color:#f5c542 !important;
+  text-align:center;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  font-family:Georgia,serif;
+}
+
+.welcome-address,
+.presidential-address {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.experts-logo img {
+  border-radius:50%;
+  border:3px solid #f5c542;
+  background:#fff;
+  padding:5px;
+}
+
+.vote-thanks img {
+  border-radius:50%;
+  border:4px solid #f5c542;
+}
+
+@media(max-width:768px){
+  .chief-guests-grid,
+  .speakers-grid,
+  .people-grid {
+    grid-template-columns:1fr !important;
+  }
+}

@@ -200,6 +200,10 @@ const ApplicationService = {
       throw err;
     }
 
+    const err = new Error('Competition submissions are closed. The deadline for Pre-Conference Competitions, Research Paper Submission, and International Awards Nomination has been completed on 16 July 2026.');
+    err.status = 410;
+    throw err;
+
     const normalizedSubmissionTitle = normalizeSubmissionTitle(body);
     const validationData = { ...body, submissionTitle: normalizedSubmissionTitle };
     validateRequired(validationData, ['fullName', 'email', 'mobile', 'submissionTitle']);
