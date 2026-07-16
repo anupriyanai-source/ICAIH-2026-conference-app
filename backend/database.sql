@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS registrations (
   organization VARCHAR(200) NOT NULL,
   role VARCHAR(80) DEFAULT 'Attendee',
   category VARCHAR(80) DEFAULT 'General',
-  tsi_membership_number VARCHAR(100),
   fee_amount DECIMAL(10,2) DEFAULT 0,
   discount_percent INT DEFAULT 0,
   bulk_offer VARCHAR(120),

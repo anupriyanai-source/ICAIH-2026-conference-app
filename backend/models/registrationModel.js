@@ -35,7 +35,6 @@ const RegistrationModel = {
     organization,
     role,
     category,
-    tsiMembershipNumber,
     feeAmount,
     discountPercent,
     bulkOffer,
@@ -52,8 +51,8 @@ const RegistrationModel = {
 
       await conn.query(
         `INSERT INTO registrations
-         (ref_id, name, email, phone, organization, role, category, tsi_membership_number, fee_amount, discount_percent, bulk_offer, student_count, payment_confirmed, payment_status, payment_method, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, DATE_ADD(UTC_TIMESTAMP(), INTERVAL 330 MINUTE))`,
+         (ref_id, name, email, phone, organization, role, category, fee_amount, discount_percent, bulk_offer, student_count, payment_confirmed, payment_status, payment_method, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, DATE_ADD(UTC_TIMESTAMP(), INTERVAL 330 MINUTE))`,
         [
           refId,
           name,
@@ -62,7 +61,6 @@ const RegistrationModel = {
           organization,
           role,
           category,
-          tsiMembershipNumber || null,
           feeAmount,
           discountPercent,
           bulkOffer || null,

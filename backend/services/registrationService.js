@@ -98,7 +98,7 @@ const RegistrationService = {
       body.registrationRole ||
       body.feeCategory ||
       body.roleCategory ||
-      (body.tsiMembershipNumber ? 'TSI Member' : '')
+      ''
     ) || 'Delegate';
 
     const normalizedRole = role.toLowerCase().replace(/\s+/g, ' ').trim();
@@ -116,7 +116,6 @@ const RegistrationService = {
     };
     role = roleMap[normalizedRole] || role;
     const category = sanitize(body.category) || 'General';
-    const tsiMembershipNumber = sanitize(body.tsiMembershipNumber);
 
     const requiredFields = [
       ['Full Name', name],
@@ -134,13 +133,8 @@ const RegistrationService = {
       throw { status: 400, message: 'Please enter a valid email address.' };
     }
 
-    if (!/^\d{10}$/.test(phone)) {
+    if (!/^[0-9]{10}$/.test(phone)) {
       throw { status: 400, message: 'Please enter a valid 10 digit phone number.' };
-    }
-
-    if (role === 'TSI Member' && !tsiMembershipNumber) {
-
-      throw { status: 400, message: 'TSI Membership Registration Number is required.' };
     }
 
     if (role === 'TSI Member') {
@@ -156,9 +150,7 @@ const RegistrationService = {
       bulkOffer: sanitize(body.bulkOffer),
       studentCount: body.studentCount
     });
-
-    const requiresPayment = payment.feeAmount > 0;
-
+    const requiresPayment = Number(payment.feeAmount || 0) > 0;
     const existing = await SubmissionLookupModel.findRegistrationByEmail(email);
     if (existing) {
       throw {
@@ -178,7 +170,6 @@ const RegistrationService = {
       organization,
       role,
       category,
-      tsiMembershipNumber,
       feeAmount: payment.feeAmount,
       discountPercent: payment.discountPercent,
       bulkOffer: payment.bulkOffer,

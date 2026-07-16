@@ -820,6 +820,8 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
     studentIdConfirmed.required = isStudentRegistration;
     if (!isStudentRegistration) studentIdConfirmed.checked = false;
   }
+
+
   if (role === 'Bulk Booking') synchronizeBulkOfferWithStudentCount();
 
   const details = getRegistrationPaymentDetails();
@@ -1346,9 +1348,6 @@ function openSuccessModal(formData, refId, emailStatus) {
       ['Category', formData.category || 'General']
     ];
 
-    if (String(formData.role || '').trim() === 'TSI Member' && String(formData.tsiMembershipNumber || '').trim()) {
-      rows.push(['TSI Membership Registration Number', formData.tsiMembershipNumber]);
-    }
 
     rows.push(
       ['Paid Amount', formatINR(formData.feeAmount)],
@@ -1543,6 +1542,7 @@ document.getElementById('registrationForm')?.addEventListener('submit', async e 
 
   formData.set('role', details.role);
   formData.set('registrationRole', details.role);
+  formData.set('category', formData.get('category') || 'General');
   formData.set('feeAmount', String(details.feeAmount));
   formData.set('discountPercent', String(details.discountPercent));
   formData.set('studentCount', String(details.studentCount || ''));
@@ -2467,14 +2467,9 @@ document.querySelectorAll('[data-guideline-action]').forEach(button => {
   });
 });
 
-// TSI Member registration number handling
+
 document.addEventListener('change', function(e) {
-  if (e.target && e.target.id === 'registrationRole') {
-    const box = document.getElementById('tsiMembershipWrapper');
-    const input = document.getElementById('tsiMembershipNumber');
-    if (box && input) {
-          }
-  }
+  // No TSI membership number handling required
 });
 
 

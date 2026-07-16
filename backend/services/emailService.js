@@ -220,10 +220,6 @@ function formatINR(amount) {
   return '₹' + Number(amount || 0).toLocaleString('en-IN');
 }
 
-function getTsiMembershipNumber(data) {
-  return String(data.tsiMembershipNumber || data.tsi_membership_number || '').trim();
-}
-
 function registrationRows(data) {
   const rows = [
     ['Registration ID', data.refId],
@@ -232,13 +228,7 @@ function registrationRows(data) {
     ['Phone', data.phone],
     ['Organization', data.organization],
     ['Role', data.role],
-    // ['TSI Membership Registration Number', data.tsiMembershipNumber],
   ];
-
-  const tsiMembershipNumber = getTsiMembershipNumber(data);
-  if (String(data.role || '').trim() === 'TSI Member' && tsiMembershipNumber) {
-    rows.push(['TSI Membership Registration Number', tsiMembershipNumber]);
-  }
 
   rows.push(
     ['Category', data.category],
