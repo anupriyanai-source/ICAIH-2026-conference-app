@@ -300,14 +300,9 @@ function applyEarlyBirdDiscount(amount, role = '') {
   return Math.round(Number(amount || 0) * (100 - EARLY_BIRD_DISCOUNT_PERCENT) / 100);
 }
 
-const CROWDSHAKI_PAYMENT = {
-  baseUrl: 'https://www.crowdshaki.in/payment',
-  fundraiserId: '69c7b186eac7d838c9f98d37',
-  imageUrl: 'https://res.cloudinary.com/dooupjyum/image/upload/v1781069610/crowdshaki/campaigns/w5zufyrhjohbyi9tlxct.png',
-  reasonForFund: 'Health for all @ Gross root Level',
-  paymentForPrefix: 'ICAIH 2026 Registration'
-};
-
+// Crowdshaki integration removed. The application now uses the MYTH UPI
+// merchant deep-link (buildMythUpiUrl) and QR generation for manual
+// payment flows. Do not reintroduce Crowdshaki URLs elsewhere.
 
 
 const SPONSOR_ICONS = {
@@ -570,28 +565,10 @@ function validateManualPaymentFields(details) {
   return Boolean(details);
 }
 
-function buildCrowdshakiPaymentUrl(details) {
-  const form = document.getElementById('registrationForm');
-  const formData = form ? new FormData(form) : new FormData();
-  const normalizedFields = getNormalizedRegistrationFields(formData);
-
-  const params = new URLSearchParams({
-    fundraiserId: CROWDSHAKI_PAYMENT.fundraiserId,
-    imageUrl: CROWDSHAKI_PAYMENT.imageUrl,
-    reasonForFund: CROWDSHAKI_PAYMENT.reasonForFund,
-    source: 'icaih-2026',
-    paymentMode: 'conference',
-    lockAmount: '1',
-    amount: String(details.feeAmount),
-    registrationRole: details.role,
-    paymentFor: `${CROWDSHAKI_PAYMENT.paymentForPrefix} - ${details.role}`,
-    name: normalizedFields.name,
-    email: normalizedFields.email,
-    phone: normalizedFields.phone
-  });
-
-  return `${CROWDSHAKI_PAYMENT.baseUrl}?${params.toString()}`;
-}
+// buildCrowdshakiPaymentUrl removed — Crowdshaki payment page integration
+// has been intentionally removed. For manual payments we use the merchant
+// UPI deep-link produced by `buildMythUpiUrl(details, purpose)` and generate
+// QR codes from that URL.
 
 function createUpiTransactionReference(purpose = 'Payment') {
   const safePurpose = String(purpose || 'Payment').replace(/[^a-z0-9]/gi, '').slice(0, 10).toUpperCase();
@@ -755,12 +732,12 @@ document.addEventListener('keydown', event => {
   if (event.key === 'Escape') closeUpiAppChooser();
 });
 
-function buildDynamicQrImageUrl(details) {
-  const paymentPageUrl = buildCrowdshakiPaymentUrl(details);
+function buildDynamicQrImageUrl(details, purpose = 'Registration') {
+  const upiUrl = buildMythUpiUrl(details, purpose);
   const qrParams = new URLSearchParams({
     size: '260x260',
     margin: '10',
-    data: paymentPageUrl
+    data: upiUrl
   });
   return `https://api.qrserver.com/v1/create-qr-code/?${qrParams.toString()}`;
 }
@@ -793,16 +770,13 @@ function openManualUpiPayment() {
 
   showMessage(
     'registrationMessage',
-    `Opening the secure Crowdshaki / Razorpay payment page for ${formatINR(details.feeAmount)}. Complete the payment securely, then return and submit the registration form.`,
+    `Opening the secure UPI payment flow for ${formatINR(details.feeAmount)}. Complete the payment, then return and submit the registration form.`,
     ''
   );
 
-  const paymentPageUrl = buildCrowdshakiPaymentUrl(details);
-  const opened = window.open(paymentPageUrl, '_blank', 'noopener');
-
-  if (!opened) {
-    window.location.href = paymentPageUrl;
-  }
+  // Open the UPI deep-link (MYTH merchant) using the existing chooser logic.
+  const upiUrl = buildMythUpiUrl(details, 'Registration');
+  openUpiAppChooser({ upiUrl, amount: details.feeAmount, purpose: 'Registration', messageId: 'registrationMessage' });
 }
 function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   const role = document.getElementById('registrationRole')?.value || 'Delegate';
@@ -882,13 +856,13 @@ function updateRegistrationPaymentUI({ keepPayment = false } = {}) {
   }
 
   if (paymentQrText) {
-    paymentQrText.textContent = `Pay ${formatINR(details.feeAmount)} through the secure Crowdshaki / Razorpay page using Google Pay, PhonePe, Paytm, BHIM, cards, or net banking.`;
+    paymentQrText.textContent = `Pay ${formatINR(details.feeAmount)} through the secure UPI/Razorpay page using Google Pay, PhonePe, Paytm, BHIM, cards, or net banking.`;
   }
 
   if (paymentQrImage && details.requiresPayment) {
     paymentQrImage.src = buildDynamicQrImageUrl(details);
-    paymentQrImage.alt = `ICAIH 2026 secure Crowdshaki payment QR code for ${formatINR(details.feeAmount)}`;
-    paymentQrImage.title = `Scan to open the secure payment page for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.alt = `ICAIH 2026 secure payment QR code for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.title = `Scan to open the secure payment flow for ${formatINR(details.feeAmount)}`;
   }
 }
 
@@ -1183,35 +1157,17 @@ function getNormalizedSponsorFields(formData) {
 }
 
 function buildSponsorPaymentUrl(details) {
-  const form = document.getElementById('sponsorForm');
-  const formData = form ? new FormData(form) : new FormData();
-  const fields = getNormalizedSponsorFields(formData);
-  const paymentType = sponsorFormMode === 'stall' ? 'Stall / Exhibitor Booking' : 'Sponsorship';
-
-  const params = new URLSearchParams({
-    fundraiserId: CROWDSHAKI_PAYMENT.fundraiserId,
-    imageUrl: CROWDSHAKI_PAYMENT.imageUrl,
-    reasonForFund: CROWDSHAKI_PAYMENT.reasonForFund,
-    source: 'icaih-2026',
-    paymentMode: 'conference',
-    lockAmount: '1',
-    amount: String(details.feeAmount),
-    registrationRole: details.sponsorTier || paymentType,
-    paymentFor: `ICAIH 2026 ${paymentType} - ${details.sponsorTier || ''}`,
-    name: fields.contactPerson || fields.companyName,
-    email: fields.email,
-    phone: fields.phone
-  });
-
-  return `${CROWDSHAKI_PAYMENT.baseUrl}?${params.toString()}`;
+  // Sponsor Crowdshaki URL builder removed. Use the MYTH UPI deep-link
+  // generator (`buildMythUpiUrl`) for sponsor payment QR and direct UPI opens.
+  return '';
 }
 
 function buildSponsorDynamicQrImageUrl(details) {
-  const paymentPageUrl = buildSponsorPaymentUrl(details);
+  const upiUrl = buildMythUpiUrl(details, 'Sponsorship');
   const qrParams = new URLSearchParams({
     size: '260x260',
     margin: '10',
-    data: paymentPageUrl
+    data: upiUrl
   });
   return `https://api.qrserver.com/v1/create-qr-code/?${qrParams.toString()}`;
 }
@@ -1254,14 +1210,14 @@ function updateSponsorPaymentUI({ keepPayment = false } = {}) {
 
   if (paymentQrText) {
     paymentQrText.textContent = details.requiresPayment
-      ? `Pay ${formatINR(details.feeAmount)} through the secure Crowdshaki / Razorpay payment page.`
+      ? `Pay ${formatINR(details.feeAmount)} through the secure UPI/Razorpay payment page.`
       : 'Select a sponsorship or stall tier to generate the secure payment page and QR code.';
   }
 
   if (paymentQrImage && details.requiresPayment) {
     paymentQrImage.src = buildSponsorDynamicQrImageUrl(details);
-    paymentQrImage.alt = `ICAIH 2026 secure Crowdshaki payment QR code for ${formatINR(details.feeAmount)}`;
-    paymentQrImage.title = `Scan to open the secure payment page for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.alt = `ICAIH 2026 secure payment QR code for ${formatINR(details.feeAmount)}`;
+    paymentQrImage.title = `Scan to open the secure payment flow for ${formatINR(details.feeAmount)}`;
   }
 
   if (details.requiresPayment) {
@@ -1301,16 +1257,12 @@ function openSponsorPaymentPage() {
 
   showMessage(
     'sponsorMessage',
-    `Opening the secure Crowdshaki / Razorpay payment page for ${formatINR(details.feeAmount)}. Complete the payment securely, then return and submit the form.`,
+    `Opening the secure UPI payment flow for ${formatINR(details.feeAmount)}. Complete the payment securely, then return and submit the form.`,
     ''
   );
 
-  const paymentPageUrl = buildSponsorPaymentUrl(details);
-  const opened = window.open(paymentPageUrl, '_blank', 'noopener');
-
-  if (!opened) {
-    window.location.href = paymentPageUrl;
-  }
+  const upiUrl = buildMythUpiUrl(details, 'Sponsorship');
+  openUpiAppChooser({ upiUrl, amount: details.feeAmount, purpose: 'Sponsorship', messageId: 'sponsorMessage' });
 }
 
 document.getElementById('sponsorTier')?.addEventListener('input', () => updateSponsorPaymentUI());
