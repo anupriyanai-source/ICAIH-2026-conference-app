@@ -138,7 +138,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="css/style.css?v=20260626-mobile-form-pages" />
+  <link rel="stylesheet" href="css/style.css?v=20260722-menu-aligned" />
 </head>
 
 <body>
@@ -149,9 +149,11 @@
     </a>
     <button class="menu-toggle" id="menuToggle" aria-label="Open navigation">Menu</button>
     <div class="nav-links" id="navLinks">
+      <a href="#teaser">Watch Teaser</a>
       <a href="#about">About ICAIH 2026</a>
       <a href="#focus">Conference Focus Areas</a>
       <a href="#speakers">Chief Guests &amp; Speakers</a>
+      <a href="#gallery">Gallery</a>
       <a href="#agenda">Full Day Agenda</a>
       <a href="#sponsors">Sponsorship</a>
       <button class="nav-link-button" id="openCompetitionModalNav" type="button">Competition</button>
@@ -225,6 +227,29 @@
   </header>
 
   <main>
+
+    <section class="section teaser-section" id="teaser" aria-labelledby="teaserTitle">
+      <div class="container">
+        <div class="section-head teaser-heading reveal">
+          <p class="section-kicker">Official Conference Teaser</p>
+          <h2 id="teaserTitle">Experience the vision of ICAIH 2026</h2>
+          <p>Watch the official teaser for the International Conference on Artificial Intelligence in Healthcare.</p>
+        </div>
+
+        <div class="teaser-video-card reveal">
+          <video class="teaser-video" controls preload="metadata" playsinline
+            poster="assets/videos/icaih-2026-teaser-poster.jpg"
+            aria-label="Official ICAIH 2026 AI in Healthcare conference teaser video">
+            <source src="assets/videos/icaih-2026-teaser.mp4" type="video/mp4">
+            Your browser does not support HTML5 video.
+          </video>
+          <div class="teaser-video-caption">
+            <span>ICAIH 2026</span>
+            <strong>AI for Health, Humanity and Inclusive Growth</strong>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <section class="section" id="about">
       <div class="container two-col">
@@ -564,12 +589,37 @@
           <div class="invitation-gold-divider" aria-hidden="true"></div>
           <div id="chiefGuestsContainer" class="official-speaker-group chief-guests-group" aria-live="polite"></div>
           <div id="speakersContainer" class="official-speaker-group speakers-group" aria-live="polite"></div>
-          <div id="expertsContainer" class="official-speaker-group experts-group" aria-live="polite"></div>
+          <div class="invitation-gold-divider" aria-hidden="true"></div>
+          <div id="awardRecipientsContainer" class="official-speaker-group award-recipients-group" aria-live="polite"></div>
+          <div id="valedictoryGuestContainer" class="official-speaker-group valedictory-group" aria-live="polite"></div>
           <div id="voteThanksContainer" class="official-speaker-group vote-thanks-group" aria-live="polite"></div>
+          <div id="expertsContainer" class="official-speaker-group experts-group" aria-live="polite"></div>
           <div class="invitation-board-footer">AI FOR HEALTH, HUMANITY &amp; INCLUSIVE GROWTH</div>
         </div>
       </div>
     </section>
+
+
+    <section class="section conference-gallery-section" id="gallery">
+      <div class="container">
+        <div class="section-head reveal conference-gallery-heading">
+          <p class="section-kicker">Conference Moments</p>
+          <h2>ICAIH 2026 Gallery</h2>
+          <p>A curated collection of ICAIH 2026 highlights featuring memorable conference moments, distinguished guests, award presentations, and competition winners.</p>
+        </div>
+        <div class="conference-gallery-grid" id="conferenceGalleryGrid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <div class="gallery-lightbox" id="galleryLightbox" role="dialog" aria-modal="true" aria-label="Conference gallery image viewer" hidden>
+      <button class="gallery-lightbox-close" id="galleryLightboxClose" type="button" aria-label="Close gallery viewer">&times;</button>
+      <button class="gallery-lightbox-nav gallery-lightbox-prev" id="galleryLightboxPrev" type="button" aria-label="Previous image">&#10094;</button>
+      <figure>
+        <img id="galleryLightboxImage" src="" alt="" />
+        <figcaption id="galleryLightboxCaption"></figcaption>
+      </figure>
+      <button class="gallery-lightbox-nav gallery-lightbox-next" id="galleryLightboxNext" type="button" aria-label="Next image">&#10095;</button>
+    </div>
 
     <section class="section tinted" id="agenda">
       <div class="container">
@@ -1493,7 +1543,7 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=20260712-dynamic-ai-agenda"></script>
+  <script src="js/main.js?v=20260722-gallery-curated"></script>
 </body>
 
 </html>

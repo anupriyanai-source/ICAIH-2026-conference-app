@@ -2324,41 +2324,54 @@ document.addEventListener('change', function(e) {
    Edit this data object to update names, designations, or images dynamically. */
 const ICAIH_OFFICIAL_PEOPLE = {
   presidential: [
-    { name: 'Dr. S. Elumalai', designation: 'Former Registrar, University of Madras', image: 'assets/speakers-official/s-elumalai.jpg' }
+    { name: 'Dr. S. Elumalai', designation: 'Former Registrar, University of Madras', image: 'assets/speakers-revised/s-elumalai.png' }
   ],
   welcome: [
-    { name: 'Dr. D. Sathish Dev', designation: 'Deputy Medical Superintendent, Vels Medical College & Hospital, Tiruvallur District', image: 'assets/speakers-official/d-sathish-dev.png' }
+    { name: 'Dr. D. Sathish Dev', designation: 'Deputy Medical Superintendent, Vels Medical College & Hospital, Tiruvallur District', image: 'assets/speakers-revised/d-sathish-dev.png' }
   ],
   chiefGuests: [
-    { name: 'Dr. K.G. Arunraj', designation: 'Minister for Health and Family Welfare Department, Government of Tamil Nadu', image: 'assets/speakers-official/kg-arunraj.jpg' },
-    { name: 'Dr. R. Kumar', designation: 'Information Technology Minister, Government of Tamil Nadu', image: 'assets/speakers-official/r-kumar.jpg' },
-    { name: 'Dr. Darez Ahamed, IAS', designation: 'Secretary to Government, Health and Family Welfare Department, Government of Tamil Nadu', image: 'assets/speakers-official/darez-ahamed.jpg' },
-    { name: 'Mr. Pradeep Yadav, IAS', designation: 'Additional Chief Secretary, IT & Digital Services Department, Government of Tamil Nadu', image: 'assets/speakers-official/pradeep-yadav.jpg' },
-    { name: 'Dr. Soumya Swaminathan', designation: 'Former Chief Scientist, World Health Organization', image: 'assets/speakers-official/soumya-swaminathan.jpg' },
-    { name: 'Dr. T. Arunkumar', designation: 'Member of the Tamil Nadu Legislative Assembly – Tiruvallur', image: 'assets/speakers-official/t-arunkumar.jpg' },
-    { name: 'Dr. M. S. Ravi', designation: 'Member of the Tamil Nadu Legislative Assembly – Ponneri', image: 'assets/speakers-official/ms-ravi.jpg' },
-    { name: 'M. Arul Prakasam', designation: 'Member of the Tamil Nadu Legislative Assembly – Saidapet', image: 'assets/speakers-official/arul-prakasam.jpg' }
+    { name: 'Dr. K.G. Arunraj', designation: 'Minister for Health and Family Welfare Department, Government of Tamil Nadu', image: 'assets/speakers-revised/kg-arunraj.jpeg' },
+    { name: 'Dr. R. Kumar', designation: 'Minister for Information Technology, Government of Tamil Nadu', image: 'assets/speakers-revised/r-kumar.jpeg' },
+    { name: 'Dr. Darez Ahamed, IAS', designation: 'Secretary to Government, Health and Family Welfare Department, Government of Tamil Nadu', image: 'assets/speakers-revised/darez-ahamed-ias.png' },
+    { name: 'Mr. Pradeep Yadav, IAS', designation: 'Additional Chief Secretary, Information Technology and Digital Services Department, Government of Tamil Nadu', image: 'assets/speakers-revised/pradeep-yadav-ias.jpeg' },
+    { name: 'Dr. Soumya Swaminathan', designation: 'Former Chief Scientist at the World Health Organization', image: 'assets/speakers-revised/soumya-swaminathan.jpeg' },
+    { name: 'Dr. T. Arunkumar', designation: 'Member of the Tamil Nadu Legislative Assembly – Tiruvallur', image: 'assets/speakers-revised/t-arunkumar.jpeg' },
+    { name: 'Dr. M. S. Ravi', designation: 'Member of the Tamil Nadu Legislative Assembly – Ponneri', image: 'assets/speakers-revised/m-s-ravi.jpeg' },
+    { name: 'M. Arul Prakasam', designation: 'Member of the Tamil Nadu Legislative Assembly – Saidapet', image: 'assets/speakers-revised/m-arul-prakasam.jpeg' }
   ],
   speakers: [
-    { name: 'Dr. S. Uma, IAS', designation: 'Project Director, Tamil Nadu Health System Project', image: 'assets/speakers-official/s-uma-ias.jpg' },
-    { name: 'Dr. Sunil Shroff', designation: 'President, TSI | Urologist & Transplant Surgeon', image: 'assets/speakers-official/sunil-shroff.jpg' },
-    { name: 'Vanitha Venugopal', designation: 'CEO, Tamil Nadu Technology Hub, Government of Tamil Nadu', image: 'assets/speakers-official/vanitha-venugopal.jpg' },
-    { name: 'K. Krishna Chaitanya', designation: 'CEO, TN Infrastructure Fund Management Corporation Ltd, Government of Tamil Nadu', image: 'assets/speakers-official/krishna-chaitanya.jpg' },
-    { name: 'Dr. Renuka Vidyashankar', designation: 'Managing Director, Tamil Nadu Apex Skill Development Centre for Healthcare (TNASDCH)', image: 'assets/speakers-official/renuka-vidyashankar.jpg' },
-    { name: 'Dr. Sudha Seshayyan', designation: 'Former Vice-Chancellor, Tamil Nadu Dr. M.G.R. Medical University, Chennai', image: 'assets/speakers-official/sudha-seshayyan.jpg' },
-    { name: 'Mr. Praveen Kumar', designation: 'Practice Leader – Risk, Cyber & Analytics', image: 'assets/speakers-official/praveen-kumar.jpg' },
-    { name: 'Mr. Vikram Elango', designation: 'Generative AI Specialist – AWS, Dubai', image: 'assets/speakers-official/vikram-elango.jpg' },
-    { name: 'Dr. Parasuraman Raman', designation: 'Principal Scientist, M. S. Swaminathan Research Foundation', image: 'assets/speakers-official/parasuraman-raman.jpg' }
+    { name: 'Dr. S. Uma, IAS', designation: 'Project Director, Tamil Nadu Health System Project', image: 'assets/speakers-revised/s-uma-ias.jpeg' },
+    { name: 'Dr. Sudha Seshayyan', designation: 'Former Vice-Chancellor, Tamil Nadu Dr. M.G.R. Medical University, Chennai', image: 'assets/speakers-revised/sudha-seshayyan.jpeg' },
+    { name: 'Dr. Sunil Shroff', designation: 'President, Telemedicine Society of India; Urologist and Transplant Surgeon', image: 'assets/speakers-revised/sunil-shroff.jpeg' },
+    { name: 'Vanitha Venugopal', designation: 'CEO, Tamil Nadu Technology Hub, Government of Tamil Nadu', image: 'assets/speakers-revised/vanitha-venugopal.jpeg' },
+    { name: 'K. Krishna Chaitanya', designation: 'CEO, Tamil Nadu Infrastructure Fund Management Corporation Limited', image: 'assets/speakers-revised/k-krishna-chaitanya.jpeg' },
+    { name: 'Dr. Renuka Vidyashankar', designation: 'Managing Director, Tamil Nadu Apex Skill Development Centre for Healthcare', image: 'assets/speakers-revised/renuka-vidyashankar.jpeg' },
+    { name: 'Mr. Praveen Kumar', designation: 'Practice Leader – Risk, Cyber and Analytics', image: 'assets/speakers-revised/praveen-kumar.jpeg' },
+    { name: 'Mr. Vikram Elango', designation: 'Generative AI Specialist, AWS, Dubai', image: 'assets/speakers-revised/vikram-elango.jpeg' },
+    { name: 'Dr. Parasuraman Raman', designation: 'Principal Scientist, M. S. Swaminathan Research Foundation', image: 'assets/speakers-revised/parasuraman-raman.jpeg' }
   ],
-  experts: [
-    { name: 'State Planning Commission', image: 'assets/speakers-official/state-planning-commission.jpg' },
-    { name: 'ELCOT', image: 'assets/speakers-official/elcot.jpg' },
-    { name: 'EDII-TN', image: 'assets/speakers-official/edii-tn.jpg' },
-    { name: 'ICT Academy', image: 'assets/speakers-official/ict-academy.jpg' },
-    { name: 'TNRiSE', image: 'assets/speakers-official/tnrise.jpg' }
+  awardRecipients: [
+    { name: 'Dr. S. Pushkala', designation: 'Recipient of the Lifetime Achievement Award', image: 'assets/speakers-revised/s-pushkala.jpeg' },
+    { name: 'Dr. E. Theranirajan', designation: 'Recipient of the Lifetime Achievement Award', image: 'assets/speakers-revised/e-theranirajan.jpeg' },
+    { name: 'Dr. Kumudha Lingaraj', designation: 'Recipient of the Lifetime Achievement Award', image: 'assets/speakers-revised/kumudha-lingaraj.png' },
+    { name: 'Dr. Arunkumar Krishnasamy', designation: 'Recipient of the Lifetime Achievement Award', image: 'assets/speakers-revised/arunkumar-krishnasamy.jpeg' },
+    { name: 'Dr. Vasanth Ramasamy', designation: 'Recipient of the Lifetime Achievement Award', image: 'assets/speakers-revised/vasanth-ramasamy.jpeg' }
+  ],
+  valedictory: [
+    { name: 'Prof. Dr. R. Velraj', designation: 'Former Vice-Chancellor, Anna University', image: 'assets/speakers-revised/r-velraj.png' }
   ],
   voteThanks: [
-    { name: 'T. L. Nandagopal, MCA., MSW.', designation: 'Chairman, G Care Council', image: 'assets/speakers-official/tl-nandagopal.jpg' }
+    { name: 'T. L. Nandagopal, MCA., MSW.', designation: 'Chairman, G Care Council', image: 'assets/speakers-revised/tl-nandagopal.jpeg' }
+  ],
+  experts: [
+    { name: 'State Planning Commission', image: '/assets/associates-final-upload/state-planning-commission.png' },
+    { name: 'ELCOT', image: '/assets/associates-final-upload/elcot.png' },
+    { name: 'EDII-TN', image: '/assets/associates-final-upload/edii-tn.png' },
+    { name: 'ICT Academy', image: '/assets/associates-final-upload/ict-academy.png' },
+    { name: 'iTNT Hub', image: '/assets/associates-final-upload/itnt.png' },
+    { name: 'TNRiSE', image: '/assets/associates-final-upload/tnrise.png' },
+    { name: 'Telemedicine Society of India', image: '/assets/associates-final-upload/tsi.png' },
+    { name: 'TVA', image: '/assets/associates-final-upload/tva.png' }
   ]
 };
 
@@ -2376,6 +2389,11 @@ function buildOfficialPersonCard(person, config = {}) {
   img.alt = person.name;
   img.loading = 'lazy';
   img.decoding = 'async';
+  img.addEventListener('error', () => {
+    if (person.image.startsWith('/assets/')) {
+      img.src = person.image.slice(1);
+    }
+  }, { once: true });
   photo.appendChild(img);
 
   const content = document.createElement('div');
@@ -2432,7 +2450,79 @@ function renderOfficialSpeakers() {
   renderOfficialPeopleGroup('welcomeAddressContainer', 'Welcome Address', ICAIH_OFFICIAL_PEOPLE.welcome, { featured: true });
   renderOfficialPeopleGroup('chiefGuestsContainer', 'Chief Guest', ICAIH_OFFICIAL_PEOPLE.chiefGuests);
   renderOfficialPeopleGroup('speakersContainer', 'Speakers', ICAIH_OFFICIAL_PEOPLE.speakers);
-  renderOfficialPeopleGroup('expertsContainer', 'Experts From', ICAIH_OFFICIAL_PEOPLE.experts, { logoGrid: true });
+  renderOfficialPeopleGroup('awardRecipientsContainer', 'Recipient of the Lifetime Achievement Award', ICAIH_OFFICIAL_PEOPLE.awardRecipients);
+  renderOfficialPeopleGroup('valedictoryGuestContainer', 'Valedictory & Certificate Distribution Ceremony – Chief Guest', ICAIH_OFFICIAL_PEOPLE.valedictory, { featured: true });
   renderOfficialPeopleGroup('voteThanksContainer', 'Vote of Thanks', ICAIH_OFFICIAL_PEOPLE.voteThanks, { featured: true });
+  renderOfficialPeopleGroup('expertsContainer', 'Associates', ICAIH_OFFICIAL_PEOPLE.experts, { logoGrid: true });
 }
 renderOfficialSpeakers();
+
+/* ICAIH 2026 curated gallery. Repeated individual photos are removed and competition winner images are included. */
+const ICAIH_CONFERENCE_GALLERY = [{"src":"assets/gallery-curated-2026/gallery-01.jpg?v=20260722-gallery-curated","alt":"Conference opening session at ICAIH 2026","caption":"Conference opening session at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-02.jpg?v=20260722-gallery-curated","alt":"Address delivered during ICAIH 2026","caption":"Address delivered during ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-03.jpg?v=20260722-gallery-curated","alt":"Special guests and delegates at ICAIH 2026","caption":"Special guests and delegates at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-04.jpg?v=20260722-gallery-curated","alt":"Honourees recognised during ICAIH 2026","caption":"Honourees recognised during ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-05.jpg?v=20260722-gallery-curated","alt":"Selected conference photograph – Shyam","caption":"Selected conference photograph – Shyam"},{"src":"assets/gallery-curated-2026/gallery-06.jpg?v=20260722-gallery-curated","alt":"Selected conference photograph – Edwin","caption":"Selected conference photograph – Edwin"},{"src":"assets/gallery-curated-2026/gallery-07.jpg?v=20260722-gallery-curated","alt":"Selected conference photograph – Manikandan","caption":"Selected conference photograph – Manikandan"},{"src":"assets/gallery-curated-2026/gallery-08.jpg?v=20260722-gallery-curated","alt":"Selected conference photograph – Padma","caption":"Selected conference photograph – Padma"},{"src":"assets/gallery-curated-2026/gallery-09.jpg?v=20260722-gallery-curated","alt":"Selected conference photograph – Monisha","caption":"Selected conference photograph – Monisha"},{"src":"assets/gallery-curated-2026/gallery-10.jpg?v=20260722-gallery-curated","alt":"Selected conference photograph – Alex","caption":"Selected conference photograph – Alex"},{"src":"assets/gallery-curated-2026/gallery-11.jpg?v=20260722-gallery-curated","alt":"Selected conference photograph – Lavakumar","caption":"Selected conference photograph – Lavakumar"},{"src":"assets/gallery-curated-2026/gallery-12.jpg?v=20260722-gallery-curated","alt":"Selected conference photograph – Anandhababu","caption":"Selected conference photograph – Anandhababu"},{"src":"assets/gallery-curated-2026/gallery-13.jpg?v=20260722-gallery-curated","alt":"Selected conference photograph – Ramkumar","caption":"Selected conference photograph – Ramkumar"},{"src":"assets/gallery-curated-2026/gallery-14.jpg?v=20260722-gallery-curated","alt":"Selected conference photograph – Dhanush Raj","caption":"Selected conference photograph – Dhanush Raj"},{"src":"assets/gallery-curated-2026/gallery-15.jpg?v=20260722-gallery-curated","alt":"Selected conference photograph – Reena","caption":"Selected conference photograph – Reena"},{"src":"assets/gallery-curated-2026/gallery-16.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-17.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-18.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-19.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-20.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-21.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-22.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-23.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-24.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-25.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-26.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-27.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-28.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-29.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"},{"src":"assets/gallery-curated-2026/gallery-30.jpg?v=20260722-gallery-curated","alt":"Competition winner recognised at ICAIH 2026","caption":"Competition winner recognised at ICAIH 2026"}];
+
+(function initialiseConferenceGallery() {
+  const grid = document.getElementById('conferenceGalleryGrid');
+  const lightbox = document.getElementById('galleryLightbox');
+  const lightboxImage = document.getElementById('galleryLightboxImage');
+  const caption = document.getElementById('galleryLightboxCaption');
+  const closeButton = document.getElementById('galleryLightboxClose');
+  const previousButton = document.getElementById('galleryLightboxPrev');
+  const nextButton = document.getElementById('galleryLightboxNext');
+  if (!grid || !lightbox || !lightboxImage || !caption) return;
+
+  let activeIndex = 0;
+
+  function showImage(index) {
+    activeIndex = (index + ICAIH_CONFERENCE_GALLERY.length) % ICAIH_CONFERENCE_GALLERY.length;
+    const item = ICAIH_CONFERENCE_GALLERY[activeIndex];
+    lightboxImage.src = item.src;
+    lightboxImage.alt = item.alt;
+    caption.textContent = item.caption || item.alt || '';
+  }
+
+  function openLightbox(index) {
+    showImage(index);
+    lightbox.hidden = false;
+    document.body.classList.add('gallery-lightbox-open');
+    closeButton?.focus();
+  }
+
+  function closeLightbox() {
+    lightbox.hidden = true;
+    lightboxImage.src = '';
+    document.body.classList.remove('gallery-lightbox-open');
+  }
+
+  grid.innerHTML = '';
+  ICAIH_CONFERENCE_GALLERY.forEach((item, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'conference-gallery-item visible';
+    button.setAttribute('aria-label', `Open gallery image ${index + 1}`);
+
+    const image = document.createElement('img');
+    image.src = item.src;
+    image.alt = item.alt;
+    image.loading = index < 6 ? 'eager' : 'lazy';
+    image.decoding = 'async';
+    image.onerror = () => {
+      image.onerror = null;
+      image.src = item.src.replace(/^\//, '');
+    };
+
+    button.append(image);
+    button.addEventListener('click', () => openLightbox(index));
+    grid.appendChild(button);
+  });
+
+  closeButton?.addEventListener('click', closeLightbox);
+  previousButton?.addEventListener('click', () => showImage(activeIndex - 1));
+  nextButton?.addEventListener('click', () => showImage(activeIndex + 1));
+  lightbox.addEventListener('click', event => { if (event.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', event => {
+    if (lightbox.hidden) return;
+    if (event.key === 'Escape') closeLightbox();
+    if (event.key === 'ArrowLeft') showImage(activeIndex - 1);
+    if (event.key === 'ArrowRight') showImage(activeIndex + 1);
+  });
+})();;

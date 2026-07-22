@@ -7209,3 +7209,681 @@ linear-gradient(180deg,#031a3a 0%,#02152f 55%,#020f23 100%);box-shadow:0 30px 70
     grid-template-columns:1fr !important;
   }
 }
+
+
+/* ==========================================================
+   ICAIH 2026 OFFICIAL TEASER VIDEO
+   ========================================================== */
+.teaser-section {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(20, 184, 166, 0.18), transparent 34%),
+    radial-gradient(circle at 82% 75%, rgba(37, 99, 235, 0.20), transparent 38%),
+    linear-gradient(145deg, #04142f 0%, #082a55 55%, #073b4c 100%);
+  color: #fff;
+}
+
+.teaser-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+.teaser-section .container {
+  position: relative;
+  z-index: 1;
+}
+
+.teaser-heading {
+  max-width: 820px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.teaser-heading .section-kicker,
+.teaser-heading h2 {
+  color: #fff;
+}
+
+.teaser-heading p:last-child {
+  color: rgba(255, 255, 255, 0.78);
+  max-width: 680px;
+  margin-inline: auto;
+}
+
+.teaser-video-card {
+  width: min(100%, 1060px);
+  margin: 34px auto 0;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 24px;
+  background: rgba(255,255,255,.08);
+  box-shadow: 0 28px 70px rgba(0,0,0,.36);
+  backdrop-filter: blur(10px);
+}
+
+.teaser-video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  background: #000;
+  object-fit: cover;
+}
+
+.teaser-video-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 8px 6px;
+}
+
+.teaser-video-caption span {
+  flex: 0 0 auto;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(20,184,166,.22);
+  border: 1px solid rgba(94,234,212,.4);
+  color: #ccfbf1;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.teaser-video-caption strong {
+  color: #fff;
+  font-size: clamp(.92rem, 1.6vw, 1.08rem);
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .teaser-video-card {
+    margin-top: 24px;
+    padding: 7px;
+    border-radius: 16px;
+  }
+
+  .teaser-video {
+    border-radius: 11px;
+  }
+
+  .teaser-video-caption {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 9px;
+    padding: 13px 7px 7px;
+  }
+
+  .teaser-video-caption strong {
+    text-align: left;
+  }
+}
+
+/* Revised ICAIH 2026 dignitaries and award sections */
+#speakers .award-recipients-group{margin-top:54px}
+#speakers .award-recipients-group .official-group-title,
+#speakers .valedictory-group .official-group-title{color:#f6c453;text-align:center}
+#speakers .award-recipients-group .official-people-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:34px 20px;align-items:start}
+#speakers .valedictory-group{margin-top:52px}
+#speakers .valedictory-group .official-people-grid{display:block}
+#speakers .valedictory-group .official-person-card{max-width:560px;margin:0 auto}
+#speakers .experts-group{margin-top:52px}
+@media (max-width:900px){#speakers .award-recipients-group .official-people-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 16px}}
+@media (max-width:520px){#speakers .award-recipients-group .official-people-grid{grid-template-columns:1fr}}
+
+
+/* ==========================================================
+   ICAIH 2026 - Revised speaker invitation fidelity fixes
+   Matches the uploaded revised invitation more closely.
+   ========================================================== */
+#speakers .official-speaker-group{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:1rem 0 .25rem!important;
+  margin-top:1.55rem!important;
+}
+#speakers .official-speaker-group.group-featured{background:transparent!important}
+#speakers .official-person-card,
+#speakers .official-person-card.featured-person-card,
+#speakers .official-person-card.logo-card{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:0!important;
+  border-radius:0!important;
+}
+#speakers .official-person-card:hover{transform:none!important;background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+#speakers .official-group-title{
+  margin-bottom:1rem!important;
+  text-shadow:none!important;
+}
+#speakers .chief-guests-group .official-people-grid{
+  row-gap:44px!important;
+}
+#speakers .award-recipients-group .official-people-grid{
+  display:grid!important;
+  grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  column-gap:28px!important;
+  row-gap:34px!important;
+  align-items:start!important;
+  justify-items:center!important;
+}
+#speakers .award-recipients-group .official-person-card:nth-child(-n+3){grid-column:span 2!important}
+#speakers .award-recipients-group .official-person-card:nth-child(4){grid-column:2 / span 2!important}
+#speakers .award-recipients-group .official-person-card:nth-child(5){grid-column:4 / span 2!important}
+#speakers .award-recipients-group .official-person-photo{width:165px!important;height:165px!important}
+#speakers .award-recipients-group .official-person-card h4{font-size:1.12rem!important}
+#speakers .award-recipients-group .official-person-card p{font-size:.92rem!important;line-height:1.4!important}
+#speakers .experts-group .official-group-title{margin-bottom:1.15rem!important}
+#speakers .experts-group .official-logo-grid{
+  display:grid!important;
+  grid-template-columns:repeat(8,minmax(0,1fr))!important;
+  gap:16px!important;
+  align-items:center!important;
+  justify-items:center!important;
+}
+#speakers .experts-group .official-person-card{display:flex!important;align-items:center!important;justify-content:center!important}
+#speakers .experts-group .official-person-photo{
+  width:88px!important;
+  height:88px!important;
+  padding:0!important;
+  margin:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#speakers .experts-group .official-person-photo img{
+  object-fit:contain!important;
+  object-position:center!important;
+  background:transparent!important;
+}
+#speakers .experts-group .official-person-content{display:none!important}
+@media(max-width:1100px){
+  #speakers .award-recipients-group .official-people-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  #speakers .award-recipients-group .official-person-card:nth-child(-n+3){grid-column:auto!important}
+  #speakers .award-recipients-group .official-person-card:nth-child(4),
+  #speakers .award-recipients-group .official-person-card:nth-child(5){grid-column:span 2!important}
+  #speakers .experts-group .official-logo-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+  #speakers .award-recipients-group .official-people-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:26px 12px!important}
+  #speakers .award-recipients-group .official-person-card:nth-child(n){grid-column:auto!important}
+  #speakers .award-recipients-group .official-person-photo{width:130px!important;height:130px!important}
+  #speakers .experts-group .official-logo-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+  #speakers .experts-group .official-person-photo{width:76px!important;height:76px!important}
+}
+@media(max-width:480px){
+  #speakers .experts-group .official-logo-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+
+/* ==========================================================
+   ICAIH 2026 - Associate logos equal size and uniform border
+   ========================================================== */
+#speakers .experts-group .official-logo-grid{
+  display:grid!important;
+  grid-template-columns:repeat(8,minmax(0,1fr))!important;
+  gap:18px!important;
+  align-items:center!important;
+  justify-items:center!important;
+}
+#speakers .experts-group .official-person-card{
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+#speakers .experts-group .official-person-photo{
+  width:96px!important;
+  height:96px!important;
+  min-width:96px!important;
+  min-height:96px!important;
+  padding:4px!important;
+  margin:0 auto!important;
+  border-radius:50%!important;
+  background:linear-gradient(135deg,#fff8cb 0%,#c99215 22%,#fff0a0 48%,#a66300 73%,#ffd97a 100%)!important;
+  box-shadow:0 0 0 2px rgba(255,224,134,.14),0 8px 18px rgba(232,189,85,.18)!important;
+  overflow:hidden!important;
+}
+#speakers .experts-group .official-person-photo img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  background:#fff!important;
+  border-radius:50%!important;
+  padding:8px!important;
+  box-sizing:border-box!important;
+}
+@media(max-width:1100px){
+  #speakers .experts-group .official-logo-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+  #speakers .experts-group .official-logo-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+  #speakers .experts-group .official-person-photo,
+  #speakers .experts-group .official-person-photo img{width:84px!important;height:84px!important;min-width:84px!important;min-height:84px!important}
+}
+@media(max-width:480px){
+  #speakers .experts-group .official-logo-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #speakers .experts-group .official-person-photo,
+  #speakers .experts-group .official-person-photo img{width:78px!important;height:78px!important;min-width:78px!important;min-height:78px!important}
+}
+
+
+/* ICAIH 2026 - Final associate logo alignment correction */
+#speakers .experts-group .official-logo-grid{
+  align-items:start!important;
+}
+#speakers .experts-group .official-person-card{
+  min-height:104px!important;
+  height:104px!important;
+}
+#speakers .experts-group .official-person-photo{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  box-sizing:border-box!important;
+  width:96px!important;
+  height:96px!important;
+  min-width:96px!important;
+  min-height:96px!important;
+  max-width:96px!important;
+  max-height:96px!important;
+  padding:4px!important;
+  margin:0 auto!important;
+}
+#speakers .experts-group .official-person-photo img{
+  display:block!important;
+  width:86px!important;
+  height:86px!important;
+  min-width:86px!important;
+  min-height:86px!important;
+  max-width:86px!important;
+  max-height:86px!important;
+  padding:0!important;
+  margin:0!important;
+  object-fit:contain!important;
+  object-position:center!important;
+}
+@media(max-width:700px){
+  #speakers .experts-group .official-person-card{min-height:92px!important;height:92px!important}
+  #speakers .experts-group .official-person-photo{width:84px!important;height:84px!important;min-width:84px!important;min-height:84px!important;max-width:84px!important;max-height:84px!important}
+  #speakers .experts-group .official-person-photo img{width:74px!important;height:74px!important;min-width:74px!important;min-height:74px!important;max-width:74px!important;max-height:74px!important}
+}
+
+
+/* ==========================================================
+   ICAIH 2026 - Final uploaded 8 associate logos
+   Uses the exact same-size logo artwork supplied by the user.
+   ========================================================== */
+#speakers .experts-group .official-logo-grid{
+  display:grid!important;
+  grid-template-columns:repeat(8,minmax(0,1fr))!important;
+  gap:18px!important;
+  align-items:center!important;
+  justify-items:center!important;
+}
+#speakers .experts-group .official-person-card{
+  width:100%!important;
+  height:104px!important;
+  min-height:104px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0!important;
+  margin:0!important;
+}
+#speakers .experts-group .official-person-photo{
+  width:96px!important;
+  height:96px!important;
+  min-width:96px!important;
+  min-height:96px!important;
+  max-width:96px!important;
+  max-height:96px!important;
+  padding:0!important;
+  margin:0 auto!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  box-shadow:0 8px 18px rgba(232,189,85,.20)!important;
+  overflow:hidden!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  box-sizing:border-box!important;
+}
+#speakers .experts-group .official-person-photo img{
+  display:block!important;
+  width:96px!important;
+  height:96px!important;
+  min-width:96px!important;
+  min-height:96px!important;
+  max-width:96px!important;
+  max-height:96px!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  box-sizing:border-box!important;
+}
+#speakers .experts-group .official-person-content{display:none!important}
+@media(max-width:1100px){
+  #speakers .experts-group .official-logo-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+  #speakers .experts-group .official-logo-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+  #speakers .experts-group .official-person-card{height:90px!important;min-height:90px!important}
+  #speakers .experts-group .official-person-photo,
+  #speakers .experts-group .official-person-photo img{width:82px!important;height:82px!important;min-width:82px!important;min-height:82px!important;max-width:82px!important;max-height:82px!important}
+}
+@media(max-width:480px){
+  #speakers .experts-group .official-logo-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+
+/* Associate logo visibility and fallback alignment fix */
+#speakers .experts-group .official-person-content{display:none!important;}
+#speakers .experts-group .official-person-photo{background:#fff!important;overflow:hidden!important;}
+#speakers .experts-group .official-person-photo img{display:block!important;opacity:1!important;visibility:visible!important;width:100%!important;height:100%!important;object-fit:contain!important;}
+
+
+/* ==========================================================
+   ICAIH 2026 Conference Gallery
+   ========================================================== */
+.conference-gallery-section{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(180deg,#f3f7ff 0%,#ffffff 100%);
+}
+.conference-gallery-heading{text-align:center;max-width:760px;margin:0 auto 2rem}
+.conference-gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:18px;
+}
+.conference-gallery-item{
+  position:relative;
+  display:block;
+  width:100%;
+  aspect-ratio:4/3;
+  padding:0;
+  overflow:hidden;
+  border:0;
+  border-radius:18px;
+  background:#071a37;
+  cursor:pointer;
+  box-shadow:0 12px 28px rgba(15,37,74,.16);
+}
+.conference-gallery-item img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform .35s ease,filter .35s ease;
+}
+.conference-gallery-item::after{
+  content:'View';
+  position:absolute;
+  right:12px;
+  bottom:12px;
+  padding:.42rem .72rem;
+  border-radius:999px;
+  color:#fff;
+  background:rgba(2,18,42,.78);
+  font-size:.76rem;
+  font-weight:700;
+  letter-spacing:.06em;
+  opacity:0;
+  transform:translateY(5px);
+  transition:.25s ease;
+}
+.conference-gallery-item:hover img{transform:scale(1.045);filter:brightness(.82)}
+.conference-gallery-item:hover::after,.conference-gallery-item:focus-visible::after{opacity:1;transform:none}
+.conference-gallery-item:focus-visible{outline:3px solid #2397ff;outline-offset:3px}
+.gallery-lightbox[hidden]{display:none}
+.gallery-lightbox{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  display:grid;
+  grid-template-columns:70px minmax(0,1fr) 70px;
+  align-items:center;
+  gap:10px;
+  padding:34px 18px 18px;
+  background:rgba(0,8,24,.94);
+}
+.gallery-lightbox figure{margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;height:100%}
+.gallery-lightbox img{display:block;max-width:100%;max-height:calc(100vh - 105px);object-fit:contain;border-radius:12px;box-shadow:0 18px 55px rgba(0,0,0,.48)}
+.gallery-lightbox figcaption{margin-top:10px;color:#fff;font-size:.9rem;text-align:center}
+.gallery-lightbox-close{position:absolute;top:10px;right:18px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;font-size:2rem;line-height:1;cursor:pointer}
+.gallery-lightbox-nav{width:52px;height:52px;border:1px solid rgba(255,255,255,.25);border-radius:50%;background:rgba(255,255,255,.1);color:#fff;font-size:1.7rem;cursor:pointer}
+.gallery-lightbox-nav:hover,.gallery-lightbox-close:hover{background:rgba(255,255,255,.22)}
+body.gallery-lightbox-open{overflow:hidden}
+@media(max-width:1000px){.conference-gallery-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:720px){
+  .conference-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .conference-gallery-item{border-radius:14px}
+  .gallery-lightbox{grid-template-columns:48px minmax(0,1fr) 48px;padding-left:6px;padding-right:6px}
+  .gallery-lightbox-nav{width:42px;height:42px;font-size:1.3rem}
+}
+@media(max-width:420px){.conference-gallery-grid{grid-template-columns:1fr}}
+
+
+/* ICAIH 2026 gallery image visibility and one-person-one-photo update */
+#conferenceGalleryGrid .conference-gallery-item{
+  opacity:1!important;
+  transform:none!important;
+  min-height:220px;
+}
+#conferenceGalleryGrid .conference-gallery-item img{
+  display:block!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+.conference-gallery-person-name{
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:12px;
+  z-index:2;
+  padding:.55rem .75rem;
+  border-radius:10px;
+  color:#fff;
+  background:linear-gradient(90deg,rgba(3,20,47,.92),rgba(3,20,47,.65));
+  font-weight:700;
+  text-align:left;
+}
+.conference-gallery-item::after{display:none!important}
+
+
+/* ICAIH 2026 attractive one-photo-per-person gallery refinement */
+#conferenceGalleryGrid{gap:22px!important}
+#conferenceGalleryGrid .conference-gallery-item{
+  aspect-ratio:3/2!important;
+  min-height:0!important;
+  border:1px solid rgba(38,91,170,.14)!important;
+  border-radius:20px!important;
+  background:#06152f!important;
+  box-shadow:0 16px 34px rgba(10,39,84,.18)!important;
+}
+#conferenceGalleryGrid .conference-gallery-item img{
+  object-fit:cover!important;
+  object-position:center 46%!important;
+  filter:saturate(1.03) contrast(1.02)!important;
+}
+#conferenceGalleryGrid .conference-gallery-item:hover img{
+  transform:scale(1.035)!important;
+  filter:saturate(1.05) contrast(1.03) brightness(.88)!important;
+}
+#conferenceGalleryGrid .conference-gallery-person-name{
+  left:14px!important;right:auto!important;bottom:14px!important;
+  width:auto!important;min-width:116px!important;
+  padding:.58rem .82rem!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  border-radius:999px!important;
+  background:rgba(2,20,48,.86)!important;
+  backdrop-filter:blur(7px)!important;
+  box-shadow:0 7px 18px rgba(0,0,0,.2)!important;
+  text-align:center!important;
+}
+@media(max-width:720px){#conferenceGalleryGrid{gap:14px!important}}
+
+
+/* ==========================================================
+   ICAIH 2026 curated gallery update
+   - meaningful subtitle
+   - 3 images per row on desktop
+   - no names shown on gallery cards
+   ========================================================== */
+.conference-gallery-heading p:last-child{max-width:900px;margin-left:auto;margin-right:auto}
+#conferenceGalleryGrid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:22px!important;
+}
+#conferenceGalleryGrid .conference-gallery-item{
+  aspect-ratio:3/2!important;
+  min-height:0!important;
+  border:1px solid rgba(33,81,150,.16)!important;
+  border-radius:20px!important;
+  overflow:hidden!important;
+  background:#09162f!important;
+  box-shadow:0 16px 34px rgba(7,28,61,.14)!important;
+}
+#conferenceGalleryGrid .conference-gallery-item img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  filter:saturate(1.02) contrast(1.02)!important;
+}
+#conferenceGalleryGrid .conference-gallery-item:hover img{
+  transform:scale(1.03)!important;
+  filter:saturate(1.05) contrast(1.03) brightness(.93)!important;
+}
+#conferenceGalleryGrid .conference-gallery-person-name{display:none!important}
+#conferenceGalleryGrid .conference-gallery-item::after{display:none!important}
+.gallery-lightbox figcaption{max-width:min(92vw,960px);line-height:1.45}
+@media(max-width:900px){#conferenceGalleryGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:560px){#conferenceGalleryGrid{grid-template-columns:1fr!important;gap:14px!important}}
+
+/* ==========================================================
+   ICAIH 2026 final desktop navigation alignment
+   ========================================================== */
+@media (min-width: 981px) {
+  .navbar {
+    display: grid !important;
+    grid-template-columns: 210px minmax(0, 1fr) 100px !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    min-height: 90px !important;
+    padding: 12px 30px !important;
+  }
+
+  .brand {
+    min-width: 0 !important;
+    align-self: center !important;
+  }
+
+  .nav-links {
+    position: static !important;
+    transform: none !important;
+    display: grid !important;
+    grid-template-columns: repeat(11, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+    justify-items: stretch !important;
+    gap: 2px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .nav-links a,
+  .nav-links .nav-link-button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 50px !important;
+    height: 50px !important;
+    margin: 0 !important;
+    padding: 5px 3px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: rgba(255,255,255,.94) !important;
+    font-family: var(--font-menu) !important;
+    font-size: clamp(.62rem,.69vw,.76rem) !important;
+    font-weight: 700 !important;
+    line-height: 1.14 !important;
+    letter-spacing: 0 !important;
+    text-align: center !important;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    box-sizing: border-box !important;
+  }
+
+  .nav-links a:hover,
+  .nav-links .nav-link-button:hover {
+    background: rgba(255,255,255,.1) !important;
+    color: #fff !important;
+    transform: none !important;
+  }
+
+  .nav-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    margin: 0 !important;
+  }
+
+  .nav-actions .nav-register {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100px !important;
+    min-height: 50px !important;
+    height: 50px !important;
+    padding: 0 12px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    font-size: .82rem !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (min-width: 981px) and (max-width: 1180px) {
+  .navbar {
+    grid-template-columns: 180px minmax(0, 1fr) 88px !important;
+    column-gap: 6px !important;
+    padding-inline: 16px !important;
+  }
+
+  .nav-links {
+    gap: 1px !important;
+  }
+
+  .nav-links a,
+  .nav-links .nav-link-button {
+    font-size: .61rem !important;
+    padding-inline: 2px !important;
+  }
+
+  .nav-actions .nav-register {
+    width: 88px !important;
+    font-size: .76rem !important;
+  }
+}
