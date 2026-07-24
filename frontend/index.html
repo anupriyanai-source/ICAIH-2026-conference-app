@@ -193,6 +193,62 @@
     </div>
   </div>
 
+
+  <section class="icaih-2027-coming-soon" aria-labelledby="icaih2027Title">
+    <div class="cs27-grid" aria-hidden="true"></div>
+    <div class="cs27-orb cs27-orb-one" aria-hidden="true"></div>
+    <div class="cs27-orb cs27-orb-two" aria-hidden="true"></div>
+
+    <div class="container cs27-shell">
+      <div class="cs27-copy">
+        <div class="cs27-edition-pill"><span></span> The Next Evolution of ICAIH</div>
+        <p class="cs27-kicker">International Conference on Artificial Intelligence in Healthcare</p>
+        <h2 id="icaih2027Title">
+          Where <span>Intelligence</span><br>
+          Meets <span>Human Care.</span>
+        </h2>
+        <p class="cs27-lead">A new two-day experience bringing healthcare leaders, AI pioneers, researchers and innovators together to shape the future of responsible, inclusive healthcare.</p>
+
+        <div class="cs27-date-card">
+          <div class="cs27-date-numbers"><strong>27</strong><i>&amp;</i><strong>28</strong></div>
+          <div class="cs27-date-copy"><span>January</span><b>2027</b></div>
+          <div class="cs27-date-status"><span class="cs27-live-dot"></span> Save the dates</div>
+        </div>
+        <div class="cs27-venue-card">
+          <div class="cs27-venue-icon" aria-hidden="true">⌖</div>
+          <div><span>Conference Venue</span><strong>Chennai Trade Centre</strong><small>Chennai, Tamil Nadu</small></div>
+          <b>27–28 JAN 2027</b>
+        </div>
+
+        <div class="cs27-actions">
+          <a class="cs27-primary" href="#contact">Get Conference Updates <span aria-hidden="true">→</span></a>
+          <a class="cs27-secondary" href="#gallery">Explore ICAIH 2026 Highlights</a>
+        </div>
+        <p class="cs27-note">Programme, speakers and registration details will be announced soon. Venue: Chennai Trade Centre.</p>
+      </div>
+
+      <div class="cs27-visual" aria-label="Countdown to ICAIH 2027">
+        <div class="cs27-ai-core" aria-hidden="true">
+          <div class="cs27-core-ring cs27-ring-one"></div>
+          <div class="cs27-core-ring cs27-ring-two"></div>
+          <div class="cs27-core-ring cs27-ring-three"></div>
+          <div class="cs27-core-center"><span>AI</span><small>HEALTH</small></div>
+          <i class="cs27-node cs27-node-one"></i><i class="cs27-node cs27-node-two"></i>
+          <i class="cs27-node cs27-node-three"></i><i class="cs27-node cs27-node-four"></i>
+        </div>
+
+        <div class="cs27-countdown-label"><span></span> Countdown to ICAIH 2027</div>
+        <div class="icaih-2027-coming-soon__countdown">
+          <div><strong id="cs27-days">000</strong><span>Days</span></div>
+          <div><strong id="cs27-hours">00</strong><span>Hours</span></div>
+          <div><strong id="cs27-minutes">00</strong><span>Minutes</span></div>
+          <div><strong id="cs27-seconds">00</strong><span>Seconds</span></div>
+        </div>
+        <div class="cs27-theme-strip"><span>AI</span><span>Healthcare</span><span>Humanity</span><span>Inclusive Growth</span></div>
+      </div>
+    </div>
+  </section>
+
   <header class="hero" id="hero">
     <div class="hero-overlay"></div>
     <div class="container hero-inner">
@@ -213,15 +269,15 @@
       </div>
 
       <div class="hero-actions">
-        <a href="#register" class="btn primary">Register Now</a>
-        <button class="btn secondary" id="openCompetitionModalHero" type="button">Competition</button>
+        <a href="#gallery" class="btn primary">View Gallery</a>
+        <a href="#contact" class="btn secondary">Contact Us</a>
       </div>
 
-      <div class="countdown" aria-label="Countdown to ICAIH 2026">
-        <div><strong id="cd-d">000</strong><span>Days</span></div>
-        <div><strong id="cd-h">00</strong><span>Hours</span></div>
-        <div><strong id="cd-m">00</strong><span>Minutes</span></div>
-        <div><strong id="cd-s">00</strong><span>Seconds</span></div>
+      <div class="countdown" aria-label="ICAIH 2026 conference status">
+        <div><strong>2026</strong><span>Conference Completed</span></div>
+        <div><strong>Gallery</strong><span>Latest Photos Updated</span></div>
+        <div><strong>Awards</strong><span>Winners &amp; Highlights</span></div>
+        <div><strong>2027</strong><span>Coming Soon</span></div>
       </div>
     </div>
   </header>
@@ -605,7 +661,7 @@
         <div class="section-head reveal conference-gallery-heading">
           <p class="section-kicker">Conference Moments</p>
           <h2>ICAIH 2026 Gallery</h2>
-          <p>A curated collection of ICAIH 2026 highlights featuring memorable conference moments, distinguished guests, award presentations, and competition winners.</p>
+          <p>A complete visual archive of ICAIH 2026 featuring distinct conference moments, one selected clear photo for every available person, and all competition winner photographs from the latest gallery upload.</p>
         </div>
         <div class="conference-gallery-grid" id="conferenceGalleryGrid" aria-live="polite"></div>
       </div>
@@ -1543,7 +1599,33 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=20260722-gallery-curated"></script>
+
+  <script>
+    (function () {
+      var target = new Date('2027-01-27T09:30:00+05:30').getTime();
+      function updateICAIH2027Countdown() {
+        var distance = Math.max(0, target - Date.now());
+        var days = Math.floor(distance / 86400000);
+        var hours = Math.floor((distance % 86400000) / 3600000);
+        var minutes = Math.floor((distance % 3600000) / 60000);
+        var seconds = Math.floor((distance % 60000) / 1000);
+        var values = {
+          'cs27-days': String(days).padStart(3, '0'),
+          'cs27-hours': String(hours).padStart(2, '0'),
+          'cs27-minutes': String(minutes).padStart(2, '0'),
+          'cs27-seconds': String(seconds).padStart(2, '0')
+        };
+        Object.keys(values).forEach(function (id) {
+          var element = document.getElementById(id);
+          if (element) element.textContent = values[id];
+        });
+      }
+      updateICAIH2027Countdown();
+      setInterval(updateICAIH2027Countdown, 1000);
+    }());
+  </script>
+
+  <script src="js/main.js?v=20260724-gallery-v5"></script>
 </body>
 
 </html>

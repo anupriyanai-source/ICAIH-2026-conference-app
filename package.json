@@ -1,7 +1,7 @@
 {
-  "name": "icaih-2026-backend",
+  "name": "icaih-2027-backend",
   "version": "1.0.0",
-  "description": "Backend API for ICAIH 2026 conference website",
+  "description": "Backend API for ICAIH 2027 conference website",
   "main": "backend/server.js",
   "scripts": {
     "start": "node backend/server.js",

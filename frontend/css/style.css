@@ -7887,3 +7887,162 @@ body.gallery-lightbox-open{overflow:hidden}
     font-size: .76rem !important;
   }
 }
+
+
+/* ICAIH 2027 — distinctive AI-healthcare coming-soon experience */
+.icaih-2027-coming-soon {
+  --cs27-ink: #031225;
+  --cs27-deep: #061d3f;
+  --cs27-blue: #0b4f9f;
+  --cs27-cyan: #35d9f2;
+  --cs27-mint: #63f2c7;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 700px;
+  display: flex;
+  align-items: center;
+  padding: 76px 0 72px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 79% 22%, rgba(53,217,242,.17), transparent 24%),
+    radial-gradient(circle at 15% 82%, rgba(99,242,199,.10), transparent 25%),
+    linear-gradient(125deg, #020b19 0%, var(--cs27-ink) 42%, #06285a 100%);
+  border-bottom: 1px solid rgba(100,235,255,.2);
+}
+
+.cs27-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  opacity: .22;
+  background-image:
+    linear-gradient(rgba(107,230,255,.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(107,230,255,.15) 1px, transparent 1px);
+  background-size: 68px 68px;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 35%, #000 100%);
+  mask-image: linear-gradient(to right, transparent, #000 35%, #000 100%);
+}
+
+.cs27-orb { position:absolute; border-radius:50%; filter:blur(2px); z-index:-2; pointer-events:none; }
+.cs27-orb-one { width:520px; height:520px; right:-190px; top:-210px; border:1px solid rgba(80,225,255,.2); box-shadow:inset 0 0 100px rgba(28,152,255,.14); }
+.cs27-orb-two { width:280px; height:280px; left:-155px; bottom:-135px; background:radial-gradient(circle, rgba(91,244,204,.16), transparent 68%); }
+
+.cs27-shell {
+  display:grid;
+  grid-template-columns:minmax(0,1.08fr) minmax(390px,.92fr);
+  align-items:center;
+  gap:74px;
+  position:relative;
+  z-index:1;
+}
+
+.cs27-edition-pill {
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:9px 14px;
+  border:1px solid rgba(64,222,247,.35);
+  border-radius:999px;
+  background:rgba(7,38,72,.62);
+  color:#c8f8ff;
+  font-size:.74rem;
+  font-weight:800;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  backdrop-filter:blur(12px);
+}
+.cs27-edition-pill span,.cs27-countdown-label span { width:8px; height:8px; border-radius:50%; background:var(--cs27-cyan); box-shadow:0 0 0 6px rgba(53,217,242,.11),0 0 20px var(--cs27-cyan); }
+.cs27-kicker { margin:22px 0 13px; max-width:650px; color:#83eaf9; font-size:.82rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
+.cs27-copy h2 { margin:0; color:#f5fbff; font-family:var(--font-head, 'Poppins', sans-serif); font-size:clamp(2.75rem,5vw,5.4rem); font-weight:800; line-height:.98; letter-spacing:-.045em; text-wrap:balance; }
+.cs27-copy h2 span { color:transparent; background:linear-gradient(90deg,#fff 5%,var(--cs27-cyan) 58%,var(--cs27-mint)); -webkit-background-clip:text; background-clip:text; }
+.cs27-lead { max-width:690px; margin:24px 0 0; color:rgba(229,246,255,.78); font-size:1.04rem; line-height:1.75; }
+
+.cs27-date-card {
+  display:grid;
+  grid-template-columns:auto auto 1fr;
+  align-items:center;
+  gap:22px;
+  width:min(100%,620px);
+  margin-top:30px;
+  padding:18px 22px;
+  border:1px solid rgba(114,232,250,.25);
+  border-radius:20px;
+  background:linear-gradient(105deg,rgba(255,255,255,.09),rgba(255,255,255,.025));
+  box-shadow:0 24px 70px rgba(0,0,0,.25);
+  backdrop-filter:blur(14px);
+}
+.cs27-date-numbers { display:flex; align-items:center; gap:9px; }
+.cs27-date-numbers strong { font-size:clamp(2.2rem,4.2vw,3.8rem); line-height:1; }
+.cs27-date-numbers i { color:var(--cs27-cyan); font-size:1.5rem; font-style:normal; font-weight:900; }
+.cs27-date-copy { display:flex; flex-direction:column; padding-left:20px; border-left:1px solid rgba(255,255,255,.18); }
+.cs27-date-copy span { color:#c4eefa; font-size:.83rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; }
+.cs27-date-copy b { font-size:1.55rem; }
+.cs27-date-status { justify-self:end; display:flex; align-items:center; gap:9px; color:#dffbff; font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+.cs27-live-dot { width:9px; height:9px; border-radius:50%; background:var(--cs27-mint); box-shadow:0 0 16px var(--cs27-mint); animation:cs27Pulse 1.7s ease-in-out infinite; }
+
+.cs27-actions { display:flex; flex-wrap:wrap; gap:13px; margin-top:26px; }
+.cs27-actions a { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 20px; border-radius:12px; font-weight:800; text-decoration:none; transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease; }
+.cs27-actions a:hover { transform:translateY(-3px); }
+.cs27-primary { color:#031225; background:linear-gradient(90deg,var(--cs27-cyan),var(--cs27-mint)); box-shadow:0 14px 32px rgba(47,216,240,.23); }
+.cs27-primary span { margin-left:12px; font-size:1.25rem; }
+.cs27-secondary { color:#dffaff; border:1px solid rgba(130,237,250,.29); background:rgba(255,255,255,.045); }
+.cs27-note { margin:17px 0 0; color:rgba(210,239,247,.62); font-size:.89rem; }
+
+.cs27-visual { position:relative; min-height:535px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding:24px 24px 22px; border:1px solid rgba(111,229,247,.19); border-radius:34px; background:linear-gradient(155deg,rgba(15,77,138,.26),rgba(2,16,35,.68)); box-shadow:0 35px 100px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.08); backdrop-filter:blur(12px); }
+.cs27-visual::before { content:""; position:absolute; inset:14px; border:1px solid rgba(98,230,246,.1); border-radius:25px; pointer-events:none; }
+.cs27-ai-core { position:absolute; top:28px; left:50%; width:300px; height:300px; transform:translateX(-50%); display:grid; place-items:center; }
+.cs27-core-ring { position:absolute; border-radius:50%; border:1px solid rgba(80,227,247,.36); }
+.cs27-ring-one { width:270px; height:270px; border-style:dashed; animation:cs27Spin 18s linear infinite; }
+.cs27-ring-two { width:212px; height:212px; border-color:rgba(99,242,199,.43); animation:cs27SpinReverse 13s linear infinite; }
+.cs27-ring-three { width:150px; height:150px; box-shadow:0 0 50px rgba(53,217,242,.18),inset 0 0 35px rgba(53,217,242,.11); }
+.cs27-core-center { position:relative; z-index:2; width:104px; height:104px; border-radius:30px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(145deg,rgba(77,224,245,.96),rgba(38,143,229,.95)); color:#03152a; box-shadow:0 0 0 12px rgba(58,214,241,.06),0 0 50px rgba(56,218,243,.38); transform:rotate(45deg); }
+.cs27-core-center span,.cs27-core-center small { transform:rotate(-45deg); }
+.cs27-core-center span { font-size:2rem; font-weight:900; line-height:1; }
+.cs27-core-center small { margin-top:4px; font-size:.54rem; font-weight:900; letter-spacing:.12em; }
+.cs27-node { position:absolute; width:14px; height:14px; border:3px solid #082a51; border-radius:50%; background:var(--cs27-mint); box-shadow:0 0 18px var(--cs27-mint); }
+.cs27-node-one{top:12px;left:50%}.cs27-node-two{right:22px;top:48%}.cs27-node-three{bottom:20px;left:29%}.cs27-node-four{left:17px;top:38%}
+.cs27-countdown-label { display:flex; align-items:center; gap:10px; align-self:flex-start; position:relative; z-index:2; margin:0 0 14px 4px; color:#c9f7ff; font-size:.74rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+.icaih-2027-coming-soon__countdown { position:relative; z-index:2; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; width:100%; }
+.icaih-2027-coming-soon__countdown div { min-width:0; padding:16px 5px 14px; text-align:center; border:1px solid rgba(122,232,248,.18); border-radius:15px; background:rgba(255,255,255,.055); }
+.icaih-2027-coming-soon__countdown strong { display:block; color:#fff; font-size:clamp(1.55rem,3vw,2.35rem); line-height:1; font-variant-numeric:tabular-nums; }
+.icaih-2027-coming-soon__countdown span { display:block; margin-top:8px; color:#7ee7f7; font-size:.62rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+.cs27-theme-strip { position:relative; z-index:2; display:flex; flex-wrap:wrap; justify-content:center; gap:7px 13px; width:100%; margin-top:13px; color:rgba(210,242,248,.56); font-size:.68rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; }
+.cs27-theme-strip span:not(:last-child)::after { content:"•"; margin-left:13px; color:var(--cs27-cyan); }
+
+@keyframes cs27Spin { to { transform:rotate(360deg); } }
+@keyframes cs27SpinReverse { to { transform:rotate(-360deg); } }
+@keyframes cs27Pulse { 50% { opacity:.45; transform:scale(.8); } }
+
+@media (prefers-reduced-motion: reduce) { .cs27-ring-one,.cs27-ring-two,.cs27-live-dot { animation:none; } }
+@media (max-width: 1050px) { .cs27-shell { grid-template-columns:1fr; gap:42px; } .cs27-visual { width:min(100%,680px); min-height:500px; } .cs27-copy h2 { max-width:800px; } }
+@media (max-width: 700px) {
+  .icaih-2027-coming-soon { min-height:0; padding:48px 0; }
+  .cs27-shell { gap:34px; }
+  .cs27-copy h2 { font-size:clamp(2.35rem,12vw,4rem); }
+  .cs27-date-card { grid-template-columns:1fr auto; gap:13px; padding:16px; }
+  .cs27-date-status { grid-column:1/-1; justify-self:start; }
+  .cs27-date-copy { padding-left:14px; }
+  .cs27-actions { flex-direction:column; }
+  .cs27-actions a { width:100%; }
+  .cs27-visual { min-height:470px; padding:20px 14px 18px; border-radius:25px; }
+  .cs27-ai-core { width:260px; height:260px; top:23px; }
+  .cs27-ring-one { width:238px; height:238px; }
+  .cs27-ring-two { width:184px; height:184px; }
+  .cs27-ring-three { width:132px; height:132px; }
+  .cs27-core-center { width:90px; height:90px; border-radius:25px; }
+  .icaih-2027-coming-soon__countdown { grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width: 390px) { .cs27-date-numbers strong { font-size:2.15rem; } .cs27-date-copy b { font-size:1.25rem; } .cs27-edition-pill { font-size:.62rem; } }
+
+
+
+/* ICAIH 2027 venue and gallery attraction update */
+.cs27-venue-card{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;margin-top:16px;padding:15px 17px;border:1px solid rgba(113,232,244,.24);border-radius:18px;background:linear-gradient(135deg,rgba(31,102,154,.26),rgba(10,38,70,.58));box-shadow:0 14px 34px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.06);backdrop-filter:blur(14px)}
+.cs27-venue-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#39d9f2,#5de3b5);color:#041326;font-size:1.55rem;font-weight:900;box-shadow:0 10px 26px rgba(57,217,242,.24)}
+.cs27-venue-card span,.cs27-venue-card small{display:block;color:#9edce7;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.cs27-venue-card strong{display:block;margin:4px 0;color:#fff;font-size:1.12rem}.cs27-venue-card b{padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.08);color:#c9f7ff;font-size:.7rem;white-space:nowrap;letter-spacing:.06em}
+.conference-gallery-section{background:linear-gradient(180deg,#f8fbff 0%,#eef7ff 100%)}
+.conference-gallery-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.conference-gallery-item{border-radius:18px;box-shadow:0 12px 30px rgba(19,62,99,.13);border:1px solid rgba(43,125,191,.12)}
+.conference-gallery-item img{transition:transform .45s ease,filter .45s ease}.conference-gallery-item:hover img{transform:scale(1.06)}
+@media(max-width:900px){.cs27-venue-card{grid-template-columns:auto 1fr}.cs27-venue-card b{grid-column:2;justify-self:start}.conference-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.cs27-venue-card{padding:13px}.cs27-venue-icon{width:40px;height:40px}.cs27-venue-card strong{font-size:1rem}.conference-gallery-grid{grid-template-columns:1fr}}
